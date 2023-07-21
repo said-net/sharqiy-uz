@@ -1,16 +1,18 @@
-import { Avatar, Button, IconButton, Input, Spinner } from "@material-tailwind/react";
+import { Avatar, Button, IconButton, Input, Spinner, Menu, MenuHandler, MenuList, MenuItem } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { FaPlusCircle, FaSearch, FaRegFrown, FaAlignRight } from "react-icons/fa";
+import { FaPlusCircle, FaSearch, FaRegFrown, FaAlignRight, FaPenAlt, FaTrash } from "react-icons/fa";
 import AddCategory from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_LINK } from "../../config";
+import EditCategory from "./editcategoire";
 
 function Categories() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [categories, setCategories] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
+    const [select, setSelect] = useState({ del: false, edit: false, _id: '', title: '', about: '', background: '' });
 
     const { refresh } = useSelector(e => e.category);
     useEffect(() => {
@@ -52,9 +54,26 @@ function Categories() {
                                         <Avatar style={{ background }} size="lg" src={image} withBorder color="blue-gray" className="p-[5px]" />
                                         <p className="ml-[10px]">{title}</p>
                                     </div>
-                                    <IconButton className="rounded-full" color="blue-gray">
-                                        <FaAlignRight />
-                                    </IconButton>
+                                    <Menu>
+                                        <MenuHandler>
+                                            <IconButton className="rounded-full" color="blue-gray">
+                                                <FaAlignRight />
+                                            </IconButton>
+                                        </MenuHandler>
+                                        <MenuList>
+                                            <MenuItem className="flex items-center justify-start" onClick={() => setSelect({ edit: true, del: false, id, title, background, image })}>
+                                                <FaPenAlt />
+                                                <h1 className="pl-[10px]">O'zgartirish</h1>
+                                            </MenuItem>
+                                            <MenuItem>
+                                                <div className="flex items-center justify-start">
+                                                    <FaTrash className="text-[red]" />
+                                                    <h1 className="text-[red] pl-[10px] ">O'chirish</h1>
+                                                </div>
+                                            </MenuItem>
+                                        </MenuList>
+                                    </Menu>
+
                                 </div>
                             )
                         })
@@ -74,6 +93,7 @@ function Categories() {
                             )
                         })
             }
+            <EditCategory select={select} setSelect={setSelect} />
         </>
     );
 }
