@@ -8,6 +8,10 @@ const schema = new Schema({
     background: {
         type: String,
         default: '#000'
+    },
+    hidden: {
+        type: Boolean,
+        default: false
     }
 });
 module.exports = mongoose.model('Category', schema);

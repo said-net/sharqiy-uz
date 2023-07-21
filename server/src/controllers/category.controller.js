@@ -1,7 +1,7 @@
 const md5 = require("md5");
 const categoryModel = require("../models/category.model");
 const { SERVER_LINK } = require("../configs/env");
-
+const fs = require("fs");
 module.exports = {
     create: (req, res) => {
         const { title, background } = req.body;
@@ -44,7 +44,8 @@ module.exports = {
                 id: e._id,
                 image: SERVER_LINK + e.image,
                 title: e.title,
-                background: e.background
+                background: e.background,
+                hidden: e.hidden
             });
         });
         res.send({
@@ -52,6 +53,7 @@ module.exports = {
             data: $modded
         });
     },
+
     edit: async (req, res) => {
         const { id } = req.params;
         try {
@@ -63,8 +65,23 @@ module.exports = {
                     ok: false,
                     msg: "Nom kiriting!"
                 });
-            } else if (!image){
-                $user.set
+            } else if (!image) {
+                $category.set({ title, background }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    })
+                });
+            } else {
+                fs.unlink(`.${$category.image}`, () => { });
+                const filePath = `/public/categories/${md5(image.name + title)}.png`;
+                $category.set({ title, background, image: filePath }).save().then(() => {
+                    image.mv(`.${filePath}`);
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    })
+                })
             }
         } catch (error) {
             console.log(error);
@@ -73,5 +90,27 @@ module.exports = {
                 msg: "Nimadir hato!"
             })
         }
+    },
+
+    delete: async (req,res)=>{
+        const {id} = req.params;
+        const $category = await categoryModel.findById(id);
+        $category.set({hidden: true}).save().then(()=>{
+            res.send({
+                ok: true,
+                msg: "O'chirildi!"
+            });
+        });
+    },
+
+    recovery: async (req,res)=>{
+        const {id} = req.params;
+        const $category = await categoryModel.findById(id);
+        $category.set({hidden: false}).save().then(()=>{
+            res.send({
+                ok: true,
+                msg: "Tiklandi!"
+            });
+        });
     }
 }
