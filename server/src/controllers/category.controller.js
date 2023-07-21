@@ -52,6 +52,26 @@ module.exports = {
             data: $modded
         });
     },
-    edit: async (req,res)=>{
+    edit: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $category = await categoryModel.findById(id);
+            const { title, background } = req.body;
+            const { image } = req?.files?.image;
+            if (!title) {
+                res.send({
+                    ok: false,
+                    msg: "Nom kiriting!"
+                });
+            } else if (!image){
+                $user.set
+            }
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadir hato!"
+            })
+        }
     }
 }
