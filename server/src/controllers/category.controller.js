@@ -36,6 +36,7 @@ module.exports = {
             });
         }
     },
+    // 
     getAll: async (req, res) => {
         const $categories = await categoryModel.find();
         const $modded = [];
@@ -53,7 +54,7 @@ module.exports = {
             data: $modded
         });
     },
-
+    // 
     edit: async (req, res) => {
         const { id } = req.params;
         try {
@@ -91,7 +92,7 @@ module.exports = {
             })
         }
     },
-
+    // 
     delete: async (req,res)=>{
         const {id} = req.params;
         const $category = await categoryModel.findById(id);
@@ -102,7 +103,7 @@ module.exports = {
             });
         });
     },
-
+    // 
     recovery: async (req,res)=>{
         const {id} = req.params;
         const $category = await categoryModel.findById(id);
