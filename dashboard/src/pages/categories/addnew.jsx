@@ -30,7 +30,7 @@ function AddCategory({ open, setOpen }) {
                 setState({ image: '', title: '', background: '#fff' });
             } else {
                 setMsg({ error: true, msg });
-            }
+            }   
         }).catch(() => {
             setMsg({ error: true, msg: "Aloqani tekshirisb qayta urunib ko'ring!" });
         });

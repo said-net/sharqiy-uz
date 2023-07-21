@@ -5,12 +5,14 @@ import AddCategory from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_LINK } from "../../config";
+import EditCategory from "./editcategoire";
 
 function Categories() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [categories, setCategories] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
+    const [select, setSelect] = useState({ del: false, edit: false, _id: '', title: '', about: '', background: '' });
 
     const { refresh } = useSelector(e => e.category);
     useEffect(() => {
@@ -59,11 +61,9 @@ function Categories() {
                                             </IconButton>
                                         </MenuHandler>
                                         <MenuList>
-                                            <MenuItem>
-                                                <div className="flex items-center justify-start">
-                                                    <FaPenAlt />
-                                                    <h1 className="pl-[10px]">O'zgartirish</h1>
-                                                </div>
+                                            <MenuItem className="flex items-center justify-start" onClick={() => setSelect({ edit: true, del: false, id, title, background, image })}>
+                                                <FaPenAlt />
+                                                <h1 className="pl-[10px]">O'zgartirish</h1>
                                             </MenuItem>
                                             <MenuItem>
                                                 <div className="flex items-center justify-start">
@@ -73,6 +73,7 @@ function Categories() {
                                             </MenuItem>
                                         </MenuList>
                                     </Menu>
+
                                 </div>
                             )
                         })
@@ -92,6 +93,7 @@ function Categories() {
                             )
                         })
             }
+            <EditCategory select={select} setSelect={setSelect} />
         </>
     );
 }
