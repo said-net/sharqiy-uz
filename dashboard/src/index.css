@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Lunasima&family=Ubuntu:ital,wght@0,300;0,400;1,500&display=swap');
+
+* {
+    font-family: Lunasima;
+    outline: none
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    background: #f2fffe;
+    max-width: 1290px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
