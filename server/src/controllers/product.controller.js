@@ -56,6 +56,8 @@ module.exports = {
                 image: SERVER_LINK + p.image,
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
                 value: p.value - p.solded,
+                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                bonus_duration: moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm'),
                 category: {
                     id: p.category._id,
                     title: p.category.title,
@@ -90,5 +92,51 @@ module.exports = {
                 msg: "Tiklandi!"
             });
         });
+    },
+    // 
+    setBonus: async (req, res) => {
+        const { id } = req.params;
+        const { bonus_duration, bonus_about, bonus_count, bonus_given } = req.body;
+        if (!bonus_about || !bonus_count || !bonus_duration || !bonus_given) {
+            res.send({
+                ok: false,
+                msg: "Qatorlarni to'ldiring!"
+            });
+        } else {
+            try {
+                const $product = await productModel.findById(id);
+                $product.set({ bonus: true, bonus_duration: moment.now() / 1000 + bonus_duration, bonus_about, bonus_count, bonus_given }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Bonus tizimi kiritildi!"
+                    })
+                })
+            } catch (error) {
+                console.log(error);
+                res.send({
+                    ok: false,
+                    msg: "Nimadur hato!"
+                })
+            }
+        }
+    },
+    // 
+    removeBonus: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $product = await productModel.findById(id);
+            $product.set({ bonus: false, bonus_duration: 0, bonus_about: 0, bonus_count: 0, bonus_given: 0 }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Bonus tizimi olib tashlandi!"
+                })
+            })
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadur hato!"
+            })
+        }
     }
 }

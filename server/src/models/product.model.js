@@ -1,4 +1,4 @@
-const {Types, Schema, model} = require('mongoose');
+const { Types, Schema, model } = require('mongoose');
 const schema = new Schema({
     title: String,
     about: String,
@@ -15,7 +15,9 @@ const schema = new Schema({
         type: Boolean,
         default: false,
     },
-    about_bonus: String,
+    bonus_about: String,
+    bonus_count: Number,
+    bonus_given: Number,
     bonus_duration: Number,
     created: Number,
     solded: {
