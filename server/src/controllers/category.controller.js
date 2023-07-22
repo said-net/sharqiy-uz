@@ -60,7 +60,7 @@ module.exports = {
         try {
             const $category = await categoryModel.findById(id);
             const { title, background } = req.body;
-            const { image } = req?.files?.image;
+            const image = req?.files?.image;
             if (!title) {
                 res.send({
                     ok: false,
@@ -93,10 +93,10 @@ module.exports = {
         }
     },
     // 
-    delete: async (req,res)=>{
-        const {id} = req.params;
+    delete: async (req, res) => {
+        const { id } = req.params;
         const $category = await categoryModel.findById(id);
-        $category.set({hidden: true}).save().then(()=>{
+        $category.set({ hidden: true }).save().then(() => {
             res.send({
                 ok: true,
                 msg: "O'chirildi!"
@@ -104,10 +104,10 @@ module.exports = {
         });
     },
     // 
-    recovery: async (req,res)=>{
-        const {id} = req.params;
+    recovery: async (req, res) => {
+        const { id } = req.params;
         const $category = await categoryModel.findById(id);
-        $category.set({hidden: false}).save().then(()=>{
+        $category.set({ hidden: false }).save().then(() => {
             res.send({
                 ok: true,
                 msg: "Tiklandi!"
