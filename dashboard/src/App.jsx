@@ -8,7 +8,7 @@ import Navbar from "./components/navbar";
 import { Route, Routes } from "react-router-dom";
 import Categories from "./pages/categories/categories";
 import BgPic from './assets/bg.png'
-import Posts from "./pages/posts/posts";
+import Products from "./pages/products/products";
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
   const dp = useDispatch()
@@ -36,7 +36,7 @@ function App() {
         <Navbar />
         <Routes>
           <Route path="/categories" element={<Categories />} />
-          <Route path="/posts" element={<Posts />} />
+          <Route path="/products" element={<Products />} />
         </Routes>
         <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" />
       </>

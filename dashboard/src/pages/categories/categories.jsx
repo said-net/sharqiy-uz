@@ -25,7 +25,9 @@ function Categories() {
             if (ok) {
                 setCategories(data);
             }
-        });
+        }).catch(() => {
+            alert("Aloqani tekshirib qayta urunib ko'ring!")
+        })
     }, [refresh]);
     return (
         <>

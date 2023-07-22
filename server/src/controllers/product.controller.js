@@ -6,9 +6,9 @@ const valuehistoryModel = require("../models/valuehistory.model");
 
 module.exports = {
     create: (req, res) => {
-        const { title, about, price, original_price, video, category } = req.body;
+        const { title, about, price, original_price, video, category, value } = req.body;
         const images = req?.body?.images[0] ? [...req?.body?.images] : [req?.body?.images];
-        if (!title || !about || !price || !video || !category || !original_price) {
+        if (!title || !about || !price || !video || !category || !original_price, value) {
             res.send({
                 ok: false,
                 msg: "Qatorlarni to'ldiring!"
@@ -38,11 +38,18 @@ module.exports = {
                 video,
                 category,
                 images: imgs,
+                value,
                 created: moment.now() / 1000
-            }).save().then(() => {
-                res.send({
-                    ok: true,
-                    msg: "Saqlandi!"
+            }).save().then(($saved) => {
+                new valuehistoryModel({
+                    product: $saved._id,
+                    value,
+                    created: moment.now() / 1000
+                }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    });
                 });
             });
         }
