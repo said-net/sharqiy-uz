@@ -12,7 +12,7 @@ function Categories() {
     const [openAdd, setOpenAdd] = useState(false);
     const [categories, setCategories] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
-    const [select, setSelect] = useState({ del: false, edit: false, _id: '', title: '', about: '', background: '' });
+    const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', background: '' });
 
     const { refresh } = useSelector(e => e.category);
     useEffect(() => {
