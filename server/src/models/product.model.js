@@ -5,6 +5,7 @@ const schema = new Schema({
     images: Array,
     video: String,
     price: Number,
+    value: Number,
     category: {
         type: Types.ObjectId,
         ref: 'Catgeory'

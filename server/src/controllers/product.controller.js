@@ -55,6 +55,7 @@ module.exports = {
                 ...p._doc,
                 image: SERVER_LINK + p.image,
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
+                value: p.value - p.solded,
                 category: {
                     id: p.category._id,
                     title: p.category.title,
