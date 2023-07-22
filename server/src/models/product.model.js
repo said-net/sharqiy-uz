@@ -17,5 +17,13 @@ const schema = new Schema({
     about_bonus: String,
     bonus_duration: Number,
     created: Number,
+    solded: {
+        type: Number,
+        default: 0,
+    },
+    hidden: {
+        type: Boolean,
+        default: false,
+    },
 });
 module.exports = model('Product', schema);
