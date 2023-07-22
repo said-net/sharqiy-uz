@@ -1,4 +1,4 @@
-import { Avatar, Button, IconButton, Input, Spinner, Menu, MenuHandler, MenuList, MenuItem, Chip } from "@material-tailwind/react";
+import { Button, IconButton, Input, Spinner, Menu, MenuHandler, MenuList, MenuItem, Chip } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { FaPlusCircle, FaSearch, FaRegFrown, FaAlignRight, FaPenAlt, FaTrash } from "react-icons/fa";
 import { BiRefresh } from 'react-icons/bi'
@@ -6,7 +6,7 @@ import AddCategory from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_LINK } from "../../config";
-import EditCategory from "./editcategoire";
+import EditCategory from "./editcategory";
 import DeleteCategory from "./delete";
 
 function Categories() {
