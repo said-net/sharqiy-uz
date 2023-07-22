@@ -47,17 +47,45 @@ module.exports = {
         }
     },
     // 
+    getOne: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $product = await productModel.findById(id).populate('category', 'title background image');
+            const product = {
+                ...$product,
+                id: $product._id,
+                image: SERVER_LINK + $product.image,
+                value: p.value - p.solded,
+                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                category: {
+                    id: p.category._id,
+                    title: p.category.title,
+                    background: p.category.background,
+                    image: SERVER_LINK + p.category.image
+                }
+            }
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadur hato!"
+            })
+        }
+    },
+    // 
     getAllProducts: async (req, res) => {
         const $products = await productModel.find({ hidden: false }).populate('category');
         const $modlist = [];
         $products.forEach(p => {
             $modlist.push({
                 ...p._doc,
+                id: p._id,
                 image: SERVER_LINK + p.image,
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
                 value: p.value - p.solded,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                bonus_duration: moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm'),
+                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                 category: {
                     id: p.category._id,
                     title: p.category.title,
