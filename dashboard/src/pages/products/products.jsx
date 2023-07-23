@@ -94,12 +94,22 @@ function Products() {
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
+<<<<<<< HEAD
+                                                        </IconButton> }
+                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
+=======
+>>>>>>> d9a6be0fd4be3753786d8f21a10c215804b56336
                                                         </IconButton>}
                                                         {p.bonus && <IconButton color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
+<<<<<<< HEAD
+                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
+                                                            <FaTrash />
+=======
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
                                                             <FaTrash/>
+>>>>>>> d9a6be0fd4be3753786d8f21a10c215804b56336
                                                         </IconButton>}
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
@@ -120,7 +130,11 @@ function Products() {
                         </div>
                         : null
             }
+<<<<<<< HEAD
+            <DelProduct select={select} setSelect={setSelect}/>
+=======
             <DelProduct select={select} setSelect={setSelect} />
+>>>>>>> d9a6be0fd4be3753786d8f21a10c215804b56336
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
         </div>
     );
