@@ -70,6 +70,7 @@ function Products() {
                                                     />
                                                     <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                                                 </CardHeader>
+                                                    
                                                 <CardBody>
                                                     {p?.bonus && <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="red" className="rounded" />}
                                                     <div className="mb-3 flex items-center justify-between">
@@ -121,3 +122,4 @@ function Products() {
 }
 
 export default Products;
+

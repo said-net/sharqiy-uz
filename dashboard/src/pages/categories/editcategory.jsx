@@ -86,4 +86,3 @@ function EditCategory({ select, setSelect }) {
 }
 
 export default EditCategory;
-
