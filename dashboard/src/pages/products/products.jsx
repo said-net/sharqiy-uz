@@ -95,15 +95,9 @@ function Products() {
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
                                                         </IconButton> }
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
-                                                        </IconButton>}
                                                         {p.bonus && <IconButton color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
-                                                            <FaTrash />
-                                                        <IconButton/>    
-                                                        }
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
                                                             <FaTrash/>
                                                         </IconButton>}
