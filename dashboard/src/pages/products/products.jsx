@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { TbGift, TbGiftOff } from 'react-icons/tb'
+import { TbGift, TbGiftOff } from 'react-icons/tb';
+import { ImStatsDots } from 'react-icons/im';
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
 function Products() {
     const [search, setSearch] = useState('');
@@ -70,7 +71,7 @@ function Products() {
                                                     <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                                                 </CardHeader>
                                                 <CardBody>
-                                                    <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given+p?.bonus_count} | 22.01.2023 - 15:30`} color="green" className="rounded"/>
+                                                    {p?.bonus && <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="red" className="rounded" />}
                                                     <div className="mb-3 flex items-center justify-between">
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
@@ -87,15 +88,21 @@ function Products() {
                                                         <IconButton className="rounded text-[20px]">
                                                             <BiEdit />
                                                         </IconButton>
-                                                        <IconButton color="green" className="rounded text-[20px]">
+                                                        {!p.bonus && <IconButton color="green" className="rounded text-[20px]">
                                                             <TbGift />
-                                                        </IconButton>
+                                                        </IconButton>}
+                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]">
+                                                            <TbGiftOff />
+                                                        </IconButton>}
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
                                                             <FaTrash />
                                                         </IconButton>}
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]">
                                                             <BiRefresh />
                                                         </IconButton>}
+                                                        <IconButton className="rounded" color="blue-gray">
+                                                            <ImStatsDots />
+                                                        </IconButton>
                                                     </div>
                                                 </CardBody>
                                                 {/* <CardFooter className="pt-3">
