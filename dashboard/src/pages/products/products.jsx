@@ -1,6 +1,6 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, IconButton, Input, Spinner, Tooltip, Typography } from "@material-tailwind/react";
+import { Button, Card, CardBody, CardFooter, CardHeader, Chip, IconButton, Input, Spinner, Tooltip, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { FaPlusCircle, FaRegFrown, FaSearch, FaTrash } from 'react-icons/fa'
+import { FaBox, FaPlusCircle, FaRegFrown, FaSearch, FaShoppingCart, FaTrash } from 'react-icons/fa'
 import AddProduct from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -58,7 +58,7 @@ function Products() {
                     </div> :
                     !search ?
                         <div className="flex items-center justify-start flex-col w-full">
-                            <div className="grid grid-cols-4 gap-[20px]">
+                            <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-[20px]">
                                 {products.map((p, i) => {
                                     return (
                                         <div className="flex" key={i}>
@@ -70,10 +70,15 @@ function Products() {
                                                     <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                                                 </CardHeader>
                                                 <CardBody>
+                                                    <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given+p?.bonus_count} | 22.01.2023 - 15:30`} color="green" className="rounded"/>
                                                     <div className="mb-3 flex items-center justify-between">
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
                                                         </Typography>
+                                                    </div>
+                                                    <div className="flex items-start justify-start flex-col w-full">
+                                                        <p className="flex items-center"><FaBox />Mavjud: {p.value} ta</p>
+                                                        <p className="flex items-center"><FaShoppingCart />Sotildi: {p.solded} ta</p>
                                                     </div>
                                                     <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
                                                         <IconButton color="cyan" className="rounded text-[20px]">
@@ -93,11 +98,9 @@ function Products() {
                                                         </IconButton>}
                                                     </div>
                                                 </CardBody>
-                                                <CardFooter className="pt-3">
-                                                    <Button size="lg" fullWidth={true}>
-                                                        Reserve
-                                                    </Button>
-                                                </CardFooter>
+                                                {/* <CardFooter className="pt-3">
+                                                    
+                                                </CardFooter> */}
                                             </Card>
                                         </div>
                                     )

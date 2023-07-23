@@ -162,6 +162,8 @@ module.exports = {
                 value: p.value - p.solded,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                 bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                bonus_count: p.bonus ? p.bonus_count : 0,
+                bonus_given: p.bonus ? p.bonus_given : 0,
                 category: {
                     id: p.category._id,
                     title: p.category.title,
