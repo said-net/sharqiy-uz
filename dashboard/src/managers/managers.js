@@ -6,7 +6,7 @@ const Manager = configureStore({
     reducer: {
         auth: authManager,
         category: CategoryManager,
-        post: ProductManager,
+        product: ProductManager,
     }
 })
 export default Manager;

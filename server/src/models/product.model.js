@@ -8,7 +8,7 @@ const schema = new Schema({
     value: Number,
     category: {
         type: Types.ObjectId,
-        ref: 'Catgeory'
+        ref: 'Category'
     },
     original_price: Number,
     bonus: {
