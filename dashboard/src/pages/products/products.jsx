@@ -12,12 +12,15 @@ import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
 import DelProduct from "./delproduct";
 import AddBonus from "./addbonus";
 import AddValue from "./addvalue";
+import StatProduct from "./statproduct";
+import Formatter from "../../components/formatter";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [openBonusAdd, setOpenBonusAdd] = useState('');
     const [openBonusRemove, setOpenBonusRemove] = useState('');
+    const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
     const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', image: '', recovery: false, value: '' });
     const { refresh } = useSelector(e => e.product);
@@ -82,7 +85,7 @@ function Products() {
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
                                                         </Typography>
-                                                            <p className="text-[15px]">Narxi:  {p.price} </p>
+                                                        <p className="text-[15px]">Narxi:  <Formatter value={p.price} /> </p>
                                                     </div>
                                                     <div className="flex items-start justify-start flex-col w-full">
                                                         <p className="flex items-center"><FaBox />Mavjud: {p.value} ta</p>
@@ -90,8 +93,9 @@ function Products() {
                                                     </div>
                                                     <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
                                                         <IconButton color="cyan" className="rounded text-[20px]" onClick={() => setSelect({
-                                                            join_value: true, id: p.id, edit: false, del: false, recovery: false, 
-                                                            value: p.value
+                                                            join_value: true, id: p.id, edit: false, del: false, recovery: false,
+                                                            value: p.value,
+                                                            old: p.value
                                                         })}>
                                                             <BiPlus />
                                                         </IconButton>
@@ -110,7 +114,7 @@ function Products() {
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
                                                         </IconButton>}
-                                                        <IconButton className="rounded" color="blue-gray" onClick={() => { setOpenStat(p.id) }}>
+                                                        <IconButton className="rounded" color="blue-gray" onClick={() => { setOpenProductStat(p.id) }}>
                                                             <ImStatsDots />
                                                         </IconButton>
                                                     </div>
@@ -126,7 +130,8 @@ function Products() {
             <DelProduct select={select} setSelect={setSelect} />
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
-            <AddValue select={select} setSelect={setSelect}/>
+            <AddValue select={select} setSelect={setSelect} />
+            <StatProduct open={openProductStat} setOpen={setOpenProductStat} />
         </div>
     );
 }

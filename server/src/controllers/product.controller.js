@@ -55,7 +55,7 @@ module.exports = {
         }
     },
     addValue: (req, res) => {
-        const value = req.body;
+        const {value} = req.body;
         const { id } = req.params;
         if (!value || value < 1) {
             res.send({
@@ -76,7 +76,12 @@ module.exports = {
                             msg: "Miqor kiritildi!"
                         });
                     });
-                });
+                }).catch(() => {
+                    res.send({
+                        ok: false,
+                        msg: "Nimadir hato!"
+                    })
+                })
             } catch (error) {
                 res.send({
                     ok: false,
