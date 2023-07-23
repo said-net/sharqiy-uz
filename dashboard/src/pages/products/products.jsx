@@ -11,13 +11,14 @@ import { ImStatsDots } from 'react-icons/im';
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
 import DelProduct from "./delproduct";
 import AddBonus from "./addbonus";
+import AddValue from "./addvalue";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [openBonusAdd, setOpenBonusAdd] = useState('');
     const [products, setProducts] = useState([]);
-    const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false, });
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', image: '', recovery: false, value: '' });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -60,7 +61,7 @@ function Products() {
                         <FaRegFrown className="text-[200px] text-blue-gray-200" />
                         <p className="capitalize text-blue-gray-200">Mahsulotlar mavjud emas!</p>
                     </div> :
-                    !search ?   
+                    !search ?
                         <div className="flex items-center justify-start flex-col w-full">
                             <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-[20px]">
                                 {products.map((p, i) => {
@@ -80,13 +81,17 @@ function Products() {
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
                                                         </Typography>
+                                                            <p className="text-[15px]">Narxi:  {p.price} </p>
                                                     </div>
                                                     <div className="flex items-start justify-start flex-col w-full">
                                                         <p className="flex items-center"><FaBox />Mavjud: {p.value} ta</p>
                                                         <p className="flex items-center"><FaShoppingCart />Sotildi: {p.solded} ta</p>
                                                     </div>
                                                     <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
-                                                        <IconButton color="cyan" className="rounded text-[20px]">
+                                                        <IconButton color="cyan" className="rounded text-[20px]" onClick={() => setSelect({
+                                                            join_value: true, id: p.id, edit: false, del: false, recovery: false, 
+                                                            value: p.value
+                                                        })}>
                                                             <BiPlus />
                                                         </IconButton>
                                                         <IconButton className="rounded text-[20px]">
@@ -94,12 +99,12 @@ function Products() {
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
-                                                        </IconButton> }
+                                                        </IconButton>}
                                                         {p.bonus && <IconButton color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
-                                                            <FaTrash/>
+                                                            <FaTrash />
                                                         </IconButton>}
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
@@ -117,9 +122,10 @@ function Products() {
                         </div>
                         : null
             }
-            <DelProduct select={select} setSelect={setSelect}/>
+            <DelProduct select={select} setSelect={setSelect} />
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
+            <AddValue select={select} setSelect={setSelect}/>
         </div>
     );
 }
