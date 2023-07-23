@@ -37,7 +37,7 @@ function DelProduct({ select, setSelect }) {
         }).then(res => {
             const { ok, msg } = res.data
             if (ok) {
-                dp(setRefreshCategory())
+                dp(setRefreshProduct())
                 setSelect({ del: false, edit: false, recovery: false });
             } else {
                 setMsg({ error: true, msg });

@@ -192,7 +192,7 @@ module.exports = {
     recovery: async (req, res) => {
         const { id } = req.params;
         const $product = await productModel.findById(id);
-        $product.set({ hidden: true }).save().then(() => {
+        $product.set({ hidden: false }).save().then(() => {
             res.send({
                 ok: true,
                 msg: "Tiklandi!"
