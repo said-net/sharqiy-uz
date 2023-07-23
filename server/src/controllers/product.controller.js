@@ -126,7 +126,7 @@ module.exports = {
             $modlist.push({
                 ...p._doc,
                 id: p._id,
-                images: [p.images.map(e => {
+                images: [...p.images.map(e => {
                     return SERVER_LINK + e
                 })],
                 original_price: 0,
@@ -155,7 +155,7 @@ module.exports = {
             $modlist.push({
                 ...p._doc,
                 id: p._id,
-                images: [p.images.map(e => {
+                images: [...p.images.map(e => {
                     return SERVER_LINK + e
                 })],
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
