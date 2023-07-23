@@ -26,6 +26,7 @@ function AddBonus({ open, setOpen }) {
                     toast.success(msg);
                     dp(setRefreshProduct());
                     setOpen('');
+                    setState({ bonus_given: 0, bonus_count: 0, bonus_duration: 0, bonus_about: '' });
                 }
             })
         }
@@ -56,7 +57,7 @@ function AddBonus({ open, setOpen }) {
                 </DialogBody>
                 <DialogFooter className="w-full">
                     <Button onClick={() => setOpen('')} color="red" className="rounded mr-[10px]">BEKOR QILISH</Button>
-                    <Button color="green" className="rounded" disabled={state.bonus_given < 1 || state.bonus_count < 1 || state.bonus_duration < 1 || !state.bonus_about}>SAQLaSH</Button>
+                    <Button onClick={Submit} color="green" className="rounded" disabled={state.bonus_given < 1 || state.bonus_count < 1 || state.bonus_duration < 1 || !state.bonus_about}>SAQLaSH</Button>
                 </DialogFooter>
             </div>
         </Dialog>
