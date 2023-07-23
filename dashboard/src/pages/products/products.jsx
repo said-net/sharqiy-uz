@@ -8,11 +8,13 @@ import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
 import { TbGift, TbGiftOff } from 'react-icons/tb'
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
+import DelProduct from "./delproduct";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [products, setProducts] = useState([]);
+    const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false  , });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -90,10 +92,10 @@ function Products() {
                                                         <IconButton color="green" className="rounded text-[20px]">
                                                             <TbGift />
                                                         </IconButton>
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
+                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
                                                             <FaTrash />
                                                         </IconButton>}
-                                                        {p.hidden && <IconButton color="orange" className="rounded text-[20px]">
+                                                        {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
                                                         </IconButton>}
                                                     </div>
@@ -109,6 +111,7 @@ function Products() {
                         </div>
                         : null
             }
+            <DelProduct select={select} setSelect={setSelect}/>
         </div>
     );
 }

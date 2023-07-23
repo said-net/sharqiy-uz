@@ -1,5 +1,9 @@
 import { useDispatch } from "react-redux";
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader } from "@material-tailwind/react";
+import { FaQuestion } from "react-icons/fa";
+import { useState } from "react";
+import axios from "axios";
+import { API_LINK } from "../../config";
 
 function DelProduct({ select, setSelect }) {
     const [msg, setMsg] = useState({ error: false, msg: '' });
