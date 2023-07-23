@@ -120,7 +120,7 @@ module.exports = {
     },
     // 
     getAllProducts: async (req, res) => {
-        const $products = await productModel.find({ hidden: false }).populate('category');
+        const $products = await productModel.find().populate('category');
         const $modlist = [];
         $products.forEach(p => {
             $modlist.push({
@@ -149,7 +149,7 @@ module.exports = {
     },
     // 
     getAllProductsToAdmin: async (req, res) => {
-        const $products = await productModel.find({ hidden: false }).populate('category');
+        const $products = await productModel.find().populate('category');
         const $modlist = [];
         $products.forEach(p => {
             $modlist.push({
