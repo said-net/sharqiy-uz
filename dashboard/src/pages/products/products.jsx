@@ -14,6 +14,7 @@ import AddBonus from "./addbonus";
 import AddValue from "./addvalue";
 import StatProduct from "./statproduct";
 import Formatter from "../../components/formatter";
+import RemoveBonus from "./removebonus";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -105,7 +106,7 @@ function Products() {
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
                                                         </IconButton>}
-                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]">
+                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]" onClick={()=>setOpenBonusRemove(p.id)}>
                                                             <TbGiftOff />
                                                         </IconButton>}
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
@@ -130,6 +131,7 @@ function Products() {
             <DelProduct select={select} setSelect={setSelect} />
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
+            <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
             <AddValue select={select} setSelect={setSelect} />
             <StatProduct open={openProductStat} setOpen={setOpenProductStat} />
         </div>
