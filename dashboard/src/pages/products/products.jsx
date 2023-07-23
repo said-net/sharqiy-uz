@@ -9,18 +9,15 @@ import { toast } from "react-toastify";
 import { TbGift, TbGiftOff } from 'react-icons/tb';
 import { ImStatsDots } from 'react-icons/im';
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
-<<<<<<< HEAD
 import DelProduct from "./delproduct";
-=======
 import AddBonus from "./addbonus";
->>>>>>> 01fa1ad634c07ac6492f7ba07bd9b32bb103b4ef
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [openBonusAdd, setOpenBonusAdd] = useState('');
     const [products, setProducts] = useState([]);
-    const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false  , });
+    const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false, });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -97,17 +94,12 @@ function Products() {
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
-<<<<<<< HEAD
-                                                        </IconButton>
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
-=======
                                                         </IconButton>}
                                                         {p.bonus && <IconButton color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
->>>>>>> 3c1991a063008776eae86750e85caeec81a28cfe
-                                                            <FaTrash />
+                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
+                                                            <FaTrash/>
                                                         </IconButton>}
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
@@ -128,11 +120,8 @@ function Products() {
                         </div>
                         : null
             }
-<<<<<<< HEAD
-            <DelProduct select={select} setSelect={setSelect}/>
-=======
+            <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
->>>>>>> 01fa1ad634c07ac6492f7ba07bd9b32bb103b4ef
         </div>
     );
 }
