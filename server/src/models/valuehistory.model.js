@@ -6,6 +6,5 @@ const schema = new Schema({
     },
     value: Number,
     created: Number
-})
-
+});
 module.exports = model('Vhistory', schema)

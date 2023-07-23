@@ -211,7 +211,7 @@ module.exports = {
         } else {
             try {
                 const $product = await productModel.findById(id);
-                $product.set({ bonus: true, bonus_duration: moment.now() / 1000 + bonus_duration, bonus_about, bonus_count, bonus_given }).save().then(() => {
+                $product.set({ bonus: true, bonus_duration: moment.now() / 1000 + (bonus_duration * 86400), bonus_about, bonus_count, bonus_given }).save().then(() => {
                     res.send({
                         ok: true,
                         msg: "Bonus tizimi kiritildi!"
