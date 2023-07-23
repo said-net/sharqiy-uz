@@ -75,7 +75,7 @@ function Products() {
                                                 </CardHeader>
 
                                                 <CardBody>
-                                                    {p?.bonus && <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="red" className="rounded" />}
+                                                    {p?.bonus && <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="green" className="rounded" />}
                                                     <div className="mb-3 flex items-center justify-between">
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
