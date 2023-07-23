@@ -1,4 +1,4 @@
-import { Avatar, Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -10,7 +10,7 @@ function EditCategory({ select, setSelect }) {
     const dp = useDispatch();
     const [msg, setMsg] = useState({ error: false, msg: '' });
     function Submit() {
-        const { title, background, image, imgs } = select
+        const { title, background, imgs } = select
         function App() {
             if (!imgs) {
                 const data = new FormData()
@@ -33,8 +33,7 @@ function EditCategory({ select, setSelect }) {
             const { ok, msg } = res.data
             if (ok) {
                 dp(setRefreshCategory())
-                setSelect(false)
-                setSelect({ image: '', title: '', background: '#fff' });
+                setSelect({ del: false, edit: false, recovery: false });
             } else {
                 setMsg({ error: true, msg });
             }
@@ -52,11 +51,13 @@ function EditCategory({ select, setSelect }) {
                     <DialogBody className="w-full border-y">
                         <p className={`text-center mb-[10px] ${msg.error ? 'text-red-500' : 'text-green-500'}`} onClick={() => setMsg({ error: false, msg: '' })}>{msg.msg}</p>
                         <div className="flex items-center justify-start w-full mb-[10px]">
-                            {select.imgs ?  
-                                <Avatar size="xl" src={URL.createObjectURL(select.imgs)} alt="avatar" withBorder={true} className="p-[10px]" style={{ background: select.background }} />
+                            {select.imgs ?
+                                <div style={{ background: select?.background }} className="flex items-center justify-center w-[50px] h-[50px] rounded-full border p-[5px] overflow-hidden">
+                                    <img src={URL.createObjectURL(select.imgs)} alt="Rasm" />
+                                </div>
                                 :
-                                <div className="flex items-center justify-center w-[50px] h-[50px] border rounded-full">
-                                    <FaImage className="text-[25px]" />
+                                <div style={{ background: select?.background }} className="flex items-center justify-center w-[50px] h-[50px] rounded-full border p-[5px] overflow-hidden">
+                                    <img src={select?.image} alt="Rasm" />
                                 </div>
                             }
                             <label htmlFor="image" className="flex items-center justify-center ml-[20px] rounded p-[5px_10px] bg-[#4e5e7b] text-white shadow-lg">
@@ -73,7 +74,7 @@ function EditCategory({ select, setSelect }) {
                         </div>
                     </DialogBody>
                     <DialogFooter className="w-full">
-                        <Button onClick={() => { setSelect(false); setSelect({ del: false, edit: '', id: '', title: '', background: '', image: ''}) }} color="red" className="rounded">Bekor qilish</Button>
+                        <Button onClick={() => { setSelect({ del: false, edit: false, recovery: false }) }} color="red" className="rounded">Bekor qilish</Button>
                         <IconButton className="rounded ml-[20px] text-[20px]" color="green" disabled={!select.image || !select.title} onClick={Submit}>
                             <FaSave />
                         </IconButton>

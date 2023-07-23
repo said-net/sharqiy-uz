@@ -26,7 +26,12 @@ module.exports = require('express').Router()
             video: String,
             price: Number,
             value: Number,
-            original_price: Number
+            category: {
+                id: String,
+                title: String,
+                background: String,
+                image: String
+            }
             // 
             solded: Number
             bonus?: Boolean
@@ -37,7 +42,36 @@ module.exports = require('express').Router()
             // 
         }
     ]*/
-    .get('/getall-from-admin', authMiddleware.boss, productController.getAllProducts)
+    .get('/getall-from-admin', authMiddleware.boss, productController.getAllProductsToAdmin)
+
+    // -------------------------------------------------------------------
+
+    /*
+    params: {id: String}
+    return: {
+        {
+            title: String,
+            about: String,
+            images: String[],
+            video: String,
+            price: Number,
+            value: Number,
+            original_price: Number
+            category: {
+                id: String,
+                title: String,
+                background: String,
+                image: String
+            }
+            // 
+            solded: Number
+            bonus?: Boolean
+            bonus_about?: String
+            bonus_duration?: String,
+            bonus_count?: Number - Bonus berilishi uchun mahsulot qiymati DONA,
+            bonus_given?: Number - nechta bonus beriladi
+    }*/
+    .get('/get-one/:id', productController.getOne)
 
     // -------------------------------------------------------------------
 
@@ -74,3 +108,10 @@ module.exports = require('express').Router()
     .post('/remove-bonus/:id', authMiddleware.boss, productController.removeBonus)
 
     // -------------------------------------------------------------------
+    /*
+        params: {id: string} - tovar id si
+        body:{
+            value: Number - bazaga qo'shilishi kerak bo'lgan tovar soni,
+        }
+    */
+    .put('/add-value', authMiddleware.boss, productController.addValue)
