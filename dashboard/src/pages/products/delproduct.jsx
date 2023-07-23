@@ -87,4 +87,5 @@ function DelProduct({ select, setSelect }) {
     );
 }
 
+
 export default DelProduct;
