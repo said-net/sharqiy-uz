@@ -231,7 +231,7 @@ module.exports = {
         const { id } = req.params;
         try {
             const $product = await productModel.findById(id);
-            $product.set({ bonus: false, bonus_duration: 0, bonus_about: 0, bonus_count: 0, bonus_given: 0 }).save().then(() => {
+            $product.set({ bonus: false, bonus_duration: 0, bonus_about: '', bonus_count: 0, bonus_given: 0 }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "Bonus tizimi olib tashlandi!"

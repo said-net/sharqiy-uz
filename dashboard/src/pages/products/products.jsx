@@ -1,4 +1,4 @@
-import { Button, Card, CardBody, CardFooter, CardHeader, Chip, IconButton, Input, Spinner, Tooltip, Typography } from "@material-tailwind/react";
+import { Button, Card, CardBody, CardHeader, Chip, IconButton, Input, Spinner, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { FaBox, FaPlusCircle, FaRegFrown, FaSearch, FaShoppingCart, FaTrash } from 'react-icons/fa'
 import AddProduct from "./addnew";
@@ -11,11 +11,13 @@ import { ImStatsDots } from 'react-icons/im';
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
 import DelProduct from "./delproduct";
 import AddBonus from "./addbonus";
+import RemoveBonus from "./removebonus";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [openBonusAdd, setOpenBonusAdd] = useState('');
+    const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [products, setProducts] = useState([]);
     const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false, });
     const { refresh } = useSelector(e => e.product);
@@ -60,7 +62,7 @@ function Products() {
                         <FaRegFrown className="text-[200px] text-blue-gray-200" />
                         <p className="capitalize text-blue-gray-200">Mahsulotlar mavjud emas!</p>
                     </div> :
-                    !search ?   
+                    !search ?
                         <div className="flex items-center justify-start flex-col w-full">
                             <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-[20px]">
                                 {products.map((p, i) => {
@@ -94,15 +96,13 @@ function Products() {
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
-                                                        </IconButton> }
-                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]">
+                                                        </IconButton>}
+                                                        {p.bonus && <IconButton onClick={() => setOpenBonusRemove(p.id)} color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
-                                                            <FaTrash />
-                                                        }
+
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
-                                                            <FaTrash/>
+                                                            <FaTrash />
                                                         </IconButton>}
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
@@ -120,9 +120,10 @@ function Products() {
                         </div>
                         : null
             }
-            <DelProduct select={select} setSelect={setSelect}/>
+            <DelProduct select={select} setSelect={setSelect} />
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
+            <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
         </div>
     );
 }
