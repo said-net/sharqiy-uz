@@ -9,11 +9,16 @@ import { toast } from "react-toastify";
 import { TbGift, TbGiftOff } from 'react-icons/tb';
 import { ImStatsDots } from 'react-icons/im';
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
+<<<<<<< HEAD
 import DelProduct from "./delproduct";
+=======
+import AddBonus from "./addbonus";
+>>>>>>> 01fa1ad634c07ac6492f7ba07bd9b32bb103b4ef
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
+    const [openBonusAdd, setOpenBonusAdd] = useState('');
     const [products, setProducts] = useState([]);
     const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false  , });
     const { refresh } = useSelector(e => e.product);
@@ -30,7 +35,6 @@ function Products() {
                 toast.error(msg);
             } else {
                 setProducts(data);
-                console.log(data);
             }
         }).catch(() => {
             setIsLoad(false);
@@ -72,7 +76,7 @@ function Products() {
                                                     />
                                                     <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
                                                 </CardHeader>
-                                                    
+
                                                 <CardBody>
                                                     {p?.bonus && <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="red" className="rounded" />}
                                                     <div className="mb-3 flex items-center justify-between">
@@ -91,7 +95,7 @@ function Products() {
                                                         <IconButton className="rounded text-[20px]">
                                                             <BiEdit />
                                                         </IconButton>
-                                                        {!p.bonus && <IconButton color="green" className="rounded text-[20px]">
+                                                        {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
 <<<<<<< HEAD
                                                         </IconButton>
@@ -124,7 +128,11 @@ function Products() {
                         </div>
                         : null
             }
+<<<<<<< HEAD
             <DelProduct select={select} setSelect={setSelect}/>
+=======
+            <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
+>>>>>>> 01fa1ad634c07ac6492f7ba07bd9b32bb103b4ef
         </div>
     );
 }
