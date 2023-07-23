@@ -94,7 +94,7 @@ function Products() {
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
-                                                        </IconButton>}
+                                                        </IconButton> }
                                                         {p.bonus && <IconButton color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
@@ -120,11 +120,13 @@ function Products() {
                         </div>
                         : null
             }
+            <DelProduct select={select} setSelect={setSelect}/>
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
         </div>
     );
 }
+
 
 export default Products;
 
