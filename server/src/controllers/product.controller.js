@@ -93,7 +93,41 @@ module.exports = {
             const product = {
                 ...$product._doc,
                 id: $product._id,
-                images: [$product.images.map(e => {
+                images: [...$product.images.map(e => {
+                    return SERVER_LINK + e
+                })],
+                original_price: 0,
+                value: $product.value - $product.solded,
+                bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
+                bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                category: {
+                    id: $product.category._id,
+                    title: $product.category.title,
+                    background: $product.category.background,
+                    image: SERVER_LINK + $product.category.image
+                }
+            }
+            res.send({
+                ok: true,
+                data: product
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadur hato!"
+            })
+        }
+    },
+    // 
+    getOneToAdmin: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $product = await productModel.findById(id).populate('category', 'title background image');
+            const product = {
+                ...$product._doc,
+                id: $product._id,
+                images: [...$product.images.map(e => {
                     return SERVER_LINK + e
                 })],
                 value: $product.value - $product.solded,

@@ -12,6 +12,7 @@ import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
 import DelProduct from "./delproduct";
 import AddBonus from "./addbonus";
 import RemoveBonus from "./removebonus";
+import StatProduct from "./statproduct";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -20,6 +21,7 @@ function Products() {
     const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [products, setProducts] = useState([]);
     const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false, });
+    const [openStat, setOpenStat] = useState('');
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -96,23 +98,17 @@ function Products() {
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
-                                                        </IconButton> }
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
                                                         </IconButton>}
                                                         {p.bonus && <IconButton color="red" className="rounded text-[20px]">
                                                             <TbGiftOff />
                                                         </IconButton>}
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
-                                                            <FaTrash />
-                                                        <IconButton/>    
-                                                        }
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
                                                             <FaTrash />
                                                         </IconButton>}
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
                                                         </IconButton>}
-                                                        <IconButton className="rounded" color="blue-gray">
+                                                        <IconButton className="rounded" color="blue-gray" onClick={() => { setOpenStat(p.id) }}>
                                                             <ImStatsDots />
                                                         </IconButton>
                                                     </div>
@@ -129,6 +125,7 @@ function Products() {
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
             <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
+            <StatProduct open={openStat} setOpen={setOpenStat} />
         </div>
     );
 }
