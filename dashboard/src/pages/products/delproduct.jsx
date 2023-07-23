@@ -4,6 +4,7 @@ import { FaQuestion } from "react-icons/fa";
 import { useState } from "react";
 import axios from "axios";
 import { API_LINK } from "../../config";
+import { setRefreshProduct } from "../../managers/product.manager";
 
 function DelProduct({ select, setSelect }) {
     const [msg, setMsg] = useState({ error: false, msg: '' });
@@ -17,12 +18,13 @@ function DelProduct({ select, setSelect }) {
         }).then(res => {
             const { ok, msg } = res.data
             if (ok) {
-                dp(setRefreshCategory())
+                dp(setRefreshProduct())
                 setSelect({ del: false, edit: false, recovery: false });
             } else {
                 setMsg({ error: true, msg });
             }
-        }).catch(() => {
+        }).catch((err) => {
+            console.log(err);
             setMsg({ error: true, msg: "Aloqani tekshirisb qayta urunib ko'ring!" });
         });
     }
