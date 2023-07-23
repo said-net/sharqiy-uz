@@ -60,13 +60,13 @@ function Products() {
                         <FaRegFrown className="text-[200px] text-blue-gray-200" />
                         <p className="capitalize text-blue-gray-200">Mahsulotlar mavjud emas!</p>
                     </div> :
-                    !search ?
+                    !search ?   
                         <div className="flex items-center justify-start flex-col w-full">
                             <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-[20px]">
                                 {products.map((p, i) => {
                                     return (
                                         <div className="flex" key={i}>
-                                            <Card className="w-full max-w-[26rem] shadow-lg">
+                                            < Card className="w-full max-w-[26rem] shadow-lg">
                                                 <CardHeader floated={false} color="blue-gray">
                                                     <img
                                                         src={p.images[0]}
@@ -102,6 +102,7 @@ function Products() {
                                                         </IconButton>}
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]">
                                                             <FaTrash />
+                                                        <IconButton/>    
                                                         }
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
                                                             <FaTrash/>
@@ -114,9 +115,6 @@ function Products() {
                                                         </IconButton>
                                                     </div>
                                                 </CardBody>
-                                                {/* <CardFooter className="pt-3">
-                                                    
-                                                </CardFooter> */}
                                             </Card>
                                         </div>
                                     )
