@@ -7,8 +7,8 @@ const valuehistoryModel = require("../models/valuehistory.model");
 module.exports = {
     create: (req, res) => {
         const { title, about, price, original_price, video, category, value } = req.body;
-        const images = req?.body?.images[0] ? [...req?.body?.images] : [req?.body?.images];
-        if (!title || !about || !price || !video || !category || !original_price, value) {
+        const images = req?.files?.images[0] ? [...req?.files?.images] : [req?.files?.images];
+        if (!title || !about || !price || !video || !category || !original_price || !value) {
             res.send({
                 ok: false,
                 msg: "Qatorlarni to'ldiring!"
@@ -18,7 +18,7 @@ module.exports = {
                 ok: false,
                 msg: "Rasm yuklang min: 1, max: 5"
             });
-        } else if (images?.length < 5) {
+        } else if (images?.length > 5) {
             res.send({
                 ok: false,
                 msg: "Rasm max: 5 ta"
@@ -28,7 +28,7 @@ module.exports = {
             images?.forEach((img, i) => {
                 const filePath = `/public/products/${md5(img?.name + new Date() + i)}.png`;
                 imgs.push(filePath);
-                imgs.mv(`.${filePath}`);
+                img.mv(`.${filePath}`);
             })
             new productModel({
                 title,

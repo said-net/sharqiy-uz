@@ -3,12 +3,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FaBox, FaBoxes, FaImages, FaMoneyBill, FaMoneyCheck, FaRegFrown, FaYoutube } from 'react-icons/fa'
 import { API_LINK } from "../../config";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import { setRefreshProduct } from "../../managers/product.manager";
 function AddProduct({ open, setOpen }) {
     const [msg, setMsg] = useState({ error: false, msg: '' });
     const [categories, setCategories] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const [state, setState] = useState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '' });
     const [disableBtn, setDisableBtn] = useState(false);
+    const dp = useDispatch();
     useEffect(() => {
         setIsLoad(false);
         if (open) {
@@ -31,6 +35,42 @@ function AddProduct({ open, setOpen }) {
             setDisableBtn(false)
         }
     }, [state]);
+    //
+    function Submit() {
+        const { title, category, images, about, price, original_price, value, video } = state;
+        if (!title || !category || ![...images][0] || !about || !price || !original_price || !value || !video) {
+            toast.error("Qatorlarni to'ldiring!")
+        } else {
+            const form = new FormData();
+            form.append('title', title);
+            form.append('about', about);
+            form.append('category', category);
+            form.append('price', price);
+            form.append('original_price', original_price);
+            form.append('value', value);
+            form.append('video', video);
+            [...images].forEach(image => {
+                form.append('images', image)
+            });
+            axios.post(API_LINK+'/product/create', form, {
+                headers: {
+                    'x-auth-token': `Bearer ${localStorage.getItem('access')}`
+                }
+            }).then(res => {
+                const { ok, data, msg } = res.data;
+                if (!ok) {
+                    toast.error(msg);
+                } else {
+                    toast.success(msg);
+                    dp(setRefreshProduct());
+                    setOpen(false);
+                    setState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '' });
+                }
+            }).catch(()=>{
+                toast.error("Aloqani tekshirib qayta urunib ko'ring!")
+            })
+        }
+    }
     return (
         <Dialog open={open} size="xxl" className="flex items-center justify-center bg-[#1b424a80] backdrop-blur-md">
             <div className="flex items-center justify-start flex-col md:w-[700px] w-[90%] p-[10px] bg-white shadow-lg rounded-md">
@@ -94,7 +134,7 @@ function AddProduct({ open, setOpen }) {
                 }
                 <DialogFooter className="w-full">
                     <Button onClick={() => setOpen(false)} className="rounded mr-[10px]" color="red">Bekor qilish</Button>
-                    <Button className="rounded" color="green" disabled={disableBtn}>Saqlash</Button>
+                    <Button onClick={Submit} className="rounded" color="green" disabled={disableBtn}>Saqlash</Button>
                 </DialogFooter>
             </div>
         </Dialog>
