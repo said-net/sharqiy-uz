@@ -11,8 +11,7 @@ import { ImStatsDots } from 'react-icons/im';
 import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
 import DelProduct from "./delproduct";
 import AddBonus from "./addbonus";
-import RemoveBonus from "./removebonus";
-import StatProduct from "./statproduct";
+import AddValue from "./addvalue";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -20,8 +19,7 @@ function Products() {
     const [openBonusAdd, setOpenBonusAdd] = useState('');
     const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [products, setProducts] = useState([]);
-    const [select, setSelect] = useState({ del: false, edit: false, id: '', title: '', about: '', image: '', recovery: false, });
-    const [openStat, setOpenStat] = useState('');
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', image: '', recovery: false, value: '' });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -84,13 +82,17 @@ function Products() {
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
                                                         </Typography>
+                                                            <p className="text-[15px]">Narxi:  {p.price} </p>
                                                     </div>
                                                     <div className="flex items-start justify-start flex-col w-full">
                                                         <p className="flex items-center"><FaBox />Mavjud: {p.value} ta</p>
                                                         <p className="flex items-center"><FaShoppingCart />Sotildi: {p.solded} ta</p>
                                                     </div>
                                                     <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
-                                                        <IconButton color="cyan" className="rounded text-[20px]">
+                                                        <IconButton color="cyan" className="rounded text-[20px]" onClick={() => setSelect({
+                                                            join_value: true, id: p.id, edit: false, del: false, recovery: false, 
+                                                            value: p.value
+                                                        })}>
                                                             <BiPlus />
                                                         </IconButton>
                                                         <IconButton className="rounded text-[20px]">
@@ -124,8 +126,7 @@ function Products() {
             <DelProduct select={select} setSelect={setSelect} />
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
-            <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
-            <StatProduct open={openStat} setOpen={setOpenStat} />
+            <AddValue select={select} setSelect={setSelect}/>
         </div>
     );
 }
