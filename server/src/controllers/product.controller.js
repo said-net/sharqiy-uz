@@ -73,7 +73,7 @@ module.exports = {
                     $product.set({ value: $product.value + value }).save().then(() => {
                         res.send({
                             ok: true,
-                            msg: "Miqor kiritildi!"
+                            msg: "Miqdor kiritildi!"
                         });
                     });
                 }).catch(() => {

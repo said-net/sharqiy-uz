@@ -1,6 +1,6 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
 import { FaBars, FaBell, FaBox, FaCaretLeft, FaComment, FaList, FaUsers } from "react-icons/fa";
-import { BiLogOut } from 'react-icons/bi'
+import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -47,6 +47,11 @@ function Navbar() {
                             </IconButton>
                         </MenuHandler>
                         <MenuList>
+                            <MenuItem onClick={() => nv('/')} className="flex items-center justify-start">
+                                <BiSolidDashboard className="mr-[10px]" />
+                                Dashboard
+                                {pathname === '/' && <FaCaretLeft />}
+                            </MenuItem>
                             <MenuItem onClick={() => nv('/categories')} className="flex items-center justify-start">
                                 <FaList className="mr-[10px]" />
                                 Kategoriyalar

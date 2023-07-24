@@ -1,4 +1,4 @@
-function Formatter({ value }) {
+function Formatter({ value, style = { margin: '0 10px' } }) {
     function f() {
         let val = String(value).split('');
         val = val.reverse()
@@ -11,7 +11,7 @@ function Formatter({ value }) {
     }
     return (
         <>{
-            <b className="mx-[10px]">{f()}</b>
+            <b style={style}>{f()}</b>
         }</>
     );
 }
