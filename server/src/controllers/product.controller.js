@@ -55,7 +55,7 @@ module.exports = {
         }
     },
     addValue: (req, res) => {
-        const value = req.body;
+        const {value} = req.body;
         const { id } = req.params;
         if (!value || value < 1) {
             res.send({
@@ -76,7 +76,12 @@ module.exports = {
                             msg: "Miqor kiritildi!"
                         });
                     });
-                });
+                }).catch(() => {
+                    res.send({
+                        ok: false,
+                        msg: "Nimadir hato!"
+                    })
+                })
             } catch (error) {
                 res.send({
                     ok: false,
@@ -93,7 +98,41 @@ module.exports = {
             const product = {
                 ...$product._doc,
                 id: $product._id,
-                images: [$product.images.map(e => {
+                images: [...$product.images.map(e => {
+                    return SERVER_LINK + e
+                })],
+                original_price: 0,
+                value: $product.value - $product.solded,
+                bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
+                bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                category: {
+                    id: $product.category._id,
+                    title: $product.category.title,
+                    background: $product.category.background,
+                    image: SERVER_LINK + $product.category.image
+                }
+            }
+            res.send({
+                ok: true,
+                data: product
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadur hato!"
+            })
+        }
+    },
+    // 
+    getOneToAdmin: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $product = await productModel.findById(id).populate('category', 'title background image');
+            const product = {
+                ...$product._doc,
+                id: $product._id,
+                images: [...$product.images.map(e => {
                     return SERVER_LINK + e
                 })],
                 value: $product.value - $product.solded,
@@ -192,7 +231,7 @@ module.exports = {
     recovery: async (req, res) => {
         const { id } = req.params;
         const $product = await productModel.findById(id);
-        $product.set({ hidden: true }).save().then(() => {
+        $product.set({ hidden: false }).save().then(() => {
             res.send({
                 ok: true,
                 msg: "Tiklandi!"
@@ -231,7 +270,7 @@ module.exports = {
         const { id } = req.params;
         try {
             const $product = await productModel.findById(id);
-            $product.set({ bonus: false, bonus_duration: 0, bonus_about: 0, bonus_count: 0, bonus_given: 0 }).save().then(() => {
+            $product.set({ bonus: false, bonus_duration: 0, bonus_about: '', bonus_count: 0, bonus_given: 0 }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "Bonus tizimi olib tashlandi!"
