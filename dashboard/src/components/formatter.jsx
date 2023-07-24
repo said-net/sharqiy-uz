@@ -1,6 +1,6 @@
 function Formatter({ value, style = { margin: '0 10px' } }) {
     function f() {
-        let val = String(value).split('');
+        let val = String(value).split('.')[0].split('');
         val = val.reverse()
         for (var i = 0; i < val.length; i++) {
             if (i % 3 === 0) {

@@ -6,6 +6,10 @@ const schema = new Schema({
         unique: true,
     },
     password: String,
-    access: String
+    access: String,
+    banned: {
+        type: Boolean,
+        default: false
+    }
 });
-module.exports = mongoose.model('Boss', schema);
+module.exports = mongoose.model('Operator', schema);
