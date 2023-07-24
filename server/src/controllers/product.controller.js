@@ -205,6 +205,43 @@ module.exports = {
             data: $modlist
         });
     },
+    getProductsByCategory: async (req, res) => {
+        const { id } = req.params;
+        if (!id || id.length !== 24) {
+            res.send({
+                ok: false,
+                msg: "LINK O'zgartirildi!"
+            })
+        } else {
+            const $products = await productModel.find({ category: id }).populate('category');
+            const $modlist = [];
+            $products.forEach(p => {
+                $modlist.push({
+                    ...p._doc,
+                    id: p._id,
+                    // images: [...p.images.map(e => {
+                    //     return SERVER_LINK + e
+                    // })],
+                    image: SERVER_LINK + p.images[0],
+                    original_price: 0,
+                    created: moment.unix(p.created).format('YYYY-MM-DD'),
+                    value: p.value - p.solded,
+                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    category: {
+                        id: p.category._id,
+                        title: p.category.title,
+                        background: p.category.background,
+                        image: SERVER_LINK + p.category.image
+                    }
+                });
+            });
+            res.send({
+                ok: true,
+                data: $modlist
+            });
+        }
+    },
     // 
     getAllProductsToAdmin: async (req, res) => {
         const $products = await productModel.find().populate('category');

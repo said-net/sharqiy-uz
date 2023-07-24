@@ -7,7 +7,6 @@ import { setInfoAuth } from "./managers/auth.manager";
 import Navbar from "./components/navbar";
 import { Route, Routes } from "react-router-dom";
 import Categories from "./pages/categories/categories";
-import BgPic from './assets/bg.png'
 import Products from "./pages/products/products";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';

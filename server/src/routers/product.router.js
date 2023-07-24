@@ -12,3 +12,6 @@ module.exports = require('express').Router()
     .post('/set-bonus/:id', authMiddleware.boss, productController.setBonus)
     .post('/remove-bonus/:id', authMiddleware.boss, productController.removeBonus)
     .put('/add-value/:id', authMiddleware.boss, productController.addValue)
+    // 
+    .get('/get-by-category/:id', productController.getProductsByCategory)
+

@@ -2,6 +2,7 @@ const md5 = require("md5");
 const categoryModel = require("../models/category.model");
 const { SERVER_LINK } = require("../configs/env");
 const fs = require("fs");
+const productModel = require("../models/product.model");
 module.exports = {
     create: (req, res) => {
         const { title, background } = req.body;
@@ -38,17 +39,19 @@ module.exports = {
     },
     // 
     getAll: async (req, res) => {
-        const $categories = await categoryModel.find();
+        const $categories = await categoryModel.find({hidden:false});
         const $modded = [];
-        $categories.forEach(e => {
+        for (let e of $categories) {
+            const products = await productModel.find({ category: e._id }).countDocuments()
             $modded.push({
                 id: e._id,
                 image: SERVER_LINK + e.image,
                 title: e.title,
                 background: e.background,
-                hidden: e.hidden
+                hidden: e.hidden,
+                products
             });
-        });
+        }
         res.send({
             ok: true,
             data: $modded
