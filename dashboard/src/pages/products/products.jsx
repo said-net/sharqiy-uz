@@ -15,6 +15,7 @@ import AddValue from "./addvalue";
 import StatProduct from "./statproduct";
 import Formatter from "../../components/formatter";
 import RemoveBonus from "./removebonus";
+import EditProduct from "./editproduct";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -100,7 +101,7 @@ function Products() {
                                                         })}>
                                                             <BiPlus />
                                                         </IconButton>
-                                                        <IconButton className="rounded text-[20px]">
+                                                        <IconButton className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: true, recovery: false, id: p.id, title: p.title, price: p.price, original_price: p.original_price, video: p.video, about: p.about, value: p.value })}>
                                                             <BiEdit />
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
@@ -134,6 +135,7 @@ function Products() {
             <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
             <AddValue select={select} setSelect={setSelect} />
             <StatProduct open={openProductStat} setOpen={setOpenProductStat} />
+            <EditProduct select={select} setSelect={setSelect}/>
         </div>
     );
 }
