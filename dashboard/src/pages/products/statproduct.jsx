@@ -45,25 +45,25 @@ function StatProduct({ open, setOpen }) {
                         </div> :
                         <DialogBody className="w-full border-y overflow-y-scroll h-[400px]">
                             <div className="flex items-center justify-start flex-col w-full">
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaBox className="mr-[10px]" /> Mahsulot: <b className="ml-[10px]">{p?.title}</b></p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaBox className="mr-[10px]" /> Mahsulot: <b className="ml-[10px]">{p?.title}</b></p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaShoppingCart className="mr-[10px]" /> Sotildi: <Formatter value={p?.solded} /> ta</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaShoppingCart className="mr-[10px]" /> Sotildi: <Formatter value={p?.solded} /> ta</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaBoxes className="mr-[10px]" /> Mavjud: <Formatter value={p?.value} /> ta</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaBoxes className="mr-[10px]" /> Mavjud: <Formatter value={p?.value} /> ta</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaMoneyBill className="mr-[10px]" /> Asl narxi: <Formatter value={p?.original_price} /> so'm / dona</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaMoneyBill className="mr-[10px]" /> Asl narxi: <Formatter value={p?.original_price} /> so'm / dona</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaCashRegister className="mr-[10px]" /> Sotuv narxi: <Formatter value={p?.price} /> so'm / dona</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaCashRegister className="mr-[10px]" /> Sotuv narxi: <Formatter value={p?.price} /> so'm / dona</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaMoneyBillAlt className="mr-[10px]" /> Mahsulotdan: <Formatter value={p?.price - p?.original_price} /> so'm / dona</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaMoneyBillAlt className="mr-[10px]" /> Mahsulotdan: <Formatter value={p?.price - p?.original_price} /> so'm / dona</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaCreditCard className="mr-[10px]" /> Sotuvlar: <Formatter value={p?.price * p?.solded} /> so'm / <Formatter value={p?.solded} /> ta uchun</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaCreditCard className="mr-[10px]" /> Sotuvlar: <Formatter value={p?.price * p?.solded} /> so'm / <Formatter value={p?.solded} /> ta uchun</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaMoneyCheck className="mr-[10px]" /> Foyda: <Formatter value={(p?.price * p?.solded) - (p?.original_price * p?.solded)} /> so'm / <Formatter value={p?.solded} /> ta uchun</p>
+                                <p className=" md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaMoneyCheck className="mr-[10px]" /> Foyda: <Formatter value={(p?.price * p?.solded) - (p?.original_price * p?.solded)} /> so'm / <Formatter value={p?.solded} /> ta uchun</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><FaSuitcase className="mr-[10px]" /> Mavjud: <Formatter value={(p?.price * p?.value)} /> so'm / <Formatter value={p?.value} /> ta uchun</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><FaSuitcase className="mr-[10px]" /> Mavjud: <Formatter value={(p?.price * p?.value)} /> so'm / <Formatter value={p?.value} /> ta uchun</p>
                                 {/*  */}
-                                <p className="md:text-[20px] w-full border-b flex items-center py-[10px] text-[12px]"><SiCashapp className="mr-[10px]" /> Foyda qoladi: <Formatter value={(p?.price * p?.value) - (p?.original_price * p?.value)} /> so'm / <Formatter value={p?.value} /> ta uchun</p>
+                                <p className="md:text-[20px] text-gray-600 w-full border-b flex items-center py-[10px] text-[12px]"><SiCashapp className="mr-[10px]" /> Foyda qoladi: <Formatter value={(p?.price * p?.value) - (p?.original_price * p?.value)} /> so'm / <Formatter value={p?.value} /> ta uchun</p>
                             </div>
                         </DialogBody>
                 }

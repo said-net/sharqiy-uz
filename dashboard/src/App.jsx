@@ -11,6 +11,7 @@ import BgPic from './assets/bg.png'
 import Products from "./pages/products/products";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Dashboard from "./pages/dashboard/dashboard";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -38,10 +39,11 @@ function App() {
       <>
         <Navbar />
         <Routes>
+          <Route path="/" element={<Dashboard />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/products" element={<Products />} />
         </Routes>
-        <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" />
+        {/* <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" /> */}
         <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
       </>
     );
