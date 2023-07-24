@@ -4,6 +4,7 @@ const { phone: pv } = require('phone');
 module.exports = {
     create: (req, res) => {
         const { name, phone, password } = req.body;
+        console.log(req.body);
         if (!name || !phone || !password) {
             res.send({
                 ok: false,

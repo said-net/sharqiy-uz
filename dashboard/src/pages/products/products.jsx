@@ -15,6 +15,7 @@ import AddValue from "./addvalue";
 import StatProduct from "./statproduct";
 import Formatter from "../../components/formatter";
 import RemoveBonus from "./removebonus";
+import EditProduct from "./editproduct";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -23,7 +24,7 @@ function Products() {
     const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
-    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', image: '', recovery: false, value: '' });
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', original_price: '', video: '',  recovery: false, value: '', price: '', category: '' });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -86,7 +87,7 @@ function Products() {
                                                         <Typography variant="h5" color="blue-gray" className="font-medium">
                                                             {p.title}
                                                         </Typography>
-                                                        <p className="text-[15px]">Narxi:  <Formatter value={p.price} /> </p>
+                                                        <p className="text-[15px]"><Formatter value={p.price} /> </p>
                                                     </div>
                                                     <div className="flex items-start justify-start flex-col w-full">
                                                         <p className="flex items-center"><FaBox />Mavjud: {p.value} ta</p>
@@ -100,7 +101,7 @@ function Products() {
                                                         })}>
                                                             <BiPlus />
                                                         </IconButton>
-                                                        <IconButton className="rounded text-[20px]">
+                                                        <IconButton className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: true, recovery: false, id: p.id, title: p.title, price: p.price, original_price: p.original_price, video: p.video, about: p.about, value: p.value , category : p.category.id})}>
                                                             <BiEdit />
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
@@ -134,6 +135,7 @@ function Products() {
             <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
             <AddValue select={select} setSelect={setSelect} />
             <StatProduct open={openProductStat} setOpen={setOpenProductStat} />
+            <EditProduct select={select} setSelect={setSelect}/>
         </div>
     );
 }
