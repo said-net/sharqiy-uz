@@ -55,7 +55,7 @@ module.exports = {
         }
     },
     addValue: (req, res) => {
-        const {value} = req.body;
+        const { value } = req.body;
         const { id } = req.params;
         if (!value || value < 1) {
             res.send({
@@ -88,6 +88,25 @@ module.exports = {
                     msg: "Nimadir hato!"
                 })
             }
+        }
+    },
+    //
+    edit: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $product = await productModel.findById(id);
+            $product.set(req.body).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Saqlandi!"
+                })
+            })
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadir hato!"
+            })
         }
     },
     // 

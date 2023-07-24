@@ -4,6 +4,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 module.exports = require('express').Router()
     .post('/create', authMiddleware.boss, productController.create)
     .get('/getall-from-admin', authMiddleware.boss, productController.getAllProductsToAdmin)
+    .get('/edit/:id', authMiddleware.boss, productController.edit)
     .get('/getone-from-admin/:id', authMiddleware.boss, productController.getOneToAdmin)
     .get('/get-one/:id', productController.getOne)
     .delete('/delete/:id', authMiddleware.boss, productController.delete)
