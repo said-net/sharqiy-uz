@@ -4,6 +4,7 @@ const { phone: pv } = require('phone');
 module.exports = {
     create: (req, res) => {
         const { name, phone, password } = req.body;
+        console.log(req.body);
         if (!name || !phone || !password) {
             res.send({
                 ok: false,
@@ -14,7 +15,7 @@ module.exports = {
                 ok: false,
                 msg: "Raqamni to'g'ri kiriting!"
             })
-        } else if (!/[A-z0-9]{6}&/.test(password)) {
+        } else if (!/[A-z0-9]{6,}$/.test(password)) {
             res.send({
                 ok: false,
                 msg: "Parol min: 6 ta ishoradan va [A-z0-9] dan tashkil topgan bo'ladi!"
