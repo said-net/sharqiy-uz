@@ -34,17 +34,14 @@ function Categories() {
                 </div>
             }
             {isLoad && categories[0] &&
-                <div className="flex items-center justify-center flex-wrap m-[20px_0_100px_0] p-[10px]">
+                <div className="grid grid-cols-2 gap-[20px]">
                     {categories.map((c, i) => {
                         return (
-                            <div onClick={() => nv('/get-by-category/' + c.id)} key={i} className="m-[10px] flex items-center justify-start w-[90%] sm:w-[300px] h-[100px] bg-white shadow-md rounded-[10px] cursor-pointer hover:shadow-lg p-[5px] overflow-hidden">
-                                <div className="flex items-center justify-center w-[80px] h-[80px] rounded-full border overflow-hidden p-[10px] mr-[10px]" style={{ background: c.background }}>
-                                    <img src={c.image} alt="k rasm" />
-                                </div>
-                                <div className="flex items-start justify-start flex-col">
-                                    <h1 className="text-[20px] text-blue-gray-600">{c.title}</h1>
-                                    <p className="text-[12px] text-blue-gray-300">{c.products} hil mahsulot</p>
-                                </div>
+                            <div onClick={() => nv('/get-by-category/' + c.id)} key={i} className="w-[170px] h-[200px] bg-white shadow-md rounded-[10px] flex items-center justify-center flex-col">
+                               <div className="flex items-center justify-center w-[100px] overflow-hidden">
+                                <img src={c.image} alt="c" />
+                               </div>
+                               <p>{c.title}</p>
                             </div>
                         )
                     })}

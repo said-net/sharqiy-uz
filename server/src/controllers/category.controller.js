@@ -39,7 +39,7 @@ module.exports = {
     },
     // 
     getAll: async (req, res) => {
-        const $categories = await categoryModel.find({hidden:false});
+        const $categories = await categoryModel.find();
         const $modded = [];
         for (let e of $categories) {
             const products = await productModel.find({ category: e._id }).countDocuments()

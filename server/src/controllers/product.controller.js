@@ -131,6 +131,7 @@ module.exports = {
                     image: SERVER_LINK + $product.category.image
                 }
             }
+            console.log(product);
             res.send({
                 ok: true,
                 data: product
@@ -140,7 +141,7 @@ module.exports = {
             res.send({
                 ok: false,
                 msg: "Nimadur hato!"
-            })
+            });
         }
     },
     // 

@@ -1,68 +1,109 @@
-import { IconButton, Input } from "@material-tailwind/react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaBars, FaComment, FaUser, FaUserPlus, FaYoutube } from 'react-icons/fa6'
-import { FaBoxes, FaHome, FaSearch } from 'react-icons/fa'
-import { useState } from "react";
+import { Drawer, IconButton, ListItem, Spinner } from "@material-tailwind/react";
+import { FaBars } from 'react-icons/fa'
+import { useLocation, useNavigate } from "react-router-dom";
+import Logo from '../assets/logo.png';
+import { GoHome, GoHomeFill } from 'react-icons/go'
+import { BiCategory, BiSolidCategory, BiCommentDetail, BiSolidCommentDetail, BiUser, BiSolidUser } from 'react-icons/bi'
+import { MdClose, MdOutlineVideoLibrary, MdVideoLibrary } from 'react-icons/md'
+import { useEffect, useState } from "react";
+import { API_LINK } from "../config";
+import { toast } from "react-toastify";
+import axios from "axios";
 function Navbar() {
+    const nv = useNavigate();
     const { pathname } = useLocation();
-    const [type, setType] = useState('link');
-
-    const nv = useNavigate()
+    const [openMenu, setOpenMenu] = useState(false);
+    const [isLoad, setIsLoad] = useState(false);
+    const [categories, setCategories] = useState([]);
+    useEffect(() => {
+        setIsLoad(false);
+        axios(`${API_LINK}/category/getall`).then(res => {
+            setIsLoad(true);
+            const { data, ok } = res.data;
+            if (ok) {
+                setCategories(data);
+            }
+        }).catch(() => {
+            toast.error("Aloqani tekshirib qayta urunib koring!")
+        });
+    }, []);
     return (
         <>
-            <div className="w-full h-[100px]">
-                <nav className="flex items-center justify-between w-full fixed top-0 left-0 z-[9999] bg-[#ffffffe6] backdrop-blur-[10px] h-[100px] shadow-sm p-[0_2%]">
-                    <h1 className="text-[30px] text-blue-gray-500">SHARQIY.UZ</h1>
-                    <div className="lg:flex items-center justify-between w-[500px] hidden ">
-                        {type === 'link' &&
-                            <>
-                                <Link to='/' className={`duration-300 ${pathname !== '/' ? 'text-blue-gray-500' : 'text-blue-gray-900 translate-y-[-10px]'}`}>Asosiy</Link>
-                                <Link to='/videos' className={`duration-300 ${pathname !== '/videos' ? 'text-blue-gray-500' : 'text-blue-gray-900 translate-y-[-10px]'}`}>Videolar</Link>
-                                <Link to='/categories' className={`duration-300 ${pathname !== '/categories' ? 'text-blue-gray-500' : 'text-blue-gray-900 translate-y-[-10px]'}`}>Kataloglar</Link>
-                                <Link to='/messanger' className={`duration-300 ${pathname !== '/messanger' ? 'text-blue-gray-500' : 'text-blue-gray-900 translate-y-[-10px]'}`}>Messanger</Link>
-                            </>
-                        }
-                        {type === 'search' &&
-                            <div className="flex items-center justify-center w-full">
-                                <Input label="Qidiruv" icon={<FaSearch />} className="" />
-                            </div>
-                        }
+            <div className="flex items-center justify-center w-full h-[100px] fixed top-0 left-0 z-[2]">
+                <nav className="bg-white w-full h-[100px] flex items-center justify-between p-[0_2%] rounded-[0_0_10px_10px] border-b max-w-lg">
+                    <img src={Logo} alt="logo" className="w-[45px]" onClick={() => nv('/')} />
+                    <div className="flex items-center justify-center w-[300px] relative">
+                        <input type="text" className="border border-red-500 p-[0_80px_0_10px] h-[35px] rounded-full w-full" placeholder="Qidiruv..." />
+                        <button className="w-[70px] h-[30px] bg-red-500 absolute right-[5px] rounded-full text-[12px] text-white hover:bg-red-800">QIDIRISH</button>
                     </div>
-                    <div className="flex items-center justify-end lg:justify-between w-[100px]">
-                        {type === 'link' && <IconButton className="rounded-full" onClick={() => { setType('search') }} color="blue-gray" >
-                            <FaSearch className="text-[20px]" />
-                        </IconButton>}
-                        {type === 'search' && <IconButton className="rounded-full" onClick={() => setType('link')} color="blue-gray">
-                            <FaBars className="text-[20px]" />
-                        </IconButton>}
-                        <IconButton color="blue-gray" className="rounded hidden lg:inline-block">
-                            <FaUser className="text-[20px]" />
-                        </IconButton>
-                    </div>
+                    <IconButton onClick={() => setOpenMenu(true)} color="red" className="rounded-full">
+                        <FaBars />
+                    </IconButton>
                 </nav>
             </div>
-            <div className="flex lg:hidden items-center justify-between w-full h-[80px] fixed bottom-0 left-0 z-[9999] bg-[#ffffffe6] backdrop-blur-[10px] -shadow-sm p-[0_2%]">
-                {type === 'link' && <>
-                    <div className={`duration-300 flex items-center justify-center w-[50px] h-[50px] rounded-full border ${pathname === '/' && 'translate-y-[-10px] shadow-md'}`} onClick={() => nv('/')}>
-                        <FaHome className="text-[30px] text-orange-500" />
+            <div className="flex items-center justify-center w-full h-[80px] fixed bottom-0 left-0 z-[2]">
+                <div className="bg-white w-full h-[80px] flex items-center justify-between p-[0_2%] rounded-[10px_10px_0_0] border-t max-w-lg">
+                    <div className="flex items-center justify-center flex-col">
+                        {pathname !== '/' && <GoHome className="text-[30px] cursor-pointer" onClick={() => nv('/')} />}
+                        {pathname === '/' && <GoHomeFill className="text-[30px] cursor-pointer" onClick={() => nv('/')} />}
+                        <p className="text-[12px]">Asosiy</p>
                     </div>
-                    <div className={`duration-300 flex items-center justify-center w-[50px] h-[50px] rounded-full border ${pathname === '/videos' && 'translate-y-[-10px] shadow-md'}`} onClick={() => nv('/videos')}>
-                        <FaYoutube className="text-[30px] text-red-500" />
+                    {/*  */}
+                    <div className="flex items-center justify-center flex-col">
+                        {pathname !== '/videos' && <MdOutlineVideoLibrary className="text-[30px] cursor-pointer" onClick={() => nv('/videos')} />}
+                        {pathname === '/videos' && <MdVideoLibrary className="text-[30px] cursor-pointer" onClick={() => nv('/videos')} />}
+                        <p className="text-[12px]">Video</p>
                     </div>
-                    <div className={`duration-300 flex items-center justify-center w-[50px] h-[50px] rounded-full border ${pathname === '/categories' && 'translate-y-[-10px] shadow-md'}`} onClick={() => nv('/categories')}>
-                        <FaBoxes className="text-[30px] text-cyan-500" />
+                    {/*  */}
+                    <div className="flex items-center justify-center flex-col">
+                        {pathname !== '/categories' && <BiCategory className="text-[30px] cursor-pointer" onClick={() => nv('/categories')} />}
+                        {pathname === '/categories' && <BiSolidCategory className="text-[30px] cursor-pointer" onClick={() => nv('/categories')} />}
+                        <p className="text-[12px]">Katalog</p>
                     </div>
-                    <div className={`duration-300 flex items-center justify-center w-[50px] h-[50px] rounded-full border ${pathname === '/messanger' && 'translate-y-[-10px] shadow-md'}`} onClick={() => nv('/messanger')}>
-                        <FaComment className="text-[30px] text-blue-500" />
+                    {/*  */}
+                    <div className="flex items-center justify-center flex-col">
+                        {pathname !== '/messanger' && <BiCommentDetail className="text-[30px] cursor-pointer" onClick={() => nv('/messanger')} />}
+                        {pathname === '/messanger' && <BiSolidCommentDetail className="text-[30px] cursor-pointer" onClick={() => nv('/messanger')} />}
+                        <p className="text-[12px]">Aloqa</p>
                     </div>
-                    <div className={`duration-300 flex items-center justify-center w-[50px] h-[50px] rounded-full border ${pathname === '/profile' && 'translate-y-[-10px] shadow-md'}`} onClick={() => nv('/profile')}>
-                        <FaUser className="text-[30px] text-blue-gray-500" />
+                    {/*  */}
+                    <div className="flex items-center justify-center flex-col">
+                        {pathname !== '/profile' && <BiUser className="text-[30px] cursor-pointer" onClick={() => nv('/profile')} />}
+                        {pathname === '/profile' && <BiSolidUser className="text-[30px] cursor-pointer" onClick={() => nv('/profile')} />}
+                        <p className="text-[12px]">Profil</p>
                     </div>
-                </>}
-                {type === 'search' && <div className="flex items-center justify-center w-full">
-                    <Input label="Qidiruv" ref={focus} icon={<FaSearch />} className="" />
-                </div>}
+                </div>
             </div>
+            {/*  */}
+            <Drawer onClose={() => setOpenMenu(false)} open={openMenu} className="bg-white z-[99999]">
+                <div className="flex items-center justify-between w-full h-[70px] p-[10px] border-b">
+                    <h1 className="text-[30px] text-blue-gray-500">SHARQIY</h1>
+                    <IconButton className="text-[20px] rounded-full " onClick={() => setOpenMenu(false)} color="blue-gray">
+                        <MdClose />
+                    </IconButton>
+                </div>
+                <div className="flex items-center justify-start flex-col h-[500px] overflow-y-scroll border-b p-[10px_0]">
+                    {!isLoad && <Spinner />}
+                    {isLoad && !categories[0] &&
+                        <div className="flex">Kategoriyalar mavjud emas</div>
+                    }
+                    {isLoad && categories[0] &&
+                        categories.map((c, i) => {
+                            return (
+                                <ListItem onClick={() => { nv('/get-by-category/' + c.id); setOpenMenu(false) }} key={i} className="mb-[5px]">
+                                    <div className="flex items-center justify-center w-[35px] h-[35px] rounded-full outline-1 outline outline-blue-gray-500 overflow-hidden p-[3px] mr-[10px]">
+                                        <img src={c?.image} alt="c" />
+                                    </div>
+                                    {c.title}
+                                </ListItem>
+                            )
+                        })
+                    }
+                </div>
+                <div className="flex items-center justify-center h-[30px]">
+                    <p className="text-[14px] text-blue-gray-100">SHARQIY.UZ Barcha huquqlar himoyalangan</p>
+                </div>
+            </Drawer>
         </>
     );
 }

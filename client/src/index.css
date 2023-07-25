@@ -3,7 +3,10 @@
 
 * {
     font-family: 'Red Hat Display', sans-serif;;
-    outline: none
+    outline: none;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box
 }
 
 @tailwind base;
@@ -11,8 +14,9 @@
 @tailwind utilities;
 
 body {
-    background: #F0F1F7;
-    max-width: 1290px;
+    background: #fef7f7;
+    max-width: 512px;
     margin: 0 auto;
-    margin-bottom: 10px;
+    min-width: 375px;
+    padding: 110px 0;
 }
