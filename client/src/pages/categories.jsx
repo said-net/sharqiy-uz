@@ -34,14 +34,14 @@ function Categories() {
                 </div>
             }
             {isLoad && categories[0] &&
-                <div className="grid grid-cols-2 gap-[20px]">
+                <div className="grid grid-cols-3 gap-[20px]">
                     {categories.map((c, i) => {
                         return (
-                            <div onClick={() => nv('/get-by-category/' + c.id)} key={i} className="w-[170px] h-[200px] bg-white shadow-md rounded-[10px] flex items-center justify-center flex-col">
-                               <div className="flex items-center justify-center w-[100px] overflow-hidden">
+                            <div onClick={() => nv('/get-by-category/' + c.id)} key={i} className="w-[110px] h-[170px] bg-white shadow-sm rounded-[10px] flex items-center justify-center flex-col">
+                               <div className="flex items-center justify-center w-[50px] overflow-hidden">
                                 <img src={c.image} alt="c" />
                                </div>
-                               <p>{c.title}</p>
+                               <p className="text-[12px] mt-[25px]">{c.title}</p>
                             </div>
                         )
                     })}

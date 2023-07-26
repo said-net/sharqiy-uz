@@ -124,14 +124,15 @@ module.exports = {
                 value: $product.value - $product.solded,
                 bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
                 bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                category: {
-                    id: $product.category._id,
-                    title: $product.category.title,
-                    background: $product.category.background,
-                    image: SERVER_LINK + $product.category.image
-                }
+                bonus_count: $product.bonus ? $product.bonus_count : 0,
+                bonus_given: $product.bonus ? $product.bonus_given : 0,
+                // category: {
+                //     id: $product.category._id,
+                //     title: $product.category.title,
+                //     background: $product.category.background,
+                //     image: SERVER_LINK + $product.category.image
+                // }
             }
-            console.log(product);
             res.send({
                 ok: true,
                 data: product
@@ -225,14 +226,14 @@ module.exports = {
                     // })],
                     image: SERVER_LINK + p.images[0],
                     original_price: 0,
-                    created: moment.unix(p.created).format('YYYY-MM-DD'),
+                    // created: moment.unix(p.created).format('YYYY-MM-DD'),
                     value: p.value - p.solded,
                     bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                     bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     category: {
                         id: p.category._id,
                         title: p.category.title,
-                        background: p.category.background,
+                        // background: p.category.background,
                         image: SERVER_LINK + p.category.image
                     }
                 });
