@@ -1,7 +1,6 @@
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input } from "@material-tailwind/react";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { FaQuestion } from "react-icons/fa";
 import axios from "axios";
 import { API_LINK } from "../../config";
 import { setRefreshProduct } from "../../managers/product.manager";

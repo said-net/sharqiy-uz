@@ -6,13 +6,15 @@ import { toast } from "react-toastify";
 import { Button, Carousel, Spinner } from "@material-tailwind/react";
 import { BsQuestionCircleFill } from "react-icons/bs";
 import RequestShop from "../components/requstshop";
-
+import { AiOutlinePlayCircle } from 'react-icons/ai'
+import YoutubePlayer from "../components/videoplayer";
 function Product() {
     const { id } = useParams();
     const [isLoad, setIsLoad] = useState(false);
     const [product, setProduct] = useState({});
     const [showMore, setShowMore] = useState(false);
     const [openShop, setOpenShop] = useState({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '' });
+    const [openVideo, setOpenVideo] = useState('')
     useEffect(() => {
         setIsLoad(false);
         setProduct({});
@@ -43,22 +45,27 @@ function Product() {
                                 return (<img src={i} alt={k} key={k} className="h-full w-full object-cover" />)
                             })}
                         </Carousel>
+                        <div className="flex items-center justify-center w-[120px] h-[35px] rounded-[10px] bg-white shadow-lg absolute bottom-[5px] left-[10px]" onClick={() => setOpenVideo(p?.video)}>
+                            <AiOutlinePlayCircle className="text-[25px] mr-[10px]" /> Video
+                        </div>
                     </div>
                     <div className="flex items-start justify-start flex-col w-[95%]">
                         {/*  */}
-                        <h1 className="font-bold text-[18px]">{p?.title}</h1>
-                        <p className="text-[14px] font-bold">Narx:</p>
+                        <h1 className="font-bold text-[22px]">{p?.title}</h1>
+                        <p className="text-[14px] font-bold mt-[10px]">Narx:</p>
                         {/*  */}
-                        <p className="text-20px font-bold">{Number(p?.price).toLocaleString()} so'm <sup className="ml-[10px] font-normal"><s>{Number(p?.price * 1.4).toLocaleString()} so'm</s></sup></p>
+                        <p className="text-[25px] font-bold">{Number(p?.price).toLocaleString()} so'm {p?.old_price &&
+                            <span className="ml-[10px] text-[12px] font-normal"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></span>
+                        }</p>
                         {/*  */}
                         <p className="my-[10px]">
                             <BsQuestionCircleFill className="inline mr-[10px] text-blue-gray-500" />
                             Mahsulot tavsifi
                         </p>
-                        <p>{!showMore &&
+                        <p className="leading-7">{!showMore &&
                             p?.about?.slice(0, 150)
                         }</p>
-                        <p>{showMore &&
+                        <p className="leading-7">{showMore &&
                             p?.about
                         }</p>
                         {!showMore && <p onClick={() => setShowMore(true)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Batfsil ...</p>}
@@ -66,11 +73,12 @@ function Product() {
                         {showMore && <p onClick={() => setShowMore(false)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Qisqartma</p>}
                     </div>
                     <div className="flex items-center justify-center w-full fixed bottom-[60px] left-0">
-                        <Button onClick={() => (setOpenShop({ ...openShop, id: p?.id, title: p?.title, bonus: p?.bonus, bonus_count: p?.bonus_count, bonus_given: p?.bonus_given }))} className="w-[90%] rounded" color="red">Sotib olish</Button>
+                        <Button onClick={() => (setOpenShop({ ...openShop, id: p?.id, title: p?.title, bonus: p?.bonus, bonus_count: p?.bonus_count, bonus_given: p?.bonus_given }))} className="w-[98%] h-[50px] rounded-full text-[16px]" color="red">Sotib olish</Button>
                     </div>
                 </>
             }
             <RequestShop openShop={openShop} setOpenShop={setOpenShop} />
+            <YoutubePlayer open={openVideo} setOpen={setOpenVideo} />
         </div>
     );
 }

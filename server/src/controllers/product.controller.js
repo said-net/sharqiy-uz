@@ -341,5 +341,23 @@ module.exports = {
                 msg: "Nimadur hato!"
             })
         }
+    },
+    setNewPrices: async (req, res) => {
+        const { id } = req.params;
+        const { price, new_price } = req.body;
+        if (!price || !new_price) {
+            res.send({
+                ok: false,
+                msg: "Yangi narxni va eski narxni kiriting!"
+            });
+        } else {
+            const $product = await productModel.findById(id);
+            $product.set({ old_price: price, price: new_price }).save().then(()=>{
+                res.send({
+                    ok: true,
+                    msg: "Sqalandi!"
+                });
+            })
+        }
     }
 }

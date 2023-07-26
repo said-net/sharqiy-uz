@@ -11,6 +11,7 @@ const schema = new Schema({
         ref: 'Category'
     },
     original_price: Number,
+    old_price: Number,
     bonus: {
         type: Boolean,
         default: false,

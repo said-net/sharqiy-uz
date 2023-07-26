@@ -16,7 +16,6 @@ function EditProduct({ select, setSelect }) {
     const [categories, setCategories] = useState([]);
 
     const dp = useDispatch();
-    console.log(select);
     useEffect(() => {
         setIsLoad(false)
         if (select?.edit) {
@@ -27,7 +26,7 @@ function EditProduct({ select, setSelect }) {
                     setCategories(data)  
                 }
             }).catch(()=>{
-                alert("Aloqani tekshirib qayta urinib ko'ring!")
+                toast.error("Aloqani tekshirib qayta urinib ko'ring!")
             })
         }
     }, [select])

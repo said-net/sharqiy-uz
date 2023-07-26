@@ -1,6 +1,6 @@
 import { Button, Card, CardBody, CardHeader, Chip, IconButton, Input, Spinner, Typography } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { FaBox, FaPlusCircle, FaRegFrown, FaSearch, FaShoppingCart, FaTrash } from 'react-icons/fa'
+import { FaBox, FaMoneyCheck, FaPlusCircle, FaRegFrown, FaSearch, FaShoppingCart, FaTrash } from 'react-icons/fa'
 import AddProduct from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -16,6 +16,7 @@ import StatProduct from "./statproduct";
 import Formatter from "../../components/formatter";
 import RemoveBonus from "./removebonus";
 import EditProduct from "./editproduct";
+import SetNewPrices from "./setnewprices";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -24,7 +25,8 @@ function Products() {
     const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
-    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', original_price: '', video: '',  recovery: false, value: '', price: '', category: '' });
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', original_price: '', video: '', recovery: false, value: '', price: '', category: '' });
+    const [openPrice, setOpenPrice] = useState({ price: 0, new_price: 0, id: '' });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
         setIsLoad(false);
@@ -101,13 +103,13 @@ function Products() {
                                                         })}>
                                                             <BiPlus />
                                                         </IconButton>
-                                                        <IconButton className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: true, recovery: false, id: p.id, title: p.title, price: p.price, original_price: p.original_price, video: p.video, about: p.about, value: p.value , category : p.category.id})}>
+                                                        <IconButton className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: true, recovery: false, id: p.id, title: p.title, price: p.price, original_price: p.original_price, video: p.video, about: p.about, value: p.value, category: p.category.id })}>
                                                             <BiEdit />
                                                         </IconButton>
                                                         {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
                                                             <TbGift />
                                                         </IconButton>}
-                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]" onClick={()=>setOpenBonusRemove(p.id)}>
+                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]" onClick={() => setOpenBonusRemove(p.id)}>
                                                             <TbGiftOff />
                                                         </IconButton>}
                                                         {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
@@ -116,6 +118,11 @@ function Products() {
                                                         {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
                                                             <BiRefresh />
                                                         </IconButton>}
+                                                        <IconButton className="rounded text-[20px]" color="indigo" onClick={() => {
+                                                            setOpenPrice({ id: p?.id, price: p?.price, new_price: 0 })
+                                                        }}>
+                                                            <FaMoneyCheck />
+                                                        </IconButton>
                                                         <IconButton className="rounded" color="blue-gray" onClick={() => { setOpenProductStat(p.id) }}>
                                                             <ImStatsDots />
                                                         </IconButton>
@@ -135,7 +142,8 @@ function Products() {
             <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />
             <AddValue select={select} setSelect={setSelect} />
             <StatProduct open={openProductStat} setOpen={setOpenProductStat} />
-            <EditProduct select={select} setSelect={setSelect}/>
+            <EditProduct select={select} setSelect={setSelect} />
+            <SetNewPrices open={openPrice} setOpen={setOpenPrice} />
         </div>
     );
 }
