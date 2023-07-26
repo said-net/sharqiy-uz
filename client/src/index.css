@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@300;400;500&display=swap');
 
 * {
-    font-family: 'Red Hat Display', sans-serif;;
+    font-family: sans-serif;;
     outline: none;
     margin: 0;
     padding: 0;
@@ -14,7 +14,7 @@
 @tailwind utilities;
 
 body {
-    background: #fef7f7;
+    background: #f7f7f7;
     max-width: 512px;
     margin: 0 auto;
     min-width: 375px;

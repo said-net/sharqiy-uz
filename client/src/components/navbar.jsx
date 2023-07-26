@@ -35,7 +35,7 @@ function Navbar() {
                     <IconButton onClick={() => setOpenMenu(true)} color="red" className="rounded-full text-[20px]">
                         <FaBars />
                     </IconButton>
-                    <div className="flex items-center justify-center w-[300px] relative">
+                    <div className="flex items-center justify-center w-[70%] relative">
                         <input type="text" className="border border-red-500 p-[0_30px_0_10px] h-[35px] rounded-full w-full" placeholder="Qidiruv..." />
                         <button className="w-[30px] h-[30px]  absolute right-[5px] rounded-full text-[16px] text-black flex items-center justify-center">
                             <FaSearch />
