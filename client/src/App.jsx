@@ -9,7 +9,7 @@ import Profile from "./profile/profile";
 
 function App() {
   return (
-    <>
+    <div>
       <Navbar />
       <Routes>
         <Route path="/categories" element={<Categories />} />
@@ -19,7 +19,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
       </Routes>
       <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
-    </>
+    </div>
   );
 }
 
