@@ -4,11 +4,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { Chip, Spinner } from "@material-tailwind/react";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import Auth from "../components/auth";
 function GetProductsByCategory() {
     const { id } = useParams();
     const [isLoad, setIsLoad] = useState(false);
     const nv = useNavigate()
     const [products, setProducts] = useState([]);
+    const [openAuth, setOpenAuth] = useState(false);
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/product/get-by-category/${id}`).then((res) => {
@@ -23,8 +27,16 @@ function GetProductsByCategory() {
             toast.error("Aloqani tekshirib qayta urunib ko'ring!");
         });
     }, [id]);
+
+    const { id: userId } = useSelector(e => e.auth)
+    function setLike() {
+        if (!userId) {
+            setOpenAuth(true);
+        }
+    }
+
     return (
-        <div className="flex items-center justify-start w-full m-[0px_0_100px_0]">
+        <div className="flex items-center justify-start w-full m-[0px_0_60px_0]">
             {!isLoad && <Spinner />}
             {isLoad && !products[0] && <h1>Mahsulotlar vaqtinchalik mavjud emas!</h1>}
             {isLoad && products[0] &&
@@ -44,11 +56,23 @@ function GetProductsByCategory() {
                         <div className="flex items-center justify-center w-[49%] flex-col">
                             {products.map((p, i) => {
                                 return (
-                                    (i + 1) % 2 !== 0 && <div key={i} onClick={() => nv('/product/' + p.id)} className="flex items-center justify-start flex-col w-[100%] mb-[6px] bg-white rounded shadow-md overflow-hidden">
-                                        <img src={p.image} alt="c" />
-                                        {p?.bonus && <Chip value={`AKSIYA: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="green" className="w-full rounded mt-[5px] text-[9px] md:text-[12px]" />}
-                                        <p className="w-full p-[0_2%]">{p.title}</p>
-                                        <p className="w-full text-[15px] p-[0_2%] text-orange-300">{Number(p.price).toLocaleString()}</p>
+                                    (i + 1) % 2 !== 0 && <div key={i} className="flex items-center justify-start flex-col w-[100%] mb-[20px]  rounded shadow-md overflow-hidden relative h-[350px]">
+                                        <FaRegHeart onClick={()=>setLike()} className="absolute top-[5px] right-[5px] text-red-500" />
+                                        {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
+                                        <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                            <img src={p.image} alt="c" />
+                                        </div>
+                                        {/* {p?.bonus && <Chip value={`AKSIYA: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="green" className="w-full rounded mt-[5px] text-[9px] md:text-[12px]" />} */}
+                                        <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                            <p className="w-full p-[0_2%] my-[10px]">
+                                                {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
+                                                {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                            </p>
+                                            {p?.old_price &&
+                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>
+                                            }
+                                            <p className=" absolute bottom-[10px] w-full p-[0_2%] font-bold text-[16px] text-black">{Number(p.price).toLocaleString()} so'm</p>
+                                        </div>
                                     </div>
                                 )
                             })}
@@ -56,11 +80,23 @@ function GetProductsByCategory() {
                         <div className="flex items-center justify-center w-[49%] flex-col">
                             {products.map((p, i) => {
                                 return (
-                                    (i + 1) % 2 === 0 && <div key={i} onClick={() => nv('/product/' + p.id)} className="flex items-center justify-start flex-col w-[100%] mb-[6px] bg-white rounded shadow-md overflow-hidden">
-                                        <img src={p.image} alt="c" />
-                                        {p?.bonus && <Chip value={`AKSIYA: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="green" className="w-full rounded mt-[5px] text-[9px] md:text-[12px]" />}
-                                        <p className="w-full p-[0_2%]">{p.title}</p>
-                                        <p className="w-full text-[15px] p-[0_2%] text-orange-300">{Number(p.price).toLocaleString()}</p>
+                                    (i + 1) % 2 === 0 && <div key={i} className="flex items-center justify-start flex-col w-[100%] mb-[20px]  rounded shadow-md overflow-hidden relative h-[400px]">
+                                        <FaRegHeart onClick={()=>setLike()} className="absolute top-[5px] right-[5px] text-red-500" />
+                                        {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
+                                        <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[300px]">
+                                            <img src={p.image} alt="c" />
+                                        </div>
+                                        {/* {p?.bonus && <Chip value={`AKSIYA: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="green" className="w-full rounded mt-[5px] text-[9px] md:text-[12px]" />} */}
+                                        <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                            <p className="w-full p-[0_2%] my-[10px]">
+                                                {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
+                                                {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                            </p>
+                                            {p?.old_price &&
+                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>
+                                            }
+                                            <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(p.price).toLocaleString()} so'm</p>
+                                        </div>
                                     </div>
                                 )
                             })}
@@ -68,6 +104,7 @@ function GetProductsByCategory() {
                     </div>
                 </div>
             }
+            <Auth open={openAuth} setOpen={setOpenAuth}/>
         </div>
     );
 }

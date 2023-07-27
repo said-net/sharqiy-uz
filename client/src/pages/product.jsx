@@ -8,13 +8,17 @@ import { BsQuestionCircleFill } from "react-icons/bs";
 import RequestShop from "../components/requstshop";
 import { AiOutlinePlayCircle } from 'react-icons/ai'
 import YoutubePlayer from "../components/videoplayer";
+import { useSelector } from "react-redux";
+import Auth from "../components/auth";
 function Product() {
     const { id } = useParams();
     const [isLoad, setIsLoad] = useState(false);
     const [product, setProduct] = useState({});
     const [showMore, setShowMore] = useState(false);
     const [openShop, setOpenShop] = useState({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '' });
-    const [openVideo, setOpenVideo] = useState('')
+    const [openVideo, setOpenVideo] = useState('');
+    const [openAuth, setOpenAuth] = useState(false);
+    const { id: userId } = useSelector(e => e.auth)
     useEffect(() => {
         setIsLoad(false);
         setProduct({});
@@ -30,6 +34,12 @@ function Product() {
             toast.error("Aloqani tekshirib qayta urunib ko'ring!")
         });
     }, [id]);
+
+    function setLike() {
+        if (!userId) {
+            setOpenAuth(true);
+        }
+    }
     const p = product;
     return (
         <div className="flex items-center justify-start flex-col w-full mb-[100px]">
@@ -55,7 +65,7 @@ function Product() {
                         <p className="text-[14px] font-bold mt-[10px]">Narx:</p>
                         {/*  */}
                         <p className="text-[25px] font-bold">{Number(p?.price).toLocaleString()} so'm {p?.old_price &&
-                            <span className="ml-[10px] text-[12px] font-normal"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></span>
+                            <span className="ml-[10px] text-[12px] font-normal"><s>{Number(p?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></span>
                         }</p>
                         {/*  */}
                         <p className="my-[10px]">
@@ -79,6 +89,7 @@ function Product() {
             }
             <RequestShop openShop={openShop} setOpenShop={setOpenShop} />
             <YoutubePlayer open={openVideo} setOpen={setOpenVideo} />
+            <Auth open={openAuth} setOpen={setOpenAuth} />
         </div>
     );
 }
