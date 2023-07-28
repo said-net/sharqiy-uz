@@ -5,9 +5,10 @@ const moment = require('moment/moment');
 const smsSender = require('../middlewares/sms.sender');
 const JWT = require('jsonwebtoken');
 const { USER_SECRET } = require('../configs/env');
+const md5 = require('md5');
 module.exports = {
     requestSMS: async (req, res) => {
-        const { phone, role, ref_id } = req.body;
+        const { phone, ref_id } = req.body;
         if (!phone) {
             re.send({
                 ok: false,
@@ -35,8 +36,8 @@ module.exports = {
                         new userModel({
                             name: "Foydalanuvchi" + phone.slice(-4),
                             phone: ph(phone, { country: 'uz' }).phoneNumber,
-                            role,
                             verify_code: code,
+                            created: moment.now()/1000,
                             ref_id: !ref_id || ref_id === 'null' ? '' : ref_id
                         }).save().then(() => {
                             res.send({
@@ -132,7 +133,7 @@ module.exports = {
     editInformations: async (req, res) => {
         try {
             const $user = await userModel.findById(req?.user.id);
-            $user.set(req.body).save().then(() => {
+            $user.set({ ...req.body, password: req?.body?.password ? md5(req?.body?.password) : '' }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "O'zgartirildi!"
@@ -150,6 +151,42 @@ module.exports = {
                 ok: false,
                 msg: "Xatolik!"
             })
+        }
+    },
+    signInWithPassword: async (req, res) => {
+        const { phone, password } = req.body;
+        if (!phone || !password) {
+            res.send({
+                ok: false,
+                msg: "Qatorlarni to'ldiring!"
+            });
+        } else if (!ph(phone, { country: 'uz' }).isValid) {
+            res.send({
+                ok: false,
+                msg: "Raqamni to'g'ri kiriting!"
+            });
+        } else {
+            const $user = await userModel.findOne({ phone: ph(phone, { country: 'uz' }).phoneNumber });
+            if (!$user) {
+                res.send({
+                    ok: false,
+                    msg: "Ushbu raqamni avval SMS kod orqali avtomatlashtirish kerak!"
+                });
+            } else if (md5(password) !== $user.password) {
+                res.send({
+                    ok: false,
+                    msg: "Parol hato kiritildi!"
+                });
+            } else {
+                const token = JWT.sign({ id: $user._id }, USER_SECRET);
+                $user.set({ access: token }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Profilga yo'naltirildi!",
+                        token
+                    });
+                });
+            }
         }
     }
 }

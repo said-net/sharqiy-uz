@@ -11,7 +11,7 @@ const AuthManager = createSlice({
         created: '',
         balance: 0,
         telegram: 0,
-        location
+        location: ''
     },
     reducers: {
         setRefreshAuth: state => {

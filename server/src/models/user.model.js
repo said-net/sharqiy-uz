@@ -7,7 +7,6 @@ const schema = new Schema({
     verify_code: String,
     created: Number,
     telegram: Number,
-    role: String,
     balance: Number,
     password: String,
     ref_id:String,

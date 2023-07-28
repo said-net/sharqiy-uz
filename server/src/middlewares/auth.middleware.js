@@ -70,8 +70,8 @@ module.exports = {
                             msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
                         });
                     } else {
-                        const { name, phone, created, role, balance, location, telegram } = $user;
-                        req.user = { id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), role, balance, location, telegram };
+                        const { name, phone, created, balance, location, telegram } = $user;
+                        req.user = { id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), balance, location, telegram };
                         next();
                     }
                 }
