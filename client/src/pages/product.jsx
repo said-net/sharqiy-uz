@@ -9,7 +9,7 @@ import RequestShop from "../components/requstshop";
 import { AiOutlinePlayCircle } from 'react-icons/ai'
 import YoutubePlayer from "../components/videoplayer";
 import { useSelector } from "react-redux";
-import Auth from "../components/auth";
+import Auth from "../user/auth";
 function Product() {
     const { id } = useParams();
     const [isLoad, setIsLoad] = useState(false);

@@ -10,12 +10,16 @@ import { useEffect, useState } from "react";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import axios from "axios";
+import { useSelector } from "react-redux";
+import Auth from "../user/auth";
 function Navbar() {
+    const { id } = useSelector(a => a.auth);
     const nv = useNavigate();
     const { pathname } = useLocation();
     const [openMenu, setOpenMenu] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     const [categories, setCategories] = useState([]);
+    const [openAuth, setOpenAuth] = useState(false);
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/category/getall`).then(res => {
@@ -47,17 +51,25 @@ function Navbar() {
                                 <BsFillGearFill />
                             </IconButton>
                         </MenuHandler>
-                        <MenuList>
-                            <MenuItem onClick={() => nv('/profile')}>
-                                Profil
-                            </MenuItem>
-                            <MenuItem onClick={() => nv('/profile')}>
-                                Adminlar uchun
-                            </MenuItem >
-                            <MenuItem onClick={() => nv('/profile')}>
-                                Sozlamalar
-                            </MenuItem>
-                        </MenuList>
+                        {id &&
+                            <MenuList>
+                                <MenuItem onClick={() => nv('/profile')}>
+                                    Profil
+                                </MenuItem>
+                                <MenuItem onClick={() => nv('/dashboard')}>
+                                    Adminlar uchun
+                                </MenuItem >
+                                <MenuItem onClick={() => nv('/settings')}>
+                                    Sozlamalar
+                                </MenuItem>
+                            </MenuList>
+                        }{!id &&
+                            <MenuList>
+                                <MenuItem onClick={() => setOpenAuth(!openAuth)}>
+                                    Kirish / Ro'yhatdan o'tish
+                                </MenuItem>
+                            </MenuList>
+                        }
                     </Menu>
                     {/* <img src={Logo} alt="logo" className="w-[45px]" onClick={() => nv('/')} /> */}
                 </nav>
@@ -125,6 +137,7 @@ function Navbar() {
                     <p className="text-[14px] text-blue-gray-100">SHARQIY.UZ Barcha huquqlar himoyalangan</p>
                 </div>
             </Drawer>
+            <Auth open={openAuth} setOpen={setOpenAuth} />
         </>
     );
 }

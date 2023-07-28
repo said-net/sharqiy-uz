@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { Chip, Spinner } from "@material-tailwind/react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
-import Auth from "../components/auth";
+import Auth from "../user/auth";
 function GetProductsByCategory() {
     const { id } = useParams();
     const [isLoad, setIsLoad] = useState(false);

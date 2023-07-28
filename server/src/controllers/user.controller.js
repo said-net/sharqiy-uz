@@ -1,0 +1,155 @@
+const { phone: ph } = require('phone');
+const userModel = require('../models/user.model');
+const generatorCode = require('../middlewares/generator.code');
+const moment = require('moment/moment');
+const smsSender = require('../middlewares/sms.sender');
+const JWT = require('jsonwebtoken');
+const { USER_SECRET } = require('../configs/env');
+module.exports = {
+    requestSMS: async (req, res) => {
+        const { phone, role, ref_id } = req.body;
+        if (!phone) {
+            re.send({
+                ok: false,
+                msg: "Raqamingizni kiriting!"
+            });
+        } else if (!ph(phone, { country: 'uz' }).isValid) {
+            res.send({
+                ok: false,
+                msg: "Raqamni to'g'ri kiriting!"
+            });
+        } else {
+            const $user = await userModel.findOne({ phone: ph(phone, { country: 'uz' }).phoneNumber });
+            const code = generatorCode();
+            smsSender(code, ph(phone, { country: 'uz' }).phoneNumber.slice(4)).then((response) => {
+                const { ok } = response.data;
+                console.log(response.data);
+                if (!ok) {
+                    res.send({
+                        ok: false,
+                        msg: "Aloqani tekshirib qayta urunib ko'ring!"
+                    })
+                } else {
+                    console.log(ref_id);
+                    if (!$user) {
+                        new userModel({
+                            name: "Foydalanuvchi" + phone.slice(-4),
+                            phone: ph(phone, { country: 'uz' }).phoneNumber,
+                            role,
+                            verify_code: code,
+                            ref_id: !ref_id || ref_id === 'null' ? '' : ref_id
+                        }).save().then(() => {
+                            res.send({
+                                ok: true,
+                                msg: "SMS Habar yuborildi!",
+                                data: {
+                                    duration: moment.now() / 1000 + 120,
+                                    new: true
+                                }
+                            })
+                        })
+                    } else {
+                        $user.set({ verify_code: code }).save().then(() => {
+                            res.send({
+                                ok: true,
+                                msg: "SMS Habar yuborildi!",
+                                data: {
+                                    duration: moment.now() / 1000 + 120,
+                                    new: !$user.location || !$user?.name ? true : false
+                                }
+                            });
+                        });
+                    }
+                }
+            }).catch((err) => {
+                console.log(err);
+                res.send({
+                    ok: false,
+                    msg: "Nimadir hato 2 daqiqadan so'ng qayta urunib ko'ring!"
+                })
+            })
+
+        }
+    },
+    verifyCode: async (req, res) => {
+        const { code, phone, name, location } = req.body;
+        if (!phone || !code) {
+            res.send({
+                ok: false,
+                msg: "Qatorlarni to'ldiring!"
+            });
+        } else if (!ph(phone, { country: 'uz' }).isValid) {
+            res.send({
+                ok: false,
+                msg: "Raqamni to'g'ri kiriting!"
+            });
+        } else {
+            const $user = await userModel.findOne({ phone: ph(phone, { country: 'uz' }).phoneNumber });
+            if (!$user) {
+                res.send({
+                    ok: false,
+                    msg: "Ushbu raqam avval ro'yhatdan o'tmagan!"
+                });
+            } else if ($user.verify_code !== code) {
+                res.send({
+                    ok: false,
+                    msg: "Tasdiqlash ko'di hato kiritildi!"
+                });
+            } else if (!$user.location && !name || !$user.location && !location) {
+                res.send({
+                    ok: false,
+                    msg: "Qatorlarni to'ldiring!"
+                });
+            } else {
+                if (!$user.location || !$user.name) {
+                    const token = JWT.sign({ id: $user._id }, USER_SECRET);
+                    $user.set({ access: token, name, location }).save().then(() => {
+                        res.send({
+                            ok: true,
+                            msg: "Profilga yo'naltirildi!",
+                            token
+                        });
+                    });
+                } else {
+                    const token = JWT.sign({ id: $user._id }, USER_SECRET);
+                    $user.set({ access: token }).save().then(() => {
+                        res.send({
+                            ok: true,
+                            msg: "Profilga yo'naltirildi!",
+                            token
+                        });
+                    });
+                }
+            }
+        }
+    },
+    verifyAuth: (req, res) => {
+        res.send({
+            ok: true,
+            data: req.user
+        })
+    },
+    editInformations: async (req, res) => {
+        try {
+            const $user = await userModel.findById(req?.user.id);
+            $user.set(req.body).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "O'zgartirildi!"
+                });
+            }).catch(err => {
+                console.log(err);
+                res.send({
+                    ok: false,
+                    msg: "Xatolik"
+                });
+            })
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
+            })
+        }
+    }
+}
