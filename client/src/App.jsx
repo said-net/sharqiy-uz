@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import Navbar from "./components/navbar";
 import Categories from "./pages/categories";
 import { ToastContainer } from 'react-toastify';
@@ -12,10 +12,12 @@ import axios from "axios";
 import { API_LINK } from "./config";
 import { setInformations } from "./managers/authManager";
 import Settings from "./user/settings";
+import VideoPlayers from "./pages/video";
 
 function App() {
   const { refresh } = useSelector(e => e.auth);
   const dp = useDispatch()
+  const { pathname } = useLocation();
   useEffect(() => {
     axios(`${API_LINK}/user/verify-auth`, {
       headers: {
@@ -29,18 +31,25 @@ function App() {
     })
   }, [refresh]);
   return (
-    <div>
-      <Navbar />
-      <Routes>
-        <Route path="/categories" element={<Categories />} />
-        <Route path="/get-by-category/:id" element={<GetProductsByCategory />} />
-        <Route path="/product/:id" element={<Product />} />
-        {/*  */}
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
-      <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
-    </div>
+    <>
+      {pathname !== '/dashboard' &&
+        <>
+          <Navbar />
+          <Routes>
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/get-by-category/:id" element={<GetProductsByCategory />} />
+            <Route path="/product/:id" element={<Product />} />
+            <Route path="/videos" element={<VideoPlayers/>}/>
+            {/*  */}
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+          <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
+        </>}
+      {pathname === '/dashboard' &&
+        <h1>ADMIN</h1>
+      }
+    </>
   );
 }
 

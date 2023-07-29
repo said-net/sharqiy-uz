@@ -26,7 +26,7 @@ function Product() {
         if (userId) {
             setOpenShop({ ...openShop, name, region: location, phone })
         }
-    }, [openShop]);
+    }, [userId]);
     useEffect(() => {
         setIsLoad(false);
         setProduct({});

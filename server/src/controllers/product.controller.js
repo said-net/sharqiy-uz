@@ -186,18 +186,19 @@ module.exports = {
             $modlist.push({
                 ...p._doc,
                 id: p._id,
-                images: [...p.images.map(e => {
-                    return SERVER_LINK + e
-                })],
+                // images: [...p.images.map(e => {
+                //     return SERVER_LINK + e
+                // })],
+                image: SERVER_LINK + p.images[0],
                 original_price: 0,
-                created: moment.unix(p.created).format('YYYY-MM-DD'),
+                // created: moment.unix(p.created).format('YYYY-MM-DD'),
                 value: p.value - p.solded,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                 bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                 category: {
                     id: p.category._id,
                     title: p.category.title,
-                    background: p.category.background,
+                    // background: p.category.background,
                     image: SERVER_LINK + p.category.image
                 }
             });
@@ -352,12 +353,27 @@ module.exports = {
             });
         } else {
             const $product = await productModel.findById(id);
-            $product.set({ old_price: price, price: new_price }).save().then(()=>{
+            $product.set({ old_price: price, price: new_price }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "Sqalandi!"
                 });
             })
         }
+    },
+    getVideos: async (req, res) => {
+        const $videos = await productModel.find();
+        const $modded = [];
+        $videos.forEach(p => {
+            $modded.push({
+                id: p?._id,
+                video: p?.video,
+                title: p?.title
+            })
+        })
+        res.send({
+            ok: true,
+            data: $videos
+        })
     }
 }

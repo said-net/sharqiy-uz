@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 
 function RequestShop({ openShop, setOpenShop }) {
     const [disabled, setDisablet] = useState(false);
+    // 
     useEffect(() => {
         const { name, phone, region } = openShop;
         if (!name || phone.length < 13 || !phone.startsWith('+998') || region < 1) {
@@ -17,7 +18,7 @@ function RequestShop({ openShop, setOpenShop }) {
             setDisablet(false);
         }
     }, [openShop]);
-
+    // 
     function Submit() {
         setDisablet(true);
         const { name, phone, region } = openShop;
@@ -35,6 +36,7 @@ function RequestShop({ openShop, setOpenShop }) {
             setDisablet(false);
         })
     }
+    // 
     return (
         <Dialog open={openShop?.id !== ''} size="xxl" className="flex items-center justify-center w-full h-[100vh] bg-[#000000ab] backdrop-blur-sm">
             <div className="flex items-center justify-start flex-col w-[90%] rounded bg-white p-[5px]">
@@ -42,7 +44,7 @@ function RequestShop({ openShop, setOpenShop }) {
                     Mahsulot: {openShop?.title}
                     <div className="absolute  top-[-20px] right-[-20px]">
                         <IconButton onClick={() => {
-                            setOpenShop({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '', city: '' })
+                            setOpenShop({ ...openShop, id: '' });
                         }} color="blue-gray" className="rounded-full text-[24px]">
                             <MdClose />
                         </IconButton>

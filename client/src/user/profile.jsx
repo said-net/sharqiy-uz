@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NotAuth from "./notauth";
-import { FaCalendar, FaCartShopping, FaGear, FaGears, FaHeart, FaLocationDot, FaPhone, FaTelegram, FaUser } from 'react-icons/fa6'
+import { FaCalendar, FaCartShopping, FaGear, FaGears, FaHeart, FaLocationDot, FaPhone, FaRegHeart, FaTelegram, FaUser } from 'react-icons/fa6'
 import { BiLogOut } from 'react-icons/bi'
 import { setInformations, setRefreshAuth } from "../managers/authManager";
 import Regions from '../components/regions.json'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
@@ -16,7 +16,11 @@ function Profile() {
     const [type, setType] = useState('profile');
     const [isLoad, setIsLoad] = useState(false);
     const [history, setHistory] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [refreshLikes, setRefreshLikes] = useState(false);
+    const [loadLikes, setLoadLikes] = useState(false);
     const dp = useDispatch();
+    const nv = useNavigate();
     function LogOut() {
         if (window.confirm('Profildan chiqishni hohlaysizmi?')) {
             localStorage.removeItem('access');
@@ -55,6 +59,39 @@ function Profile() {
             })
         }
     }, [type]);
+
+    function setLike(pid) {
+        if (!id) {
+            setOpenAuth(true);
+        } else {
+            axios(`${API_LINK}/user/set-like/${pid}`, {
+                headers: {
+                    'x-user-token': `Bearer ${localStorage.getItem('access')}`
+                }
+            }).then((res) => {
+                const { ok } = res.data;
+                if (ok) {
+                    setRefreshLikes(!refreshLikes);
+                }
+            });
+        }
+    }
+
+    useEffect(() => {
+        setLoadLikes(false);
+        axios(`${API_LINK}/user/get-my-likes`, {
+            headers: {
+                'x-user-token': `Bearer ${localStorage.getItem('access')}`
+            }
+        }).then((res) => {
+            const { ok, data } = res.data;
+            setLoadLikes(true);
+            console.log(ok);
+            if (ok) {
+                setProducts(data);
+            }
+        });
+    }, [refreshLikes]);
     return (
         <div className="flex items-center justify-start flex-col w-full p-[10px]">
             {!id &&
@@ -106,7 +143,7 @@ function Profile() {
                                 <>
                                     {history?.map((e, i) => {
                                         return (
-                                            <div className={`flex items-center justify-between  w-full h-[50px] border ${(i + 1) % 2 == 0 ? 'bg-white' : 'bg-gray-200'}`}>
+                                            <div key={i} className={`flex items-center justify-between  w-full h-[50px] border ${(i + 1) % 2 == 0 ? 'bg-white' : 'bg-gray-200'}`}>
                                                 <div className="flex items-center justify-center">
                                                     <div className="flex items-center justify-center w-[40px] h-[40px] rounded-full border overflow-hidden">
                                                         <img src={e?.image} alt="rasm" />
@@ -125,7 +162,65 @@ function Profile() {
                             }
                         </div>
                     }
-                    {/*  */}
+                    {/* LIKES */}
+                    {type === 'saved' &&
+                        <>
+                            {!loadLikes && <Spinner />}
+                            {loadLikes && !products[0] && <h1>Saqlangan mahsulotlar mavjud emas</h1>}
+                            {loadLikes && products[0] &&
+                                <div className="flex items-start justify-between w-full p-[0_2%]">
+                                    <div className="flex items-center justify-center w-[49%] flex-col">
+                                        {products.map((p, i) => {
+                                            return (
+                                                (i + 1) % 2 !== 0 && <div key={i} className="flex items-center justify-start flex-col w-[100%] mb-[20px]  rounded shadow-md overflow-hidden relative h-[350px]">
+                                                    <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />
+
+                                                    {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
+                                                    <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                                        <img src={p.image} alt="c" />
+                                                    </div>
+                                                    <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                                        <p className="w-full p-[0_2%] my-[10px]">
+                                                            {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
+                                                            {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                                        </p>
+                                                        {p?.old_price &&
+                                                            <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>
+                                                        }
+                                                        <p className=" absolute bottom-[10px] w-full p-[0_2%] font-bold text-[16px] text-black">{Number(p.price).toLocaleString()} so'm</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                    <div className="flex items-center justify-center w-[49%] flex-col">
+                                        {products.map((p, i) => {
+                                            return (
+                                                (i + 1) % 2 === 0 && <div key={i} className="flex items-center justify-start flex-col w-[100%] mb-[20px]  rounded shadow-md overflow-hidden relative h-[350px]">
+                                                    <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />
+
+                                                    {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
+                                                    <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                                        <img src={p.image} alt="c" />
+                                                    </div>
+                                                    <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                                        <p className="w-full p-[0_2%] my-[10px]">
+                                                            {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
+                                                            {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                                        </p>
+                                                        {p?.old_price &&
+                                                            <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>
+                                                        }
+                                                        <p className=" absolute bottom-[10px] w-full p-[0_2%] font-bold text-[16px] text-black">{Number(p.price).toLocaleString()} so'm</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                            }
+                        </>
+                    }
                 </>
             }
 

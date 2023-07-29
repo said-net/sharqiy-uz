@@ -15,4 +15,5 @@ module.exports = require('express').Router()
     .post('/set-new-prices/:id', authMiddleware.boss, productController.setNewPrices)
     // 
     .get('/get-by-category/:id', productController.getProductsByCategory)
+    .get('/get-videos', productController.getVideos)
 

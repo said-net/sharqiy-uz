@@ -8,6 +8,7 @@ const { USER_SECRET, SERVER_LINK } = require('../configs/env');
 const md5 = require('md5');
 const shopModel = require('../models/shop.model');
 const likeModel = require('../models/like.model');
+const productModel = require('../models/product.model');
 module.exports = {
     requestSMS: async (req, res) => {
         const { phone, ref_id } = req.body;
@@ -211,7 +212,6 @@ module.exports = {
     setLike: async (req, res) => {
         const { id } = req.params;
         const $like = await likeModel.findOne({ from: req.user.id, product: id });
-        console.log(id);
         if (!$like) {
             new likeModel({
                 from: req.user.id,
@@ -222,7 +222,7 @@ module.exports = {
                     ok: true,
                     msg: "Saqlandi!"
                 });
-            }).catch((err)=>{
+            }).catch((err) => {
                 console.log(err);
             })
         } else {
@@ -235,14 +235,40 @@ module.exports = {
         }
     },
     getLikes: async (req, res) => {
-        const $likes = await likeModel.find({from: req.user.id});
+        const $likes = await likeModel.find({ from: req.user.id });
         const $modded = [];
-        $likes.forEach(l=>{
+        $likes.forEach(l => {
             $modded.push(l?.product)
         })
         res.send({
             ok: true,
             data: $modded
         });
-    }
+    },
+
+    getMyLikes: async (req, res) => {
+        const $likes = await likeModel.find({ from: req.user.id }).populate('product')
+        const $modlist = [];
+        for (let like of $likes) {
+            const p = await productModel.findById(like?.product?._id);
+            $modlist.push({
+                ...p._doc,
+                id: p._id,
+                image: SERVER_LINK + p.images[0],
+                original_price: 0,
+                value: p.value - p.solded,
+                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                category: {
+                    id: p.category._id,
+                    title: p.category.title,
+                    image: SERVER_LINK + p.category.image
+                }
+            });
+        }
+        res.send({
+            ok: true,
+            data: $modlist
+        });
+    },
 }
