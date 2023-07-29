@@ -9,7 +9,6 @@ import { useSelector } from "react-redux";
 import Auth from "../user/auth";
 function Search() {
     const { search } = useParams();
-
     const [isLoad, setIsLoad] = useState(false);
     const nv = useNavigate()
     const [products, setProducts] = useState([]);
