@@ -1,19 +1,16 @@
-import { Button, Card, CardBody, CardHeader, Chip, IconButton, Input, Spinner, Typography } from "@material-tailwind/react";
+import { Button, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { FaBox, FaMoneyCheck, FaPlusCircle, FaRegFrown, FaSearch, FaShoppingCart, FaTrash } from 'react-icons/fa'
+import { FaPencilAlt, FaPlus, FaPlusCircle, FaRegFrown, FaSearch, } from 'react-icons/fa'
 import AddProduct from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { TbGift, TbGiftOff } from 'react-icons/tb';
-import { ImStatsDots } from 'react-icons/im';
-import { BiEdit, BiPlus, BiRefresh } from "react-icons/bi";
+import { BsThreeDotsVertical } from 'react-icons/bs'
 import DelProduct from "./delproduct";
 import AddBonus from "./addbonus";
 import AddValue from "./addvalue";
 import StatProduct from "./statproduct";
-import Formatter from "../../components/formatter";
 import RemoveBonus from "./removebonus";
 import EditProduct from "./editproduct";
 import SetNewPrices from "./setnewprices";
@@ -25,7 +22,9 @@ function Products() {
     const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
-    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', title: '', about: '', original_price: '', video: '', recovery: false, value: '', price: '', category: '' });
+
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '',  });
+
     const [openPrice, setOpenPrice] = useState({ price: 0, new_price: 0, id: '' });
     const { refresh } = useSelector(e => e.product);
     useEffect(() => {
@@ -70,73 +69,53 @@ function Products() {
                         <p className="capitalize text-blue-gray-200">Mahsulotlar mavjud emas!</p>
                     </div> :
                     !search ?
-                        <div className="flex items-center justify-start flex-col w-full">
-                            <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-[20px]">
-                                {products.map((p, i) => {
-                                    return (
-                                        <div className="flex" key={i}>
-                                            < Card className="w-full max-w-[26rem] shadow-lg">
-                                                <CardHeader floated={false} color="blue-gray">
-                                                    <img
-                                                        src={p.images[0]}
-                                                    />
-                                                    <div className="to-bg-black-10 absolute inset-0 h-full w-full bg-gradient-to-tr from-transparent via-transparent to-black/60 " />
-                                                </CardHeader>
-
-                                                <CardBody>
-                                                    {p?.bonus && <Chip value={`Bonus: ${p?.bonus_count} = ${p?.bonus_given + p?.bonus_count} | ${p?.bonus_duration}`} color="green" className="rounded" />}
-                                                    <div className="mb-3 flex items-center justify-between">
-                                                        <Typography variant="h5" color="blue-gray" className="font-medium">
-                                                            {p.title}
-                                                        </Typography>
-                                                        <p className="text-[15px]"><Formatter value={p.price} /> </p>
-                                                    </div>
-                                                    <div className="flex items-start justify-start flex-col w-full">
-                                                        <p className="flex items-center"><FaBox />Mavjud: {p.value} ta</p>
-                                                        <p className="flex items-center"><FaShoppingCart />Sotildi: {p.solded} ta</p>
-                                                    </div>
-                                                    <div className="group mt-8 inline-flex flex-wrap items-center gap-3">
-                                                        <IconButton color="cyan" className="rounded text-[20px]" onClick={() => setSelect({
-                                                            join_value: true, id: p.id, edit: false, del: false, recovery: false,
-                                                            value: p.value,
-                                                            old: p.value
-                                                        })}>
-                                                            <BiPlus />
-                                                        </IconButton>
-                                                        <IconButton className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: true, recovery: false, id: p.id, title: p.title, price: p.price, original_price: p.original_price, video: p.video, about: p.about, value: p.value, category: p.category.id })}>
-                                                            <BiEdit />
-                                                        </IconButton>
-                                                        {!p.bonus && <IconButton color="green" className="rounded text-[20px]" onClick={() => setOpenBonusAdd(p.id)}>
-                                                            <TbGift />
-                                                        </IconButton>}
-                                                        {p.bonus && <IconButton color="red" className="rounded text-[20px]" onClick={() => setOpenBonusRemove(p.id)}>
-                                                            <TbGiftOff />
-                                                        </IconButton>}
-                                                        {!p.hidden && <IconButton color="red" className="rounded text-[20px]" onClick={() => setSelect({ del: true, edit: false, recovery: false, id: p.id, title: p.title })}>
-                                                            <FaTrash />
-                                                        </IconButton>}
-                                                        {p.hidden && <IconButton color="orange" className="rounded text-[20px]" onClick={() => setSelect({ del: false, edit: false, recovery: true, id: p.id, title: p.title })}>
-                                                            <BiRefresh />
-                                                        </IconButton>}
-                                                        <IconButton className="rounded text-[20px]" color="indigo" onClick={() => {
-                                                            setOpenPrice({ id: p?.id, price: p?.price, new_price: 0 })
-                                                        }}>
-                                                            <FaMoneyCheck />
-                                                        </IconButton>
-                                                        <IconButton className="rounded" color="blue-gray" onClick={() => { setOpenProductStat(p.id) }}>
-                                                            <ImStatsDots />
+                        <div className="grid grid-cols-5 gap-[10px]">
+                            {products?.map((e, i) => {
+                                return (
+                                    <div className="flex items-start justify-start flex-col w-[175px] p-[5px] h-[330px] bg-white rounded shadow-sm hover:shadow-md" key={i}>
+                                        {/* IMAGE */}
+                                        <div className="flex items-start rounded justify-center w-full overflow-hidden relative h-[200px]">
+                                            <img src={e?.image} alt="Rasm" />
+                                            <Menu>
+                                                <MenuHandler>
+                                                    <div className="absolute top-[-5px] right-[-5px]">
+                                                        <IconButton color="gray" className=" rounded-full bg-[#0000] shadow-none">
+                                                            <BsThreeDotsVertical className="text-black text-[20px]" />
                                                         </IconButton>
                                                     </div>
-                                                </CardBody>
-                                            </Card>
+                                                </MenuHandler>
+                                                <MenuList>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
+                                                        <FaPlus className="mr-[10px]" /> Qo'shish
+                                                    </MenuItem>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true })}>
+                                                        <FaPencilAlt className="mr-[10px]" /> Tahrirlash
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </Menu>
                                         </div>
-                                    )
-                                })}
-                            </div>
+                                        {/* OLD PRICE */}
+                                        <p className="text-black">{e?.title?.slice(0, 20)}...</p>
+                                        <div className="w-full h-[15px]">
+                                            {e?.old_price &&
+                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(e?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((e?.old_price - e?.price) / (e?.old_price) * 100).slice(0, 5)}%</span></p>
+                                            }
+                                        </div>
+                                        {/* NEW PRICE || PRICE */}
+                                        <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(e.price).toLocaleString()} so'm</p>
+                                        {/* VALUE */}
+                                        <p className="text-[12px] text-gray-800">Mavjud: {e?.value} ta</p>
+                                        {/* SOLDED */}
+                                        <p className="text-[12px] text-gray-800">Sotildi: {e?.solded} ta</p>
+                                        {/* BONUS */}
+                                        {!e?.bonus && <p className="text-[14px] border-t w-full">Bonus mavjud emas!</p>}
+                                        {e?.bonus && <p className="text-[14px] border-t w-full">Bonus: {e?.bonus_count} = {e?.bonus_count + e?.bonus_given}</p>}
+                                    </div>
+                                )
+                            })}
                         </div>
                         : null
             }
-            <DelProduct select={select} setSelect={setSelect} />
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
             <RemoveBonus open={openBonusRemove} setOpen={setOpenBonusRemove} />

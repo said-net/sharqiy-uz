@@ -4,8 +4,6 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 import { API_LINK } from "../../config";
 import { setRefreshProduct } from "../../managers/product.manager";
-
-
 function AddValue({ select, setSelect }) {
     const [msg, setMsg] = useState({ error: false, msg: '' });
     const dp = useDispatch();
@@ -19,12 +17,11 @@ function AddValue({ select, setSelect }) {
             const { ok, msg } = res.data
             if (ok) {
                 dp(setRefreshProduct());
-                setSelect({ join_value: false, del: false, edit: false, recovery: false })
+                setSelect({ ...select, join_value: false })
             } else {
                 setMsg({ error: true, msg });
             }
         }).catch((err) => {
-            console.log(err);
             setMsg({ error: true, msg: "Aloqani tekshirisb qayta urunib ko'ring!" });
         });
     }
@@ -37,11 +34,11 @@ function AddValue({ select, setSelect }) {
                     </DialogHeader>
                     <DialogBody className="w-full border-y">
                         <p className={`text-center mb-[10px] ${msg.error ? 'text-red-500' : 'text-green-500'}`} onClick={() => setMsg({ error: false, msg: '' })}>{msg.msg}</p>
-                        <p className="">Barcha mahsulotlar: {select?.old}</p>
-                        <Input value={value} label="Mahsulot qo'shish" onChange={e => !isNaN(e.target.value) && setValue(Math.floor(e.target.value.trim()))} />
+                        <p className="">Tovarlar soni: {select?.old} ta</p>
+                        <Input value={value} label="Tovar qo'shish" onChange={e => !isNaN(e.target.value) && setValue(Math.floor(e.target.value.trim()))} />
                     </DialogBody>
                     <DialogFooter className="w-full">
-                        <Button onClick={() => setSelect({ del: false, edit: false, recovery: false, join_value: false })} className="rounded ml-[10px]" color="orange">Bekor qilish</Button>
+                        <Button onClick={() => setSelect({ ...select, join_value: false })} className="rounded ml-[10px]" color="orange">Bekor qilish</Button>
                         <Button className="rounded ml-[10px]" color="red" onClick={Submit}>Qo'shish</Button>
                     </DialogFooter>
                 </div>

@@ -93,6 +93,7 @@ module.exports = {
     //
     edit: async (req, res) => {
         const { id } = req.params;
+        console.log(req.body);
         try {
             const $product = await productModel.findById(id);
             $product.set(req.body).save().then(() => {
@@ -109,41 +110,27 @@ module.exports = {
             })
         }
     },
-    // 
-    getOne: async (req, res) => {
-        const { id } = req.params;
-        try {
-            const $product = await productModel.findById(id).populate('category', 'title background image');
-            const product = {
-                ...$product._doc,
-                id: $product._id,
-                images: [...$product.images.map(e => {
-                    return SERVER_LINK + e
-                })],
-                original_price: 0,
-                value: $product.value - $product.solded,
-                bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
-                bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                bonus_count: $product.bonus ? $product.bonus_count : 0,
-                bonus_given: $product.bonus ? $product.bonus_given : 0,
-                // category: {
-                //     id: $product.category._id,
-                //     title: $product.category.title,
-                //     background: $product.category.background,
-                //     image: SERVER_LINK + $product.category.image
-                // }
-            }
-            res.send({
-                ok: true,
-                data: product
+    getAllProductsToAdmin: async (req, res) => {
+        const $products = await productModel.find()
+        const $modlist = [];
+        $products.forEach(p => {
+            $modlist.push({
+                ...p._doc,
+                id: p._id,
+                image: SERVER_LINK+p?.images[0],
+                created: moment.unix(p.created).format('YYYY-MM-DD'),
+                value: p.value - p.solded,
+                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                bonus_count: p.bonus ? p.bonus_count : 0,
+                bonus_given: p.bonus ? p.bonus_given : 0,
+                category:p?.category
             });
-        } catch (error) {
-            console.log(error);
-            res.send({
-                ok: false,
-                msg: "Nimadur hato!"
-            });
-        }
+        });
+        res.send({
+            ok: true,
+            data: $modlist
+        });
     },
     // 
     getOneToAdmin: async (req, res) => {
@@ -178,102 +165,6 @@ module.exports = {
             })
         }
     },
-    // 
-    getSearch: async (req, res) => {
-        const { prefix } = req.params;
-        const $products = await productModel.find().populate();
-        const $modlist = [];
-        $products.forEach(p => {
-            if (p?.title?.toLowerCase()?.includes(prefix?.toLowerCase()) || p?.about?.toLowerCase()?.includes(prefix?.toLowerCase())) {
-                $modlist.push({
-                    ...p._doc,
-                    id: p._id,
-                    image: SERVER_LINK + p.images[0],
-                    original_price: 0,
-                    value: p.value - p.solded,
-                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                    category: {
-                        id: p.category._id,
-                        title: p.category.title,
-                        image: SERVER_LINK + p.category.image
-                    }
-                });
-            }
-        });
-        res.send({
-            ok: true,
-            data: $modlist
-        });
-    },
-    getProductsByCategory: async (req, res) => {
-        const { id } = req.params;
-        if (!id || id.length !== 24) {
-            res.send({
-                ok: false,
-                msg: "LINK O'zgartirildi!"
-            })
-        } else {
-            const $products = await productModel.find({ category: id }).populate('category');
-            const $modlist = [];
-            $products.forEach(p => {
-                $modlist.push({
-                    ...p._doc,
-                    id: p._id,
-                    // images: [...p.images.map(e => {
-                    //     return SERVER_LINK + e
-                    // })],
-                    image: SERVER_LINK + p.images[0],
-                    original_price: 0,
-                    // created: moment.unix(p.created).format('YYYY-MM-DD'),
-                    value: p.value - p.solded,
-                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                    category: {
-                        id: p.category._id,
-                        title: p.category.title,
-                        // background: p.category.background,
-                        image: SERVER_LINK + p.category.image
-                    }
-                });
-            });
-            res.send({
-                ok: true,
-                data: $modlist
-            });
-        }
-    },
-    // 
-    getAllProductsToAdmin: async (req, res) => {
-        const $products = await productModel.find().populate('category');
-        const $modlist = [];
-        $products.forEach(p => {
-            $modlist.push({
-                ...p._doc,
-                id: p._id,
-                images: [...p.images.map(e => {
-                    return SERVER_LINK + e
-                })],
-                created: moment.unix(p.created).format('YYYY-MM-DD'),
-                value: p.value - p.solded,
-                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                bonus_count: p.bonus ? p.bonus_count : 0,
-                bonus_given: p.bonus ? p.bonus_given : 0,
-                category: {
-                    id: p.category._id,
-                    title: p.category.title,
-                    background: p.category.background,
-                    image: SERVER_LINK + p.category.image
-                }
-            });
-        });
-        res.send({
-            ok: true,
-            data: $modlist
-        });
-    },
-    // 
     delete: async (req, res) => {
         const { id } = req.params;
         const $product = await productModel.findById(id);
@@ -359,6 +250,108 @@ module.exports = {
             })
         }
     },
+    // 
+    getOne: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $product = await productModel.findById(id).populate('category', 'title background image');
+            const product = {
+                ...$product._doc,
+                id: $product._id,
+                images: [...$product.images.map(e => {
+                    return SERVER_LINK + e
+                })],
+                original_price: 0,
+                value: $product.value - $product.solded,
+                bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
+                bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                bonus_count: $product.bonus ? $product.bonus_count : 0,
+                bonus_given: $product.bonus ? $product.bonus_given : 0,
+                // category: {
+                //     id: $product.category._id,
+                //     title: $product.category.title,
+                //     background: $product.category.background,
+                //     image: SERVER_LINK + $product.category.image
+                // }
+            }
+            res.send({
+                ok: true,
+                data: product
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadur hato!"
+            });
+        }
+    },
+    // 
+    getSearch: async (req, res) => {
+        const { prefix } = req.params;
+        const $products = await productModel.find().populate();
+        const $modlist = [];
+        $products.forEach(p => {
+            if (p?.title?.toLowerCase()?.includes(prefix?.toLowerCase()) || p?.about?.toLowerCase()?.includes(prefix?.toLowerCase())) {
+                $modlist.push({
+                    ...p._doc,
+                    id: p._id,
+                    image: SERVER_LINK + p.images[0],
+                    original_price: 0,
+                    value: p.value - p.solded,
+                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    category: {
+                        id: p.category._id,
+                        title: p.category.title,
+                        image: SERVER_LINK + p.category.image
+                    }
+                });
+            }
+        });
+        res.send({
+            ok: true,
+            data: $modlist
+        });
+    },
+    getProductsByCategory: async (req, res) => {
+        const { id } = req.params;
+        if (!id || id.length !== 24) {
+            res.send({
+                ok: false,
+                msg: "LINK O'zgartirildi!"
+            })
+        } else {
+            const $products = await productModel.find({ category: id }).populate('category');
+            const $modlist = [];
+            $products.forEach(p => {
+                $modlist.push({
+                    ...p._doc,
+                    id: p._id,
+                    // images: [...p.images.map(e => {
+                    //     return SERVER_LINK + e
+                    // })],
+                    image: SERVER_LINK + p.images[0],
+                    original_price: 0,
+                    // created: moment.unix(p.created).format('YYYY-MM-DD'),
+                    value: p.value - p.solded,
+                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    category: {
+                        id: p.category._id,
+                        title: p.category.title,
+                        // background: p.category.background,
+                        image: SERVER_LINK + p.category.image
+                    }
+                });
+            });
+            res.send({
+                ok: true,
+                data: $modlist
+            });
+        }
+    },
+    // 
     getVideos: async (req, res) => {
         const $videos = await productModel.find();
         const $modded = [];
