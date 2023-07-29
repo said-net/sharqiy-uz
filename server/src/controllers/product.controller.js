@@ -179,29 +179,27 @@ module.exports = {
         }
     },
     // 
-    getAllProducts: async (req, res) => {
-        const $products = await productModel.find().populate('category');
+    getSearch: async (req, res) => {
+        const { prefix } = req.params;
+        const $products = await productModel.find().populate();
         const $modlist = [];
         $products.forEach(p => {
-            $modlist.push({
-                ...p._doc,
-                id: p._id,
-                // images: [...p.images.map(e => {
-                //     return SERVER_LINK + e
-                // })],
-                image: SERVER_LINK + p.images[0],
-                original_price: 0,
-                // created: moment.unix(p.created).format('YYYY-MM-DD'),
-                value: p.value - p.solded,
-                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                category: {
-                    id: p.category._id,
-                    title: p.category.title,
-                    // background: p.category.background,
-                    image: SERVER_LINK + p.category.image
-                }
-            });
+            if (p?.title?.toLowerCase()?.includes(prefix?.toLowerCase()) || p?.about?.toLowerCase()?.includes(prefix?.toLowerCase())) {
+                $modlist.push({
+                    ...p._doc,
+                    id: p._id,
+                    image: SERVER_LINK + p.images[0],
+                    original_price: 0,
+                    value: p.value - p.solded,
+                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    category: {
+                        id: p.category._id,
+                        title: p.category.title,
+                        image: SERVER_LINK + p.category.image
+                    }
+                });
+            }
         });
         res.send({
             ok: true,

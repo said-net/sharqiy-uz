@@ -13,6 +13,7 @@ import { API_LINK } from "./config";
 import { setInformations } from "./managers/authManager";
 import Settings from "./user/settings";
 import VideoPlayers from "./pages/video";
+import Search from './pages/search'
 
 function App() {
   const { refresh } = useSelector(e => e.auth);
@@ -40,6 +41,7 @@ function App() {
             <Route path="/get-by-category/:id" element={<GetProductsByCategory />} />
             <Route path="/product/:id" element={<Product />} />
             <Route path="/videos" element={<VideoPlayers/>}/>
+            <Route path="/search/:search" element={<Search/>}/>
             {/*  */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />

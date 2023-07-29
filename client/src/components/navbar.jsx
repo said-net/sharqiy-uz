@@ -1,6 +1,6 @@
 import { Drawer, IconButton, ListItem, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { FaBars, FaSearch } from 'react-icons/fa'
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 // import Logo from '../assets/logo.png';
 import { GoHome, GoHomeFill } from 'react-icons/go'
 import { BiCategory, BiSolidCategory, BiCommentDetail, BiSolidCommentDetail, BiUser, BiSolidUser } from 'react-icons/bi'
@@ -20,6 +20,7 @@ function Navbar() {
     const [isLoad, setIsLoad] = useState(false);
     const [categories, setCategories] = useState([]);
     const [openAuth, setOpenAuth] = useState(false);
+    const [search, setSearch] = useState('');
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/category/getall`).then(res => {
@@ -40,9 +41,9 @@ function Navbar() {
                         <FaBars />
                     </IconButton>
                     <div className="flex items-center justify-center w-[70%] relative">
-                        <input type="text" className="border border-red-500 p-[0_30px_0_10px] h-[35px] rounded-full w-full" placeholder="Qidiruv..." />
-                        <button className="w-[30px] h-[30px]  absolute right-[5px] rounded-full text-[16px] text-black flex items-center justify-center">
-                            <FaSearch />
+                        <input value={search} type="text" className="border border-red-500 p-[0_30px_0_10px] h-[35px] rounded-full w-full" placeholder="Qidiruv..." onChange={e => setSearch(e.target.value)} onKeyPress={e => e.key === 'Enter' && nv(`/search/${search}`)} />
+                        <button className="w-[30px] h-[30px]  absolute right-[5px] rounded-full text-[16px] text-black flex items-center justify-center" onClick={() => nv('/search/' + search)}>
+                            <FaSearch  />
                         </button>
                     </div>
                     <Menu>

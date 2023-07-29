@@ -7,8 +7,9 @@ import { Spinner } from "@material-tailwind/react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Auth from "../user/auth";
-function GetProductsByCategory() {
-    const { id } = useParams();
+function Search() {
+    const { search } = useParams();
+
     const [isLoad, setIsLoad] = useState(false);
     const nv = useNavigate()
     const [products, setProducts] = useState([]);
@@ -17,7 +18,7 @@ function GetProductsByCategory() {
     const [refreshLikes, setRefreshLikes] = useState(false);
     useEffect(() => {
         setIsLoad(false);
-        axios(`${API_LINK}/product/get-by-category/${id}`).then((res) => {
+        axios(`${API_LINK}/product/get-search/${search}`).then((res) => {
             const { data, msg, ok } = res.data;
             setIsLoad(true);
             if (!ok) {
@@ -28,7 +29,7 @@ function GetProductsByCategory() {
         }).catch(() => {
             toast.error("Aloqani tekshirib qayta urunib ko'ring!");
         });
-    }, [id]);
+    }, [search]);
 
     const { id: userId } = useSelector(e => e.auth);
 
@@ -69,16 +70,6 @@ function GetProductsByCategory() {
             {isLoad && !products[0] && <h1>Mahsulotlar vaqtinchalik mavjud emas!</h1>}
             {isLoad && products[0] &&
                 <div className="flex items-center justify-start flex-col w-full">
-                    {/* KATEGORIYA */}
-                    <div className="m-[10px] flex items-center justify-start w-[98%] h-[100px] bg-white shadow-sm rounded-[10px] cursor-pointer hover:shadow-lg p-[5px] overflow-hidden">
-                        <div className="flex items-center justify-center w-[80px] h-[80px] rounded-full border overflow-hidden p-[10px] mr-[10px]" style={{ background: products[0]?.category?.background }}>
-                            <img src={products[0]?.category?.image} alt="k rasm" />
-                        </div>
-                        <div className="flex items-start justify-start flex-col">
-                            <h1 className="text-[20px] text-blue-gray-600">{products[0]?.category?.title}</h1>
-                            <p className="text-[12px] text-blue-gray-300">{products?.length} hil mahsulot</p>
-                        </div>
-                    </div>
                     {/* MAHSULOTLAR */}
                     <div className="flex items-start justify-between w-full p-[0_2%]">
                         <div className="flex items-center justify-center w-[49%] flex-col">
@@ -142,4 +133,4 @@ function GetProductsByCategory() {
     );
 }
 
-export default GetProductsByCategory;
+export default Search;

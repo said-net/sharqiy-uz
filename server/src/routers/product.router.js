@@ -16,4 +16,4 @@ module.exports = require('express').Router()
     // 
     .get('/get-by-category/:id', productController.getProductsByCategory)
     .get('/get-videos', productController.getVideos)
-
+    .get('/get-search/:prefix', productController.getSearch)
