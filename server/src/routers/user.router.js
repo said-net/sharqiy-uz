@@ -8,3 +8,7 @@ module.exports = require('express').Router()
     // 
     .get('/verify-auth', authMiddleware.user, userController.verifyAuth)
     .post('/edit-informations', authMiddleware.user, userController.editInformations)
+    // 
+    .get('/get-shop-history', authMiddleware.user, userController.getShopHistory)
+    .get('/set-like/:id', authMiddleware.user, userController.setLike)
+    .get('/get-likes', authMiddleware.user, userController.getLikes)

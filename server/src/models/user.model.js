@@ -1,6 +1,7 @@
 const {Types, Schema, model} = require('mongoose');
 
 const schema = new Schema({
+    id: Number,
     name: String,
     phone: String,
     location: Number,

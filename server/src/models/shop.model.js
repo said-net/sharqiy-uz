@@ -8,6 +8,7 @@ const schema = new Schema({
     count: Number,
     region: Number,
     phone: String,
+    flow: Number,
     bonus: {
         type: Number,
         default: 0

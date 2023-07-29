@@ -56,7 +56,7 @@ function RequestShop({ openShop, setOpenShop }) {
                         <Input value={openShop.phone} label="Raqamingiz" onChange={e => setOpenShop({ ...openShop, phone: e.target.value.trim() })} required icon={<FaPhone />} />
                     </div>
                     <div className="flex items-center justify-center w-full mb-[10px]">
-                        <Select label="Viloyat" onChange={e => setOpenShop({ ...openShop, region: e })} value={openShop.region}>
+                        <Select label="Viloyat" onChange={e => setOpenShop({ ...openShop, region: e })} value={String(openShop.region)}>
                             {
                                 Regions.map((e, key) => {
                                     return (

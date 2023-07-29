@@ -10,6 +10,7 @@ import { AiOutlinePlayCircle } from 'react-icons/ai'
 import YoutubePlayer from "../components/videoplayer";
 import { useSelector } from "react-redux";
 import Auth from "../user/auth";
+import { FaHeart, FaRegHeart } from "react-icons/fa6";
 function Product() {
     const { id } = useParams();
     const [isLoad, setIsLoad] = useState(false);
@@ -18,7 +19,14 @@ function Product() {
     const [openShop, setOpenShop] = useState({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '' });
     const [openVideo, setOpenVideo] = useState('');
     const [openAuth, setOpenAuth] = useState(false);
-    const { id: userId } = useSelector(e => e.auth)
+    const { id: userId, name, phone, location } = useSelector(e => e.auth);
+    const [likes, setLikes] = useState([]);
+    const [refreshLikes, setRefreshLikes] = useState(false);
+    useEffect(() => {
+        if (userId) {
+            setOpenShop({ ...openShop, name, region: location, phone })
+        }
+    }, [openShop]);
     useEffect(() => {
         setIsLoad(false);
         setProduct({});
@@ -35,11 +43,38 @@ function Product() {
         });
     }, [id]);
 
-    function setLike() {
+    function setLike(pid) {
         if (!userId) {
             setOpenAuth(true);
+        } else {
+            axios(`${API_LINK}/user/set-like/${pid}`, {
+                headers: {
+                    'x-user-token': `Bearer ${localStorage.getItem('access')}`
+                }
+            }).then((res) => {
+                const { ok } = res.data;
+                if (ok) {
+                    setRefreshLikes(!refreshLikes);
+                }
+            });
         }
     }
+    useEffect(() => {
+        if (userId) {
+            axios(`${API_LINK}/user/get-likes`, {
+                headers: {
+                    'x-user-token': `Bearer ${localStorage.getItem('access')}`
+                }
+            }).then((res) => {
+                const { ok, data } = res.data;
+                if (ok) {
+                    setLikes(data);
+                }
+            });
+        }
+    }, [refreshLikes]);
+
+
     const p = product;
     return (
         <div className="flex items-center justify-start flex-col w-full mb-[100px]">
@@ -49,12 +84,16 @@ function Product() {
             }
             {isLoad && product?.title &&
                 <>
-                    <div className="flex items-center justify-center w-full relative">
+                    <div className="flex items-center justify-center w-full relative" onDoubleClick={() => setLike(p?.id)}>
                         <Carousel autoplay loop className="rounded-xl">
                             {product?.images?.map((i, k) => {
                                 return (<img src={i} alt={k} key={k} className="h-full w-full object-cover" />)
                             })}
                         </Carousel>
+                        {!likes?.includes(p?.id) && <FaRegHeart onClick={() => setLike(p?.id)} className={`absolute top-[10px]  right-[10px] text-red-500 text-[20px]`} />}
+
+                        {likes?.includes(p?.id) && <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[10px] right-[10px]  text-red-500 text-[20px]`} />}
+
                         <div className="flex items-center justify-center w-[120px] h-[35px] rounded-[10px] bg-white shadow-lg absolute bottom-[5px] left-[10px]" onClick={() => setOpenVideo(p?.video)}>
                             <AiOutlinePlayCircle className="text-[25px] mr-[10px]" /> Video
                         </div>

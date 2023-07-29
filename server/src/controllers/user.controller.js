@@ -4,8 +4,10 @@ const generatorCode = require('../middlewares/generator.code');
 const moment = require('moment/moment');
 const smsSender = require('../middlewares/sms.sender');
 const JWT = require('jsonwebtoken');
-const { USER_SECRET } = require('../configs/env');
+const { USER_SECRET, SERVER_LINK } = require('../configs/env');
 const md5 = require('md5');
+const shopModel = require('../models/shop.model');
+const likeModel = require('../models/like.model');
 module.exports = {
     requestSMS: async (req, res) => {
         const { phone, ref_id } = req.body;
@@ -20,6 +22,7 @@ module.exports = {
                 msg: "Raqamni to'g'ri kiriting!"
             });
         } else {
+            const $users = await userModel.find();
             const $user = await userModel.findOne({ phone: ph(phone, { country: 'uz' }).phoneNumber });
             const code = generatorCode();
             smsSender(code, ph(phone, { country: 'uz' }).phoneNumber.slice(4)).then((response) => {
@@ -34,10 +37,11 @@ module.exports = {
                     console.log(ref_id);
                     if (!$user) {
                         new userModel({
+                            id: $users.length + 1,
                             name: "Foydalanuvchi" + phone.slice(-4),
                             phone: ph(phone, { country: 'uz' }).phoneNumber,
                             verify_code: code,
-                            created: moment.now()/1000,
+                            created: moment.now() / 1000,
                             ref_id: !ref_id || ref_id === 'null' ? '' : ref_id
                         }).save().then(() => {
                             res.send({
@@ -188,5 +192,57 @@ module.exports = {
                 });
             }
         }
+    },
+    getShopHistory: async (req, res) => {
+        const $shops = await shopModel.find({ phone: req?.user?.phone }).populate('product', 'title images');
+        const $modded = [];
+        $shops.forEach(e => {
+            $modded.push({
+                ...e?._doc,
+                id: e._id,
+                image: SERVER_LINK + e?.product?.images[0]
+            });
+        })
+        res.send({
+            ok: true,
+            data: $modded
+        })
+    },
+    setLike: async (req, res) => {
+        const { id } = req.params;
+        const $like = await likeModel.findOne({ from: req.user.id, product: id });
+        console.log(id);
+        if (!$like) {
+            new likeModel({
+                from: req.user.id,
+                product: id
+            }).save().then(() => {
+                console.log(id);
+                res.send({
+                    ok: true,
+                    msg: "Saqlandi!"
+                });
+            }).catch((err)=>{
+                console.log(err);
+            })
+        } else {
+            $like.deleteOne().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "O'chirildi!"
+                });
+            });
+        }
+    },
+    getLikes: async (req, res) => {
+        const $likes = await likeModel.find({from: req.user.id});
+        const $modded = [];
+        $likes.forEach(l=>{
+            $modded.push(l?.product)
+        })
+        res.send({
+            ok: true,
+            data: $modded
+        });
     }
 }
