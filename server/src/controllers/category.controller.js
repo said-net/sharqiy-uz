@@ -42,7 +42,7 @@ module.exports = {
         const $categories = await categoryModel.find();
         const $modded = [];
         for (let e of $categories) {
-            const products = await productModel.find({ category: e._id }).countDocuments()
+            const products = await productModel.find({ category: e._id, hidden: false }).countDocuments()
             $modded.push({
                 id: e._id,
                 image: SERVER_LINK + e.image,

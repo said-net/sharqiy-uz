@@ -245,12 +245,11 @@ module.exports = {
             data: $modded
         });
     },
-
     getMyLikes: async (req, res) => {
         const $likes = await likeModel.find({ from: req.user.id }).populate('product')
         const $modlist = [];
         for (let like of $likes) {
-            const p = await productModel.findById(like?.product?._id);
+            const p = await productModel.findOne({ _id: like?.product?._id, hidden: false });
             $modlist.push({
                 ...p._doc,
                 id: p._id,

@@ -1,6 +1,8 @@
 import { Button, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { FaPencilAlt, FaPlus, FaPlusCircle, FaRegFrown, FaSearch, } from 'react-icons/fa'
+import { FaMoneyBill, FaPencilAlt, FaPlus, FaPlusCircle, FaRegFrown, FaSearch, FaTrash, } from 'react-icons/fa'
+import { TbGift, TbGiftOff } from 'react-icons/tb'
+import { MdGraphicEq } from 'react-icons/md'
 import AddProduct from "./addnew";
 import { useSelector } from "react-redux";
 import axios from "axios";
@@ -23,7 +25,7 @@ function Products() {
     const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
 
-    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '',  });
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', });
 
     const [openPrice, setOpenPrice] = useState({ price: 0, new_price: 0, id: '' });
     const { refresh } = useSelector(e => e.product);
@@ -90,6 +92,22 @@ function Products() {
                                                     </MenuItem>
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true })}>
                                                         <FaPencilAlt className="mr-[10px]" /> Tahrirlash
+                                                    </MenuItem>
+                                                    {!e?.bonus ? <MenuItem className="flex items-center" onClick={() => setOpenBonusAdd(e?.id)}>
+                                                        <TbGift className="mr-[10px]" /> Bonus qo'shish
+                                                    </MenuItem> :
+                                                        <MenuItem className="flex items-center" onClick={() => setOpenBonusRemove(e?.id)}>
+                                                            <TbGiftOff className="mr-[10px]" /> Bonus qo'shish
+                                                        </MenuItem>
+                                                    }
+                                                    <MenuItem className="flex items-center" onClick={() => setOpenPrice({ id: e?.id, price: e?.old_price ? e?.old_price : e?.price, new_price: e?.old_price ? e?.price : 0 })}>
+                                                        <FaMoneyBill className="mr-[10px]" /> Yangi narx belgilash
+                                                    </MenuItem>
+                                                    <MenuItem className="flex items-center" onClick={() => setOpenProductStat(e?.id)}>
+                                                        <MdGraphicEq className="mr-[10px]" /> Statistika
+                                                    </MenuItem>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, del: true })}>
+                                                        <FaTrash className="mr-[10px]" /> O'chirish
                                                     </MenuItem>
                                                 </MenuList>
                                             </Menu>

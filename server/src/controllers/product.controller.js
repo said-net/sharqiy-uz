@@ -111,20 +111,20 @@ module.exports = {
         }
     },
     getAllProductsToAdmin: async (req, res) => {
-        const $products = await productModel.find()
+        const $products = await productModel.find({ hidden: false })
         const $modlist = [];
         $products.forEach(p => {
             $modlist.push({
                 ...p._doc,
                 id: p._id,
-                image: SERVER_LINK+p?.images[0],
+                image: SERVER_LINK + p?.images[0],
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
                 value: p.value - p.solded,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                 bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                 bonus_count: p.bonus ? p.bonus_count : 0,
                 bonus_given: p.bonus ? p.bonus_given : 0,
-                category:p?.category
+                category: p?.category
             });
         });
         res.send({
@@ -322,7 +322,7 @@ module.exports = {
                 msg: "LINK O'zgartirildi!"
             })
         } else {
-            const $products = await productModel.find({ category: id }).populate('category');
+            const $products = await productModel.find({ category: id, hidden: false }).populate('category');
             const $modlist = [];
             $products.forEach(p => {
                 $modlist.push({
@@ -353,7 +353,7 @@ module.exports = {
     },
     // 
     getVideos: async (req, res) => {
-        const $videos = await productModel.find();
+        const $videos = await productModel.find({hidden: false});
         const $modded = [];
         $videos.forEach(p => {
             $modded.push({
