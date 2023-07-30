@@ -7,6 +7,7 @@ const router = require('./router');
 const app = express();
 require('mongoose').connect(MONGO_URI);
 require('./controllers/boss.controller').default();
+require('./controllers/setting.controller').default();
 app.use(cors());
 app.use(express.json());
 app.use(file());

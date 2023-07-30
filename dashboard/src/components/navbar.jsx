@@ -4,6 +4,7 @@ import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
+import { FaGear } from "react-icons/fa6";
 function Navbar() {
     const { phone, name } = useSelector(e => e.auth);
     // 
@@ -66,6 +67,11 @@ function Navbar() {
                                 <FaUsers className="mr-[10px]" />
                                 Operatorlar
                                 {pathname === '/operators' && <FaCaretLeft />}
+                            </MenuItem>
+                            <MenuItem onClick={() => nv('/settings')} className="flex items-center justify-start">
+                                <FaGear className="mr-[10px]" />
+                                Sozlamalar
+                                {pathname === '/settings' && <FaCaretLeft />}
                             </MenuItem>
                             <div className="w-full h-[1px] bg-blue-gray-200"></div>
                             <MenuItem onClick={LogOut} className="flex items-center justify-start text-red-400">
