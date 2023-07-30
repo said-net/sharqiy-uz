@@ -124,6 +124,7 @@ module.exports = {
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
                 for_admins: p?.for_admins,
                 value: p.value - p.solded,
+                old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
                 sold_price: p?.price + p?.for_admins + $settings[0].for_operators,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                 bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
@@ -270,6 +271,7 @@ module.exports = {
                 original_price: 0,
                 price: $product?.price + $product?.for_admins + $settings[0].for_operators,
                 value: $product.value - $product.solded,
+                old_price: $product?.old_price ? $product?.old_price + $product?.for_admins + $settings[0].for_operators : 0,
                 bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
                 bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                 bonus_count: $product.bonus ? $product.bonus_count : 0,
@@ -296,7 +298,7 @@ module.exports = {
     // 
     getSearch: async (req, res) => {
         const { prefix } = req.params;
-        const $products = await productModel.find().populate();
+        const $products = await productModel.find({ hidden: false }).populate();
         const $modlist = [];
         const $settings = await settingModel.find();
 
@@ -309,6 +311,7 @@ module.exports = {
                     original_price: 0,
                     price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p.value - p.solded,
+                    old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
                     bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                     bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     category: {
@@ -343,6 +346,7 @@ module.exports = {
                     original_price: 0,
                     price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p.value - p.solded,
+                    old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
                     bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                     bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     category: {

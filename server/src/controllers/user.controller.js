@@ -250,20 +250,22 @@ module.exports = {
         const $modlist = [];
         for (let like of $likes) {
             const p = await productModel.findOne({ _id: like?.product?._id, hidden: false });
-            $modlist.push({
-                ...p._doc,
-                id: p._id,
-                image: SERVER_LINK + p.images[0],
-                original_price: 0,
-                value: p.value - p.solded,
-                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                category: {
-                    id: p.category._id,
-                    title: p.category.title,
-                    image: SERVER_LINK + p.category.image
-                }
-            });
+            if (p) {
+                $modlist.push({
+                    ...p._doc,
+                    id: p._id,
+                    image: SERVER_LINK + p.images[0],
+                    original_price: 0,
+                    value: p.value - p.solded,
+                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    category: {
+                        id: p.category._id,
+                        title: p.category.title,
+                        image: SERVER_LINK + p.category.image
+                    }
+                });
+            }
         }
         res.send({
             ok: true,

@@ -116,11 +116,11 @@ function Products() {
                                         <p className="text-black">{e?.title?.slice(0, 20)}...</p>
                                         <div className="w-full h-[15px]">
                                             {e?.old_price &&
-                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(e?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((e?.old_price - e?.price) / (e?.old_price) * 100).slice(0, 5)}%</span></p>
+                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(e?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((e?.old_price - e?.sold_price) / (e?.old_price) * 100).slice(0, 5)}%</span></p>
                                             }
                                         </div>
                                         {/* NEW PRICE || PRICE */}
-                                        <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(e.price).toLocaleString()} so'm</p>
+                                        <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(e.sold_price).toLocaleString()} so'm</p>
                                         {/* VALUE */}
                                         <p className="text-[12px] text-gray-800">Mavjud: {e?.value} ta</p>
                                         {/* SOLDED */}
