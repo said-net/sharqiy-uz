@@ -5,6 +5,7 @@ export const AuthManager = createSlice({
     initialState: {
         refresh: false,
         name: '',
+        
         phone: '',
         id: ''
     },
