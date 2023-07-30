@@ -132,7 +132,69 @@ function Products() {
                                 )
                             })}
                         </div>
-                        : null
+                        :
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-[5px] lg:grid-cols-5">
+                            {products?.map((e, i) => {
+                                return (
+                                    e?.title?.toLowerCase()?.includes(search?.toLocaleLowerCase()) &&
+                                    <div className="flex items-start justify-start flex-col w-[175px] p-[5px] h-[330px] bg-white rounded shadow-sm hover:shadow-md" key={i}>
+                                        {/* IMAGE */}
+                                        <div className="flex items-start rounded justify-center w-full overflow-hidden relative h-[200px]">
+                                            <img src={e?.image} alt="Rasm" />
+                                            <Menu>
+                                                <MenuHandler>
+                                                    <div className="absolute top-[-5px] right-[-5px]">
+                                                        <IconButton color="gray" className=" rounded-full bg-[#0000] shadow-none">
+                                                            <BsThreeDotsVertical className="text-black text-[20px]" />
+                                                        </IconButton>
+                                                    </div>
+                                                </MenuHandler>
+                                                <MenuList>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
+                                                        <FaPlus className="mr-[10px]" /> Qo'shish
+                                                    </MenuItem>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true })}>
+                                                        <FaPencilAlt className="mr-[10px]" /> Tahrirlash
+                                                    </MenuItem>
+                                                    {!e?.bonus ? <MenuItem className="flex items-center" onClick={() => setOpenBonusAdd(e?.id)}>
+                                                        <TbGift className="mr-[10px]" /> Bonus qo'shish
+                                                    </MenuItem> :
+                                                        <MenuItem className="flex items-center" onClick={() => setOpenBonusRemove(e?.id)}>
+                                                            <TbGiftOff className="mr-[10px]" /> Bonus qo'shish
+                                                        </MenuItem>
+                                                    }
+                                                    <MenuItem className="flex items-center" onClick={() => setOpenPrice({ id: e?.id, price: e?.old_price ? e?.old_price : e?.price, new_price: e?.old_price ? e?.price : 0 })}>
+                                                        <FaMoneyBill className="mr-[10px]" /> Yangi narx belgilash
+                                                    </MenuItem>
+                                                    <MenuItem className="flex items-center" onClick={() => setOpenProductStat(e?.id)}>
+                                                        <MdGraphicEq className="mr-[10px]" /> Statistika
+                                                    </MenuItem>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, del: true })}>
+                                                        <FaTrash className="mr-[10px]" /> O'chirish
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </Menu>
+                                        </div>
+                                        {/* OLD PRICE */}
+                                        <p className="text-black">{e?.title?.slice(0, 20)}...</p>
+                                        <div className="w-full h-[15px]">
+                                            {e?.old_price &&
+                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(e?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((e?.old_price - e?.price) / (e?.old_price) * 100).slice(0, 5)}%</span></p>
+                                            }
+                                        </div>
+                                        {/* NEW PRICE || PRICE */}
+                                        <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(e.price).toLocaleString()} so'm</p>
+                                        {/* VALUE */}
+                                        <p className="text-[12px] text-gray-800">Mavjud: {e?.value} ta</p>
+                                        {/* SOLDED */}
+                                        <p className="text-[12px] text-gray-800">Sotildi: {e?.solded} ta</p>
+                                        {/* BONUS */}
+                                        {!e?.bonus && <p className="text-[14px] border-t w-full">Bonus mavjud emas!</p>}
+                                        {e?.bonus && <p className="text-[14px] border-t w-full">Bonus: {e?.bonus_count} = {e?.bonus_count + e?.bonus_given}</p>}
+                                    </div>
+                                )
+                            })}
+                        </div>
             }
             <DelProduct select={select} setSelect={setSelect} />
             <AddBonus open={openBonusAdd} setOpen={setOpenBonusAdd} />
