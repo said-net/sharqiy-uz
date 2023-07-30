@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input, Option, Select, Spinner, Textarea } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaBox, FaBoxes, FaMoneyBill, FaMoneyCheck, FaYoutube } from 'react-icons/fa'
+import { FaBox, FaBoxes, FaMoneyBill, FaMoneyCheck, FaPercent, FaYoutube } from 'react-icons/fa'
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -14,7 +14,6 @@ function EditProduct({ select, setSelect }) {
     const [newCategory, setNewCategory] = useState('');
     const [disableBtn, setDisableBtn] = useState(false);
     const [categories, setCategories] = useState([]);
-    console.log(select?.category);
     const dp = useDispatch();
 
     useEffect(() => {
@@ -30,8 +29,8 @@ function EditProduct({ select, setSelect }) {
         })
     }, [])
     function Submit() {
-        const { title, category, about, price, original_price, value, video } = select;
-        if (!title || !about || !price || !original_price || !value || !video) {
+        const { title, category, about, price, original_price, value, video, for_admins } = select;
+        if (!title || !about || !price || !original_price || !value || !video, !for_admins) {
             toast.error("Qatorlarni to'ldiring!")
         } else {
             const form = new FormData();
@@ -42,6 +41,7 @@ function EditProduct({ select, setSelect }) {
             form.append('original_price', original_price);
             form.append('value', value);
             form.append('video', video);
+            form.append('for_admins', for_admins);
             axios.put(API_LINK + '/product/edit/' + select?.id, form, {
                 headers: {
                     'x-auth-token': `Bearer ${localStorage.getItem('access')}`
@@ -100,6 +100,10 @@ function EditProduct({ select, setSelect }) {
                                 {/* SOLD PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
                                     <Input label="Sotuv narxi/dona" required onChange={e => !isNaN(e.target.value) && setSelect({ ...select, price: Math.floor(e.target.value.trim()) })} value={select.price} icon={<FaMoneyCheck />} />
+                                </div>
+                                {/* FOR ADMINS */}
+                                <div className="flex items-center justify-center w-full mb-[10px]">
+                                    <Input label="Adminlar uchun" required onChange={e => !isNaN(e.target.value) && setSelect({ ...select, for_admins: Math.floor(e.target.value.trim()) })} value={select.for_admins} icon={<FaPercent />} />
                                 </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">

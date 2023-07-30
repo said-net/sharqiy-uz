@@ -19,7 +19,7 @@ function DelProduct({ select, setSelect }) {
             const { ok, msg } = res.data
             if (ok) {
                 dp(setRefreshProduct())
-                setSelect({ del: false, edit: false, recovery: false });
+                setSelect({ ...select, del: false });
             } else {
                 setMsg({ error: true, msg });
             }
@@ -38,7 +38,7 @@ function DelProduct({ select, setSelect }) {
             const { ok, msg } = res.data
             if (ok) {
                 dp(setRefreshProduct())
-                setSelect({ del: false, edit: false, recovery: false });
+                setSelect({ ...select, del: false });
             } else {
                 setMsg({ error: true, msg });
             }
@@ -60,7 +60,7 @@ function DelProduct({ select, setSelect }) {
                         </p>
                     </DialogBody>
                     <DialogFooter className="w-full">
-                        <Button onClick={() => setSelect({ del: false, edit: false, recovery: false })} className="rounded ml-[10px]" color="orange">Bekor qilish</Button>
+                        <Button onClick={() => setSelect({ ...select, del: false })} className="rounded ml-[10px]" color="orange">Bekor qilish</Button>
                         <Button className="rounded ml-[10px]" color="red" onClick={SubmitDelete}>O'chirish</Button>
                     </DialogFooter>
                 </div>

@@ -25,7 +25,7 @@ function SetNewPrices({ open, setOpen }) {
         })
     }
     return (
-        <Dialog open={open?.id} size="xxl" className="flex items-center justify-center bg-[#1b424a80] backdrop-blur-md">
+        <Dialog open={open?.id !== ''} size="xxl" className="flex items-center justify-center bg-[#1b424a80] backdrop-blur-md">
             <div className="flex items-center justify-start flex-col md:w-[700px] w-[90%] p-[10px] bg-white shadow-lg rounded-md">
                 <DialogHeader className="w-full">
                     <h1 className="text-[20px]">Narxni o'zgartirish</h1>

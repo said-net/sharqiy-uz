@@ -25,7 +25,7 @@ function Products() {
     const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
 
-    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', });
+    const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', recovery: false });
 
     const [openPrice, setOpenPrice] = useState({ price: 0, new_price: 0, id: '' });
     const { refresh } = useSelector(e => e.product);
@@ -71,7 +71,7 @@ function Products() {
                         <p className="capitalize text-blue-gray-200">Mahsulotlar mavjud emas!</p>
                     </div> :
                     !search ?
-                        <div className="grid grid-cols-5 gap-[10px]">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-[5px] lg:grid-cols-5">
                             {products?.map((e, i) => {
                                 return (
                                     <div className="flex items-start justify-start flex-col w-[175px] p-[5px] h-[330px] bg-white rounded shadow-sm hover:shadow-md" key={i}>

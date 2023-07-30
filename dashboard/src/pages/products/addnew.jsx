@@ -1,7 +1,7 @@
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input, List, Option, Select, Spinner, Textarea } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaBox, FaBoxes, FaImages, FaMoneyBill, FaMoneyCheck, FaRegFrown, FaYoutube } from 'react-icons/fa'
+import { FaBox, FaBoxes, FaImages, FaMoneyBill, FaMoneyCheck, FaPercent, FaRegFrown, FaYoutube } from 'react-icons/fa'
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
@@ -10,7 +10,7 @@ function AddProduct({ open, setOpen }) {
     const [msg, setMsg] = useState({ error: false, msg: '' });
     const [categories, setCategories] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
-    const [state, setState] = useState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '' });
+    const [state, setState] = useState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '', for_admins: 0 });
     const [disableBtn, setDisableBtn] = useState(false);
     const dp = useDispatch();
     useEffect(() => {
@@ -37,8 +37,8 @@ function AddProduct({ open, setOpen }) {
     }, [state]);
     //
     function Submit() {
-        const { title, category, images, about, price, original_price, value, video } = state;
-        if (!title || !category || ![...images][0] || !about || !price || !original_price || !value || !video) {
+        const { title, category, images, about, price, original_price, value, video, for_admins } = state;
+        if (!title || !category || ![...images][0] || !about || !price || !original_price || !value || !video, !for_admins) {
             toast.error("Qatorlarni to'ldiring!")
         } else {
             const form = new FormData();
@@ -49,10 +49,11 @@ function AddProduct({ open, setOpen }) {
             form.append('original_price', original_price);
             form.append('value', value);
             form.append('video', video);
+            form.append('for_admins', for_admins);
             [...images].forEach(image => {
                 form.append('images', image)
             });
-            axios.post(API_LINK+'/product/create', form, {
+            axios.post(API_LINK + '/product/create', form, {
                 headers: {
                     'x-auth-token': `Bearer ${localStorage.getItem('access')}`
                 }
@@ -64,9 +65,9 @@ function AddProduct({ open, setOpen }) {
                     toast.success(msg);
                     dp(setRefreshProduct());
                     setOpen(false);
-                    setState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '' });
+                    setState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '', for_admins: '' });
                 }
-            }).catch(()=>{
+            }).catch(() => {
                 toast.error("Aloqani tekshirib qayta urunib ko'ring!")
             })
         }
@@ -121,11 +122,15 @@ function AddProduct({ open, setOpen }) {
                                 <div className="flex items-center justify-center w-full mb-[10px]">
                                     <Input label="Sotuv narxi/dona" required onChange={e => !isNaN(e.target.value) && setState({ ...state, price: Math.floor(e.target.value.trim()) })} value={state.price} icon={<FaMoneyCheck />} />
                                 </div>
+                                {/* SOLD PRICE */}
+                                <div className="flex items-center justify-center w-full mb-[10px]">
+                                    <Input label="Adminlar uchun" required onChange={e => !isNaN(e.target.value) && setState({ ...state, for_admins: Math.floor(e.target.value.trim()) })} value={state.for_admins} icon={<FaPercent />} />
+                                </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
                                     <Input label="Nechta mahsulot mavjud" required onChange={e => !isNaN(e.target.value) && setState({ ...state, value: Math.floor(e.target.value.trim()) })} value={state.value} icon={<FaBoxes />} />
                                 </div>
-                                {/* VALUE */}
+                                {/* VIDEO */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
                                     <Input label="Youtube link" required onChange={e => setState({ ...state, video: e.target.value.trim() })} value={state.video} icon={<FaYoutube />} />
                                 </div>

@@ -6,6 +6,7 @@ const schema = new Schema({
     video: String,
     price: Number,
     value: Number,
+    for_admins: Number,
     category: {
         type: Types.ObjectId,
         ref: 'Category'

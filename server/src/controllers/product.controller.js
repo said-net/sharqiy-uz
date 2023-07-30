@@ -6,9 +6,9 @@ const valuehistoryModel = require("../models/valuehistory.model");
 
 module.exports = {
     create: (req, res) => {
-        const { title, about, price, original_price, video, category, value } = req.body;
+        const { title, about, price, original_price, video, category, value, for_admins } = req.body;
         const images = req?.files?.images[0] ? [...req?.files?.images] : [req?.files?.images];
-        if (!title || !about || !price || !video || !category || !original_price || !value) {
+        if (!title || !about || !price || !video || !category || !original_price || !value || !for_admins) {
             res.send({
                 ok: false,
                 msg: "Qatorlarni to'ldiring!"
@@ -39,6 +39,7 @@ module.exports = {
                 category,
                 images: imgs,
                 value,
+                for_admins,
                 created: moment.now() / 1000
             }).save().then(($saved) => {
                 new valuehistoryModel({
