@@ -28,7 +28,10 @@ module.exports = {
                         product: id,
                         name,
                         phone,
-                        region
+                        region,
+                        month: new Date().getMonth(),
+                        day: new Date().getDate(),
+                        year: new Date().getFullYear()
                     }).save().then(() => {
                         res.send({
                             ok: true,

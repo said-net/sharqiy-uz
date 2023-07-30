@@ -183,7 +183,7 @@ function Products() {
                                             }
                                         </div>
                                         {/* NEW PRICE || PRICE */}
-                                        <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(e.price).toLocaleString()} so'm</p>
+                                        <p className="w-full p-[0_2%] font-bold text-[16px] text-black">{Number(e.sold_price).toLocaleString()} so'm</p>
                                         {/* VALUE */}
                                         <p className="text-[12px] text-gray-800">Mavjud: {e?.value} ta</p>
                                         {/* SOLDED */}

@@ -3,6 +3,7 @@ const productModel = require("../models/product.model");
 const moment = require("moment/moment");
 const { SERVER_LINK } = require("../configs/env");
 const valuehistoryModel = require("../models/valuehistory.model");
+const settingModel = require("../models/setting.model");
 
 module.exports = {
     create: (req, res) => {
@@ -114,13 +115,16 @@ module.exports = {
     getAllProductsToAdmin: async (req, res) => {
         const $products = await productModel.find({ hidden: false })
         const $modlist = [];
+        const $settings = await settingModel.find();
         $products.forEach(p => {
             $modlist.push({
                 ...p._doc,
                 id: p._id,
                 image: SERVER_LINK + p?.images[0],
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
+                for_admins: p?.for_admins,
                 value: p.value - p.solded,
+                sold_price: p?.price + p?.for_admins + $settings[0].for_operators,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                 bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                 bonus_count: p.bonus ? p.bonus_count : 0,
@@ -254,6 +258,7 @@ module.exports = {
     // 
     getOne: async (req, res) => {
         const { id } = req.params;
+        const $settings = await settingModel.find();
         try {
             const $product = await productModel.findById(id).populate('category', 'title background image');
             const product = {
@@ -263,6 +268,7 @@ module.exports = {
                     return SERVER_LINK + e
                 })],
                 original_price: 0,
+                price: $product?.price + $product?.for_admins + $settings[0].for_operators,
                 value: $product.value - $product.solded,
                 bonus: $product.bonus && $product.bonus_duration > moment.now() / 1000,
                 bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
@@ -292,6 +298,8 @@ module.exports = {
         const { prefix } = req.params;
         const $products = await productModel.find().populate();
         const $modlist = [];
+        const $settings = await settingModel.find();
+
         $products.forEach(p => {
             if (p?.title?.toLowerCase()?.includes(prefix?.toLowerCase()) || p?.about?.toLowerCase()?.includes(prefix?.toLowerCase())) {
                 $modlist.push({
@@ -299,6 +307,7 @@ module.exports = {
                     id: p._id,
                     image: SERVER_LINK + p.images[0],
                     original_price: 0,
+                    price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p.value - p.solded,
                     bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                     bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
@@ -317,6 +326,7 @@ module.exports = {
     },
     getProductsByCategory: async (req, res) => {
         const { id } = req.params;
+        const $settings = await settingModel.find();
         if (!id || id.length !== 24) {
             res.send({
                 ok: false,
@@ -329,19 +339,15 @@ module.exports = {
                 $modlist.push({
                     ...p._doc,
                     id: p._id,
-                    // images: [...p.images.map(e => {
-                    //     return SERVER_LINK + e
-                    // })],
                     image: SERVER_LINK + p.images[0],
                     original_price: 0,
-                    // created: moment.unix(p.created).format('YYYY-MM-DD'),
+                    price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p.value - p.solded,
                     bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                     bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     category: {
                         id: p.category._id,
                         title: p.category.title,
-                        // background: p.category.background,
                         image: SERVER_LINK + p.category.image
                     }
                 });
@@ -354,7 +360,7 @@ module.exports = {
     },
     // 
     getVideos: async (req, res) => {
-        const $videos = await productModel.find({hidden: false});
+        const $videos = await productModel.find({ hidden: false });
         const $modded = [];
         $videos.forEach(p => {
             $modded.push({
