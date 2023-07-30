@@ -6,7 +6,7 @@ import { FaBoxes, FaMoneyBill, FaMoneyCheck, FaShoppingCart } from 'react-icons/
 import { FaClock, FaList, FaMoneyBillTransfer, FaMoneyBillTrendUp, FaPhone, FaUsers, FaUsersGear } from 'react-icons/fa6'
 import { TbReload, TbTruckDelivery } from 'react-icons/tb'
 import Formatter from "../../components/formatter";
-import {GiCash} from 'react-icons/gi'
+import { GiCash } from 'react-icons/gi'
 function Dashboard() {
     const [filter, setFilter] = useState('all');
     const [isLoad, setIsLoad] = useState(false);
@@ -136,23 +136,14 @@ function Dashboard() {
                             <h1 className="text-[25px]"><Formatter value={data?.rejected} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
                         </div>
                     </div>
-                    {/* ADMINLAR */}
-                    <div className={cNameType}>
-                        <div className={cNameIcon + 'bg-brown-400'}>
-                            <FaUsersGear className="text-white" />
-                        </div>
-                        <div className="flex items-start justify-start flex-col">
-                            <p className="text-blue-gray-500">Adminlar</p>
-                            <h1 className="text-[25px]"><Formatter value={data?.admins} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
-                        </div>
-                    </div>
-                    {/* BUYURTMACHILAR */}
+
+                    {/* BUYURTMACHILAR & ADMINLAR */}
                     <div className={cNameType}>
                         <div className={cNameIcon + 'bg-lime-400'}>
                             <FaUsers className="text-white" />
                         </div>
                         <div className="flex items-start justify-start flex-col">
-                            <p className="text-blue-gray-500">Foydalanuvchilar</p>
+                            <p className="text-blue-gray-500">Adminlar & Foydalanuvchilar</p>
                             <h1 className="text-[25px]"><Formatter value={data?.users} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
                         </div>
                     </div>

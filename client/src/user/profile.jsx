@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import NotAuth from "./notauth";
-import { FaCalendar, FaCartShopping, FaGear, FaGears, FaHeart, FaLocationDot, FaPhone, FaRegHeart, FaTelegram, FaUser } from 'react-icons/fa6'
+import { FaCalendar, FaCartShopping, FaGear, FaHeart, FaLocationDot, FaPhone, FaTelegram, FaUser } from 'react-icons/fa6'
 import { BiLogOut } from 'react-icons/bi'
 import { setInformations, setRefreshAuth } from "../managers/authManager";
 import Regions from '../components/regions.json'
@@ -154,7 +154,7 @@ function Profile() {
                                                 {e?.status === 'reject' && <Chip className="rounded" color="red" value={'Rad etildi'} />}
                                                 {e?.status === 'pending' && <Chip className="rounded" color="blue" value={'Kutulmoqda'} />}
                                                 {e?.status === 'success' && <Chip className="rounded" color="cyan" value={'Yuborildi'} />}
-                                                {e?.status === 'success' && <Chip className="rounded" color="green" value={'Yetkazildi'} />}
+                                                {e?.status === 'delivered' && <Chip className="rounded" color="green" value={'Yetkazildi'} />}
                                             </div>
                                         )
                                     })}
@@ -181,8 +181,8 @@ function Profile() {
                                                     </div>
                                                     <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
                                                         <p className="w-full p-[0_2%] my-[10px]">
-                                                            {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
-                                                            {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                                            {p?.title?.slice(0, 15) + '...'}
+
                                                         </p>
                                                         {p?.old_price &&
                                                             <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>
@@ -205,8 +205,8 @@ function Profile() {
                                                     </div>
                                                     <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
                                                         <p className="w-full p-[0_2%] my-[10px]">
-                                                            {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
-                                                            {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                                            {p?.title?.slice(0, 15) + '...'}
+
                                                         </p>
                                                         {p?.old_price &&
                                                             <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>

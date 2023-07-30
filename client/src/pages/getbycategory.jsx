@@ -96,8 +96,8 @@ function GetProductsByCategory() {
                                         </div>
                                         <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
                                             <p className="w-full p-[0_2%] my-[10px]">
-                                                {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
-                                                {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                                {p?.title?.slice(0, 15) + '...'}
+                                                
                                             </p>
                                             {p?.old_price &&
                                                 <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>
@@ -122,8 +122,8 @@ function GetProductsByCategory() {
                                         </div>
                                         <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
                                             <p className="w-full p-[0_2%] my-[10px]">
-                                                {p.title?.length > 20 && p?.title?.slice(0, 20) + '...'}
-                                                {p.title?.length < 20 && p?.title?.slice(0, 20)}
+                                                {p?.title?.slice(0, 15) + '...'}
+                                                
                                             </p>
                                             {p?.old_price &&
                                                 <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(p?.old_price).toLocaleString()} so'm</s> -<span className="text-[red]">{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></p>

@@ -5,6 +5,9 @@ const { BOSS_SECRET } = require("../configs/env");
 const categoryModel = require("../models/category.model");
 const productModel = require("../models/product.model");
 const valuehistoryModel = require("../models/valuehistory.model");
+const shopModel = require("../models/shop.model");
+const userModel = require("../models/user.model");
+const operatorModel = require("../models/operator.model");
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -52,40 +55,46 @@ module.exports = {
         const { date } = req.params;
         if (date === 'all') {
             const categories = await categoryModel.find().countDocuments()
-            const products = await productModel.find().countDocuments()
-            const valueHistory = await valuehistoryModel.find();
-            const shopHistory = 1690;
-            const delivered = 1250;
+            const products = await productModel.find()
+            // 
+            let shopHistory = 0;
+            let delivered = 0;
+            let rejected = 0;
+            let sales = 0;
+            let profit = 0;
+            const shp = await shopModel.find();
+            shp.forEach(e => {
+                if (e.status == 'delivered') {
+                    delivered++;
+                    sales+=(e?.count * e?.price);
+                    shopHistory++;
+                    profit += (e?.count * e?.price) - (e?.for_admin + e?.for_operator + e?.for_ref)
+                }
+            })
             const waiting = shopHistory - delivered;
-            const users = 3000
-            const admins = 1250
-            const operators = 5;
-            const deposit = 127_000_000;
-            const sales = 257_000_000;
-            const profit = sales - deposit;
-            const flows = 95_000;
-            const rejected = 65;
+            // 
+            const users = await userModel.find().countDocuments();
+            const operators = await operatorModel.find().countDocuments();
+            // 
+            let deposit = 0;
+            // 
+            products?.forEach(e => {
+                deposit += e.value * e?.original_price
+            })
             const adminsBalance = 12_000_000;
             const operatorsBalance = 7_500_000
-            let commodity = 0;
-            valueHistory.forEach(v => {
-                commodity += v.value;
-            })
             res.send({
                 ok: true,
                 data: {
                     categories,
-                    products,
-                    commodity,
+                    products: products?.length,
                     shops: shopHistory,
                     delivered,
                     waiting,
                     users,
-                    admins,
                     operators,
                     deposit,
                     profit,
-                    flows,
                     sales,
                     rejected,
                     adminsBalance,
