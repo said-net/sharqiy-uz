@@ -1,4 +1,4 @@
-const {default: mongoose, Schema} = require('mongoose');
+const { default: mongoose, Schema } = require('mongoose');
 const schema = new Schema({
     name: String,
     phone: {
@@ -7,6 +7,10 @@ const schema = new Schema({
     },
     password: String,
     access: String,
+    balance: {
+        type: Number,
+        default: 0
+    },
     banned: {
         type: Boolean,
         default: false

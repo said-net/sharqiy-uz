@@ -18,6 +18,7 @@ module.exports = {
         } else {
             try {
                 const $product = await productModel.findById(id);
+                const $orders = await shopModel.find();
                 if (!$product || $product.hidden) {
                     res.send({
                         ok: false,
@@ -27,6 +28,7 @@ module.exports = {
                     new shopModel({
                         product: id,
                         name,
+                        id: $orders?.length + 1,
                         phone,
                         region,
                         month: new Date().getMonth(),

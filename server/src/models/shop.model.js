@@ -9,14 +9,32 @@ const schema = new Schema({
     month: Number,
     year: Number,
     day: Number,
-    price: Number,
-    count: Number,
+    price: {
+        type: Number,
+        default: 0
+    },
+    count: {
+        type: Number,
+        default: 0
+    },
     region: Number,
     phone: String,
-    flow: Number,
-    for_operator: Number,
-    for_admin: Number,
-    for_ref: Number,
+    flow: {
+        type: Number,
+        default: 0
+    },
+    for_operator: {
+        type: Number,
+        default: 0
+    },
+    for_admin: {
+        type: Number,
+        default: 0
+    },
+    for_ref: {
+        type: Number,
+        default: 0
+    },
     bonus: {
         type: Number,
         default: 0

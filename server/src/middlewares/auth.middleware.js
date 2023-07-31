@@ -1,8 +1,9 @@
 const JWT = require('jsonwebtoken');
-const { BOSS_SECRET, SERVER_LINK, USER_SECRET } = require('../configs/env');
+const { BOSS_SECRET, SERVER_LINK, USER_SECRET, OPERATOR_SECRET } = require('../configs/env');
 const adminModel = require('../models/boss.model');
 const userModel = require('../models/user.model');
 const moment = require('moment/moment');
+const operatorModel = require('../models/operator.model');
 module.exports = {
     boss: (req, res, next) => {
         const token = req.headers['x-auth-token'];
@@ -72,6 +73,43 @@ module.exports = {
                     } else {
                         const { name, phone, created, balance, location, telegram } = $user;
                         req.user = { id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), balance, location, telegram };
+                        next();
+                    }
+                }
+            });
+        }
+    },
+    operator: (req, res, next) => {
+        const token = req.headers['x-auth-token'];
+        if (!token || !token.startsWith('Bearer ')) {
+            res.send({
+                ok: false,
+                msg: "Avtorizatsiya qiling!"
+            });
+        } else {
+            const signature = token.replace('Bearer ', '');
+            JWT.verify(signature, OPERATOR_SECRET, async (err, data) => {
+                if (err) {
+                    res.send({
+                        ok: false,
+                        msg: "Signatura hato yoki avtorizatsiya vaqti tugagan!"
+                    });
+                } else {
+                    const { id } = data;
+                    const $operator = await operatorModel.findById(id);
+                    if (!$operator) {
+                        res.send({
+                            ok: false,
+                            msg: "Operator topilmadi!"
+                        });
+                    } else if ($operator.access !== signature) {
+                        res.send({
+                            ok: false,
+                            msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
+                        });
+                    } else {
+                        const { name, phone, balance } = $operator;
+                        req.operator = { id, name, phone, balance };
                         next();
                     }
                 }

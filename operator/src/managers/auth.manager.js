@@ -5,7 +5,7 @@ export const AuthManager = createSlice({
     initialState: {
         refresh: false,
         name: '',
-        
+        balance: 0,
         phone: '',
         id: ''
     },
@@ -14,10 +14,11 @@ export const AuthManager = createSlice({
             state.refresh = !state.refresh;
         },
         setInfoAuth: (state, { payload }) => {
-            const { name, phone, image, id } = payload;
+            const { name, phone, id, balance } = payload;
             state.name = name;
             state.phone = phone;
             state.id = id;
+            state.balance = balance;
         }
     },
 });

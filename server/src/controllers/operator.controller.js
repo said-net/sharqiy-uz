@@ -1,6 +1,10 @@
 const md5 = require("md5");
 const operatorModel = require("../models/operator.model");
 const { phone: pv } = require('phone');
+const { OPERATOR_SECRET, SERVER_LINK } = require("../configs/env");
+const shopModel = require("../models/shop.model");
+const settingModel = require("../models/setting.model");
+
 module.exports = {
     create: (req, res) => {
         const { name, phone, password } = req.body;
@@ -111,6 +115,117 @@ module.exports = {
                 ok: true,
                 msg: "Operator blokdan olindi!"
             });
+        });
+    },
+    // 
+    // 
+    // 
+    signIn: async (req, res) => {
+        const { phone, password } = req.body;
+        if (!phone || !password) {
+            res.send({
+                ok: false,
+                msg: "Qatorlarni to'ldiring!"
+            });
+        } else {
+            const $operator = await operatorModel.findOne({ phone: phone, password: md5(password) });
+            if (!$operator) {
+                res.send({
+                    ok: false,
+                    msg: "Raqam yoki parol hato kiritildi!"
+                });
+            } else {
+                const token = require('jsonwebtoken').sign({ id: $operator._id }, OPERATOR_SECRET);
+                $operator.set({ access: token }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Kuting...",
+                        token
+                    });
+                });
+            }
+        }
+    },
+    verifySession: (req, res) => {
+        res.send({
+            ok: true,
+            data: req.operator
+        })
+    },
+    getNewOrders: async (req, res) => {
+        const $orders = await shopModel.find({ status: 'pending' }).populate('product')
+        const $modded = [];
+        const $settings = await settingModel.find();
+        $orders.forEach((order) => {
+            if (order.status === 'pending' && !order.operator) {
+                $modded.push({
+                    ...order._doc,
+                    id: order._id,
+                    image: SERVER_LINK + order.product.images[0],
+                    comming_pay: $settings[0]?.for_operators
+                });
+            }
+        });
+        res.send({
+            ok: true,
+            data: $modded
+        });
+    },
+    takeOrder: async (req, res) => {
+        const { id } = req?.params;
+        const $order = await shopModel.findById(id);
+        if ($order?.operator) {
+            res.send({
+                ok: false,
+                msg: "Ushbu buyurtma boshqa operator tomonidan qabul qilingan!"
+            });
+        } else {
+            const $myOrder = await shopModel.findOne({
+                operator: req.operator.id, status: 'pending'
+            });
+            if ($myOrder) {
+                res.send({
+                    ok: false,
+                    msg: "Sizda hali aloqaga chiqilmagan buyurtma mavjud!"
+                });
+            } else {
+                $order.set({ operator: req.operator.id }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Buyurtma egallanganlar bo'limiga o'tkazildi!"
+                    });
+                });
+            }
+        }
+    },
+    getMyOrders: async (req, res) => {
+        const $orders = await shopModel.find({ operator: req.operator.id }).populate('product')
+        const myOrders = [];
+        const $settings = await settingModel.find();
+        $orders.forEach(e => {
+            myOrders.push({
+                ...e?._doc,
+                image: SERVER_LINK + e?.product?.images[0],
+                comming_pay: $settings[0]?.for_operators
+            });
+        });
+        res.send({
+            ok: true,
+            data: myOrders
+        })
+    },
+    getInfoOrder: async (req, res) => {
+        const { id } = req.params;
+        const $order = await shopModel.findById(id).populate('product');
+        const $settings = await settingModel.find();
+        const order = {
+            ...$order._doc,
+            image: SERVER_LINK + $order?.product?.images[0],
+            for_operators: $settings[0].for_operators
+        }
+        res.send({
+            ok: true,
+            data: order
         });
     }
 }
