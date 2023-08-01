@@ -54,7 +54,7 @@ function MyOrders() {
                                 <div className="flex items-center justify-center">
                                     {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
                                     }
-                                    {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="blue" value="Kutulmoqda" />
+                                    {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
                                     }
                                     {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Yuborilgan" />
                                     }

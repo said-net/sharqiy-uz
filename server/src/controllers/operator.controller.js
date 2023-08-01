@@ -4,7 +4,7 @@ const { phone: pv } = require('phone');
 const { OPERATOR_SECRET, SERVER_LINK } = require("../configs/env");
 const shopModel = require("../models/shop.model");
 const settingModel = require("../models/setting.model");
-
+const moment = require("moment");
 module.exports = {
     create: (req, res) => {
         const { name, phone, password } = req.body;
@@ -203,11 +203,14 @@ module.exports = {
         const myOrders = [];
         const $settings = await settingModel.find();
         $orders.forEach(e => {
-            myOrders.push({
-                ...e?._doc,
-                image: SERVER_LINK + e?.product?.images[0],
-                comming_pay: $settings[0]?.for_operators
-            });
+            if (e?.status !== 'wait') {
+                myOrders.push({
+                    _id: e?._id,
+                    ...e?._doc,
+                    image: SERVER_LINK + e?.product?.images[0],
+                    comming_pay: $settings[0]?.for_operators
+                });
+            }
         });
         res.send({
             ok: true,
@@ -216,16 +219,65 @@ module.exports = {
     },
     getInfoOrder: async (req, res) => {
         const { id } = req.params;
-        const $order = await shopModel.findById(id).populate('product');
-        const $settings = await settingModel.find();
-        const order = {
-            ...$order._doc,
-            image: SERVER_LINK + $order?.product?.images[0],
-            for_operators: $settings[0].for_operators
+        console.log(id);
+        try {
+            const $order = await shopModel.findById(id).populate('product');
+            const $settings = await settingModel.find();
+            const order = {
+                ...$order._doc,
+                image: SERVER_LINK + $order?.product?.images[0],
+                for_operators: $settings[0].for_operators,
+                bonus: $order?.product?.bonus && $order?.product?.bonus_duration > moment.now() / 1000,
+                bonus_duration: $order?.product?.bonus ? moment.unix($order?.product?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                bonus_count: $order?.product?.bonus ? $order?.product?.bonus_count : 0,
+                bonus_given: $order?.product?.bonus ? $order?.product?.bonus_given : 0,
+            }
+            res.send({
+                ok: true,
+                data: order
+            });
+        } catch {
+            res.send({
+                ok: false,
+                msg: "Nimadir xato 2 daqiqdan so'ng urunib ko'ring!"
+            })
         }
-        res.send({
-            ok: true,
-            data: order
-        });
+    },
+    setStatus: async (req, res) => {
+        const { id } = req.params;
+        const { bonus_gived: bonus, about, city, region, status, count, phone, name, price } = req.body;
+        console.log(status);
+        const $order = await shopModel.findById(id);
+        if (status === 'reject' && $order?.status === 'pending') {
+            $order.set({
+                status: 'reject',
+                about, city, region, bonus, count, phone, name, price
+            }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Bekor qilindi!"
+                });
+            });
+        } else if (status === 'wait' && $order?.status === 'pending') {
+            $order.set({
+                status: 'wait',
+                about, city, region, bonus, count, phone, name
+            }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Keyinroqqa qoldirildi!"
+                });
+            });
+        } else if (status === 'success' && $order?.status === 'pending') {
+            $order.set({
+                status: 'success',
+                about, city, region, bonus, count, phone, name, price
+            }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Yetkazish bo'limiga yuborildi!"
+                });
+            });
+        }
     }
 }

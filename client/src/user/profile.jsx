@@ -86,7 +86,6 @@ function Profile() {
         }).then((res) => {
             const { ok, data } = res.data;
             setLoadLikes(true);
-            console.log(ok);
             if (ok) {
                 setProducts(data);
             }
@@ -153,6 +152,7 @@ function Profile() {
                                                 <p>{e?.count ? e?.count : 0} ta</p>
                                                 {e?.status === 'reject' && <Chip className="rounded" color="red" value={'Rad etildi'} />}
                                                 {e?.status === 'pending' && <Chip className="rounded" color="blue" value={'Kutulmoqda'} />}
+                                                {e?.status === 'wait' && <Chip className="rounded" color="orange" value={'Qayta aloqa'} />}
                                                 {e?.status === 'success' && <Chip className="rounded" color="cyan" value={'Yuborildi'} />}
                                                 {e?.status === 'delivered' && <Chip className="rounded" color="green" value={'Yetkazildi'} />}
                                             </div>

@@ -5,10 +5,16 @@ const schema = new Schema({
         ref: 'Product'
     },
     id: Number,
+    from: String,
     name: String,
+    about: String,
     month: Number,
     year: Number,
     day: Number,
+    bonus: {
+        type: Number,
+        defaul: 0
+    },
     price: {
         type: Number,
         default: 0
@@ -18,6 +24,7 @@ const schema = new Schema({
         default: 0
     },
     region: Number,
+    city: Number,
     phone: String,
     flow: {
         type: Number,
@@ -48,6 +55,6 @@ const schema = new Schema({
     status: {
         type: String,
         default: 'pending'
-    }// reject, pending, sended, recived,
+    }// reject, pending, sended, delivered, waiting 
 })
 module.exports = model('ShopHistory', schema)

@@ -1,10 +1,11 @@
 const moment = require("moment");
 const productModel = require("../models/product.model");
 const shopModel = require("../models/shop.model");
+const userModel = require("../models/user.model");
 
 module.exports = {
     create: async (req, res) => {
-        const { id, name, phone, region } = req.body;
+        const { id, name, phone, region, flow } = req.body;
         if (!id) {
             res.send({
                 ok: false,
@@ -25,11 +26,14 @@ module.exports = {
                         msg: "Ushbu mahsulot mavjud emas!"
                     });
                 } else {
+                    const $user = await userModel.findOne({ phone });
                     new shopModel({
                         product: id,
+                        from: $user ? $user?._id : '',
                         name,
                         id: $orders?.length + 1,
                         phone,
+                        flow: flow ? flow : '',
                         region,
                         month: new Date().getMonth(),
                         day: new Date().getDate(),

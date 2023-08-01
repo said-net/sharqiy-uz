@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from "./pages/dashboard/dashboard";
 import Operator from "./pages/operator/operator";
 import Settings from "./pages/settings/settings";
+import NewOrders from "./pages/neworders/neworders";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -45,6 +46,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/operators" element={<Operator />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/new-orders" element={<NewOrders />} />
         </Routes>
         {/* <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" /> */}
         <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />

@@ -1,10 +1,10 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
-import { FaBars, FaBell, FaBox, FaCaretLeft, FaComment, FaList, FaUsers } from "react-icons/fa";
+import { FaBars, FaBell, FaBox, FaCaretLeft, FaComment, FaList, FaShoppingCart, FaUsers } from "react-icons/fa";
 import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaGear } from "react-icons/fa6";
+import { FaClockRotateLeft, FaGear } from "react-icons/fa6";
 function Navbar() {
     const { phone, name } = useSelector(e => e.auth);
     // 
@@ -30,9 +30,23 @@ function Navbar() {
                 </div>
                 <div className="flex items-center justify-between w-[200px]">
                     <div className="flex items-center justify-center relative">
-                        <IconButton color="orange" className="rounded-full text-[20px]">
-                            <FaBell />
-                        </IconButton>
+                        <Menu>
+                            <MenuHandler>
+                                <IconButton color="orange" className="rounded-full text-[20px]">
+                                    <FaBell />
+                                </IconButton>
+                            </MenuHandler>
+                            <MenuList>
+                                <MenuItem className="flex items-center" onClick={() => nv('/new-orders')}>
+                                    <FaShoppingCart className="mr-[10px]" />
+                                    Buyurtmalar
+                                </MenuItem>
+                                <MenuItem className="flex items-center" onClick={() => nv('/wait-orders')}>
+                                    <FaClockRotateLeft className="mr-[10px]" />
+                                    Eslatmalar
+                                </MenuItem>
+                            </MenuList>
+                        </Menu>
                         <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" />
                     </div>
                     <div className="flex items-center justify-center relative">
