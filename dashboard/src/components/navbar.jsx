@@ -51,13 +51,13 @@ function Navbar() {
                                 </MenuItem>
                             </MenuList>
                         </Menu>
-                        <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" />
+                        {/* <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" /> */}
                     </div>
                     <div className="flex items-center justify-center relative">
                         <IconButton color="light-blue" className="rounded-full text-[20px]">
                             <FaComment />
                         </IconButton>
-                        <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" />
+                        {/* <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" /> */}
                     </div>
                     <Menu>
                         <MenuHandler>

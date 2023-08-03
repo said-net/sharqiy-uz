@@ -115,6 +115,40 @@ module.exports = {
                     operatorsBalance
                 }
             });
+        } else {
+            const year = +date?.split('-')[0];
+            const month = +date?.split('-')[1];
+            // 
+            let shopHistory = 0;
+            let delivered = 0;
+            let rejected = 0;
+            let sales = 0;
+            let profit = 0;
+            const shp = await shopModel.find({ year, month: month - 1 });
+            shp.forEach(e => {
+                if (e.status === 'delivered') {
+                    delivered++;
+                    sales += e?.price;
+                    shopHistory++;
+                    profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
+                } else if (e?.status === 'pending' || e?.status === 'success' || e?.status === 'wait') {
+                    shopHistory++
+                } else if (e?.status === 'reject') {
+                    rejected++;
+                }
+            })
+            const waiting = shopHistory - delivered;
+            res.send({
+                ok: true,
+                data: {
+                    shops: shopHistory,
+                    delivered,
+                    waiting,
+                    profit,
+                    sales,
+                    rejected,
+                }
+            });
         }
     },
     getNewOrders: async (req, res) => {
