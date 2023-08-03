@@ -150,11 +150,12 @@ function Profile() {
                                                     <p>{e?.product?.title?.slice(0, 12)}...</p>
                                                 </div>
                                                 <p>{e?.count ? e?.count : 0} ta</p>
-                                                {e?.status === 'reject' && <Chip className="rounded" color="red" value={'Rad etildi'} />}
-                                                {e?.status === 'pending' && <Chip className="rounded" color="blue" value={'Kutulmoqda'} />}
-                                                {e?.status === 'wait' && <Chip className="rounded" color="orange" value={'Qayta aloqa'} />}
-                                                {e?.status === 'success' && <Chip className="rounded" color="cyan" value={'Yuborildi'} />}
-                                                {e?.status === 'delivered' && <Chip className="rounded" color="green" value={'Yetkazildi'} />}
+                                                {e?.status === 'reject' && <Chip className="font-light text-[11px] rounded" color="red" value={'Rad etildi'} />}
+                                                {(e?.status === 'pending' || e?.status === 'wait') && <Chip className="font-light text-[11px] rounded" color="blue" value={'Kutulmoqda'} />}
+                                                {e?.status === 'wait' && <Chip className="font-light text-[11px] rounded" color="orange" value={'Qayta aloqa'} />}
+                                                {e?.status === 'success' && <Chip className="font-light text-[11px] rounded" color="cyan" value={'Tekshiruvda'} />}
+                                                {e?.status === 'sended' && <Chip className="font-light text-[11px] rounded" color="indigo" value={'Yuborildi'} />}
+                                                {e?.status === 'delivered' && <Chip className="font-light text-[11px] rounded" color="green" value={'Yetkazildi'} />}
                                             </div>
                                         )
                                     })}

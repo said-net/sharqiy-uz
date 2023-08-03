@@ -11,8 +11,9 @@ import { Route, Routes } from "react-router-dom";
 import NewOrders from "./pages/neworders";
 import MyOrders from "./pages/myorders";
 function App() {
-  const { id, refresh } = useSelector(e => e.auth);
-  const dp = useDispatch()
+  const { id, refresh, name } = useSelector(e => e.auth);
+  const dp = useDispatch();
+  document.title = name?`Operator: ${name}`:'Kirish';
   useEffect(() => {
     axios(`${API_LINK}/operator/verify-session`, {
       headers: {

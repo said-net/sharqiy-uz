@@ -242,5 +242,24 @@ module.exports = {
                 });
             });
         }
+    },
+    getSendedOrders: async (req, res) => {
+        const $orders = await shopModel.find({ status: 'sended' }).populate('product');
+        const $modded = [];
+        $orders?.forEach(o => {
+            $modded?.push({
+                _id: o?._id,
+                id: o?.id,
+                title: o?.product?.title,
+                count: o?.count,
+                price: o?.price,
+                bonus: o?.bonus,
+                image: SERVER_LINK + o?.product?.images[0],
+            });
+        });
+        res.send({
+            ok: true,
+            data: $modded
+        })
     }
 }

@@ -1,10 +1,10 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
-import { FaBars, FaBell, FaBox, FaCaretLeft, FaComment, FaList, FaShoppingCart, FaUsers } from "react-icons/fa";
+import { FaBars, FaBox, FaCaretLeft, FaComment, FaList, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
 import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaClockRotateLeft, FaGear } from "react-icons/fa6";
+import { FaCalendarDay, FaClockRotateLeft, FaGear } from "react-icons/fa6";
 function Navbar() {
     const { phone, name } = useSelector(e => e.auth);
     // 
@@ -33,13 +33,17 @@ function Navbar() {
                         <Menu>
                             <MenuHandler>
                                 <IconButton color="orange" className="rounded-full text-[20px]">
-                                    <FaBell />
+                                    <FaShoppingBag />
                                 </IconButton>
                             </MenuHandler>
                             <MenuList>
                                 <MenuItem className="flex items-center" onClick={() => nv('/new-orders')}>
                                     <FaShoppingCart className="mr-[10px]" />
-                                    Buyurtmalar
+                                    Yangi buyurtmalar
+                                </MenuItem>
+                                <MenuItem className="flex items-center" onClick={() => nv('/sended-orders')}>
+                                    <FaCalendarDay className="mr-[10px]" />
+                                    Yuborilganlar
                                 </MenuItem>
                                 <MenuItem className="flex items-center" onClick={() => nv('/wait-orders')}>
                                     <FaClockRotateLeft className="mr-[10px]" />
