@@ -18,7 +18,8 @@ import SendedOrders from "./pages/sendedorders/sendedorders";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
-  const dp = useDispatch()
+  const dp = useDispatch();
+  document.title = phone ? `Ega: ${phone}` : 'Kirish';
   useEffect(() => {
     axios(`${API_LINK}/boss/verify`, {
       headers: {

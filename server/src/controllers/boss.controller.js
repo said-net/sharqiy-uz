@@ -66,26 +66,33 @@ module.exports = {
             let profit = 0;
             const shp = await shopModel.find();
             shp.forEach(e => {
-                if (e.status == 'delivered') {
+                if (e.status === 'delivered') {
                     delivered++;
-                    sales += (e?.count * e?.price);
+                    sales += e?.price;
                     shopHistory++;
-                    profit += (e?.count * e?.price) - (e?.for_admin + e?.for_operator + e?.for_ref)
+                    profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
                 } else if (e?.status === 'pending' || e?.status === 'success' || e?.status === 'wait') {
                     shopHistory++
+                } else if (e?.status === 'reject') {
+                    rejected++;
                 }
             })
             const waiting = shopHistory - delivered;
             // 
-            const users = await userModel.find().countDocuments();
+
+            const users = await userModel.find();
             const operators = await operatorModel.find();
             // 
             let deposit = 0;
             // 
             products?.forEach(e => {
                 deposit += e.value * e?.original_price
+            });
+
+            let adminsBalance = 0;
+            users?.forEach(e => {
+                adminsBalance += e?.balance ? e?.balance : 0;
             })
-            const adminsBalance = 12_000_000;
             let operatorsBalance = 0;
             operators?.forEach(o => {
                 operatorsBalance += o?.balance
@@ -98,7 +105,7 @@ module.exports = {
                     shops: shopHistory,
                     delivered,
                     waiting,
-                    users,
+                    users: users.length,
                     operators: operators.length,
                     deposit,
                     profit,
@@ -200,7 +207,7 @@ module.exports = {
     },
     setStatusOrder: async (req, res) => {
         const { id } = req.params;
-        const o = await shopModel.findById(id).populate('product operator')
+        const o = await shopModel.findById(id).populate('product operator');
         const { status } = req.body;
         if (status === 'reject') {
             o.set({ status: 'reject' }).save().then(() => {
@@ -241,6 +248,43 @@ module.exports = {
                     });
                 });
             });
+        } else if (status === 'delivered') {
+            const $operator = await operatorModel.findById(o?.operator?._id);
+            const s = await settingModel.find();
+            if (o?.flow) {
+                const $admin = await userModel.findOne({ id: o?.flow });
+                if ($admin?.ref_id) {
+                    const $ref = await userModel?.findOne({ id: $admin.ref_id });
+                    // 
+                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                    // 
+                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
+                    // 
+                    $ref.set({ balance: $ref?.balance + s[0]?.for_ref }).save();
+                    // 
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
+                    // 
+                    res.send({
+                        ok: true,
+                        msg: "Tasdiqlandi!"
+                    });
+                } else {
+                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins }).save();
+                    res.send({
+                        ok: true,
+                        msg: "Tasdiqlandi!"
+                    });
+                }
+            } else {
+                $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                o?.set({ status: 'delivered', for_operator: s[0]?.for_operators }).save();
+                res.send({
+                    ok: true,
+                    msg: "Tasdiqlandi!"
+                });
+            }
         }
     },
     getSendedOrders: async (req, res) => {
@@ -261,5 +305,27 @@ module.exports = {
             ok: true,
             data: $modded
         })
+    },
+    getSearchedSendedOrders: async (req, res) => {
+        const { search } = req.params;
+        const $orders = await shopModel.find({ status: 'sended' }).populate('product');
+        const $modded = [];
+        $orders?.forEach(o => {
+            if (String(o?.id)?.startsWith(search)) {
+                $modded?.push({
+                    _id: o?._id,
+                    id: o?.id,
+                    title: o?.product?.title,
+                    count: o?.count,
+                    price: o?.price,
+                    bonus: o?.bonus,
+                    image: SERVER_LINK + o?.product?.images[0],
+                });
+            }
+        });
+        res.send({
+            ok: true,
+            data: $modded
+        });
     }
 }
