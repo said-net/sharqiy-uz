@@ -7,6 +7,9 @@ const productModel = require("../models/product.model");
 const shopModel = require("../models/shop.model");
 const userModel = require("../models/user.model");
 const operatorModel = require("../models/operator.model");
+const settingModel = require("../models/setting.model");
+const chequeMaker = require("../middlewares/cheque.maker");
+const path = require('path')
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -112,7 +115,12 @@ module.exports = {
         const $modded = [];
         $orders?.forEach(o => {
             $modded?.push({
-                ...o._doc,
+                _id: o?._id,
+                id: o?.id,
+                title: o?.product?.title,
+                count: o?.count,
+                price: o?.price,
+                bonus: o?.bonus,
                 image: SERVER_LINK + o?.product?.images[0]
             });
         });
@@ -120,6 +128,119 @@ module.exports = {
             ok: true,
             data: $modded
         });
-        
+
+    },
+    getOrder: async (req, res) => {
+        const { id } = req.params;
+        const $settings = await settingModel.find();
+        try {
+            const o = await shopModel.findById(id).populate('product operator');
+            const f = await userModel.findOne({ phone: o?.phone });
+            const data = {
+                _id: o?._id,
+                id: o?.id,
+                title: o?.product?.title,
+                bonus: o?.bonus,
+                flow: o?.flow,
+                count: o?.count,
+                price: o?.price,
+                // image: SERVER_LINK + o?.product?.images[0],
+                region: o?.region,
+                city: o?.city,
+                name: o?.name,
+                phone: o?.phone,
+                about: o?.about,
+                date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
+                for_admin: o?.flow ? o?.product?.for_admin : 0,
+                for_operator: $settings[0]?.for_operators,
+                for_ref: !f || !f?.ref_id ? 0 : $settings[0]?.for_ref
+            }
+            res.send({
+                ok: true,
+                data
+            });
+        } catch (error) {
+            res.send({
+                ok: false,
+                msg: "Nimadur xato!"
+            })
+        }
+    },
+    getChequeOrder: async (req, res) => {
+        const { id } = req.params;
+        const o = await shopModel.findById(id).populate('product operator');
+        const data = {
+            _id: o?._id,
+            id: o?.id,
+            title: o?.product?.title,
+            bonus: o?.bonus,
+            about: o?.about,
+            count: o?.count,
+            price: o?.price,
+            region: o?.region,
+            city: o?.city,
+            operator_name: o?.operator?.name,
+            operator_phone: o?.operator?.phone,
+            name: o?.name,
+            phone: o?.phone,
+            date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
+        }
+        chequeMaker(data).then(() => {
+            res.send({
+                ok: true,
+                data: SERVER_LINK + '/public/cheques/' + o?.id + '.pdf'
+            })
+        }).catch((err) => {
+            console.log(err);
+            res.send({
+                ok: false,
+                msg: "Nimadir hato"
+            });
+        });
+    },
+    setStatusOrder: async (req, res) => {
+        const { id } = req.params;
+        const o = await shopModel.findById(id).populate('product operator')
+        const { status } = req.body;
+        if (status === 'reject') {
+            o.set({ status: 'reject' }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Buyurtma bekor qilindi!"
+                });
+            });
+        } else if (status === 'sended') {
+            o.set({ status: 'sended' }).save().then(() => {
+                const data = {
+                    _id: o?._id,
+                    id: o?.id,
+                    title: o?.product?.title,
+                    bonus: o?.bonus,
+                    about: o?.about,
+                    count: o?.count,
+                    price: o?.price,
+                    region: o?.region,
+                    city: o?.city,
+                    operator_name: o?.operator?.name,
+                    operator_phone: o?.operator?.phone,
+                    name: o?.name,
+                    phone: o?.phone,
+                    date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
+                }
+                chequeMaker(data).then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Buyurtma yuborildi!",
+                        data: SERVER_LINK + '/public/cheques/' + o?.id + '.pdf'
+                    })
+                }).catch((err) => {
+                    console.log(err);
+                    res.send({
+                        ok: false,
+                        msg: "Nimadir hato"
+                    });
+                });
+            });
+        }
     }
 }

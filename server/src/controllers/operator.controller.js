@@ -214,7 +214,7 @@ module.exports = {
         });
         res.send({
             ok: true,
-            data: myOrders
+            data: myOrders.reverse()
         })
     },
     getInfoOrder: async (req, res) => {

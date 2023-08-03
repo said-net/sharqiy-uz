@@ -18,7 +18,9 @@
     "md5": "^2.3.0",
     "moment": "^2.29.4",
     "mongoose": "^7.3.4",
-    "phone": "^3.1.37"
+    "pdfkit": "^0.13.0",
+    "phone": "^3.1.37",
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "dotenv": "^16.3.1",

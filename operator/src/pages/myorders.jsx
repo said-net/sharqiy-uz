@@ -56,7 +56,9 @@ function MyOrders() {
                                     }
                                     {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
                                     }
-                                    {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Yuborilgan" />
+                                    {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
+                                    }
+                                    {e?.status === 'sended' && <Chip className="rounded tracking-widest" color="indigo" value="Yuborildi" />
                                     }
                                     {e?.status === 'delivered' && <Chip className="rounded tracking-widest" color="green" value="Yetkazilgan" />
                                     }
@@ -67,6 +69,8 @@ function MyOrders() {
                                     {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
                                     }
                                     {e?.status === 'success' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                    }
+                                    {e?.status === 'sended' && <p className="text-indigo-500">~{Number(e?.comming_pay).toLocaleString()}</p>
                                     }
                                     {e?.status === 'delivered' && <p className="text-green-500">+{Number(e?.comming_pay).toLocaleString()}</p>
                                     }
