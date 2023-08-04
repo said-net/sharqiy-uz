@@ -13,6 +13,7 @@ module.exports = require('express').Router()
     .post('/remove-bonus/:id', authMiddleware.boss, productController.removeBonus)
     .put('/add-value/:id', authMiddleware.boss, productController.addValue)
     .post('/set-new-prices/:id', authMiddleware.boss, productController.setNewPrices)
+    .post('/set-ads/:id', authMiddleware.boss, productController.setAds)
     // 
     .get('/get-by-category/:id', productController.getProductsByCategory)
     .get('/get-videos', productController.getVideos)

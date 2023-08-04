@@ -4,7 +4,9 @@ const moment = require("moment/moment");
 const { SERVER_LINK } = require("../configs/env");
 const valuehistoryModel = require("../models/valuehistory.model");
 const settingModel = require("../models/setting.model");
-
+const adsModel = require("../models/ads.model");
+const fs = require('fs');
+const shopModel = require("../models/shop.model");
 module.exports = {
     create: (req, res) => {
         const { title, about, price, original_price, video, category, value, for_admins } = req.body;
@@ -116,14 +118,20 @@ module.exports = {
         const $products = await productModel.find({ hidden: false })
         const $modlist = [];
         const $settings = await settingModel.find();
-        $products.forEach(p => {
+        for (let p of $products) {
+            const $sh = await shopModel.find({ product: p?._id, status: 'delivered' });
+            let c = 0;
+            $sh?.forEach(co => {
+                c += co?.count;
+            });
             $modlist.push({
                 ...p._doc,
                 id: p._id,
+                solded: c,
                 image: SERVER_LINK + p?.images[0],
                 created: moment.unix(p.created).format('YYYY-MM-DD'),
                 for_admins: p?.for_admins,
-                value: p.value - p.solded,
+                value: p.value - c,
                 old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
                 sold_price: p?.price + p?.for_admins + $settings[0].for_operators,
                 bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
@@ -132,7 +140,7 @@ module.exports = {
                 bonus_given: p.bonus ? p.bonus_given : 0,
                 category: p?.category
             });
-        });
+        }
         res.send({
             ok: true,
             data: $modlist
@@ -377,5 +385,42 @@ module.exports = {
             ok: true,
             data: $videos
         })
+    },
+    //
+    setAds: async (req, res) => {
+        const { id } = req.params;
+        const { about } = req.body;
+        const image = req?.files?.image;
+        if (about || !image) {
+            res.send({
+                ok: false,
+                msg: "Qatorlarni to'ldiring yoki rasm tanlang!"
+            });
+        } else {
+            const $ads = await adsModel.findOne({ product: id });
+            const filePath = `/public/ads/${md5(image.name + id)}.png`;
+            if (!$ads) {
+                new adsModel({
+                    product: id,
+                    about,
+                    image: filePath,
+                }).save().then(() => {
+                    image.mv(`.${filePath}`);
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    });
+                });
+            } else {
+                fs.unlink(`.${$ads.image}`, () => { });
+                const filePath = `/public/ads/${md5(image.name + id)}.png`;
+                $ads.set({ about, image: filePath }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    })
+                });
+            }
+        }
     }
 }

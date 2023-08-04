@@ -28,6 +28,10 @@ function Dashboard() {
         })
     }, [filter]);
 
+    function Submit() {
+        setFilter(nextFilter);
+        setOpenFilter(false)
+    }
     const cNameType = "flex items-center justify-start w-[90%] sm:w-[300px] h-[100px] shadow-md rounded-[10px] bg-white relative p-[4px] m-[10px] hover:shadow-lg";
 
     const cNameIcon = "flex items-center justify-center w-[50px] h-[50px] rounded-full text-[30px] mr-[10px] ";
@@ -35,7 +39,7 @@ function Dashboard() {
     return (
         <div className="flex items-center justify-start flex-col p-[10px]">
             <div className="flex items-center justify-between w-full bg-white p-[10px] rounded shadow-md mb-[20px]">
-                <h1>Statistika</h1>
+                <Button color="orange" className="rounded" disabled={filter === 'all'} onClick={() => setFilter('all')}>Tozalash</Button>
                 {filter === 'all' && <h1>Barchasi</h1>}
                 {filter !== 'all' && <h1>{filter}</h1>}
                 <Button className="rounded" onClick={() => setOpenFilter(true)}>Filter</Button>
@@ -323,11 +327,11 @@ function Dashboard() {
                         <h1 className="text-[20px]">Filterlash</h1>
                     </DialogHeader>
                     <DialogBody className="w-full border-y">
-                        <Input type="month" label="Oy-Yil bo'yicha filterlash" onChange={e => setNextFilter(e.target.value)} />
+                        <Input type="month" label="Oy-Yil bo'yicha filterlash" onChange={e => setNextFilter(e.target.value)} onKeyPress={e => e.key === 'Enter' && Submit()} />
                     </DialogBody>
                     <DialogFooter className="w-full">
                         <Button className="rounded mr-[20px]" color="orange" onClick={() => setOpenFilter(false)}>Ortga</Button>
-                        <Button className="rounded" color="green" onClick={() => { setFilter(nextFilter); setOpenFilter(false) }} disabled={!nextFilter}>OK</Button>
+                        <Button className="rounded" color="green" onClick={Submit} disabled={!nextFilter}>OK</Button>
                     </DialogFooter>
                 </div>
             </Dialog>

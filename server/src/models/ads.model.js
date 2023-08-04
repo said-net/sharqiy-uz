@@ -7,4 +7,4 @@ const schema = new Schema({
     image: String,
     about: String,
 });
-export default model('Ads', schema);
+module.exports= model('Ads', schema);

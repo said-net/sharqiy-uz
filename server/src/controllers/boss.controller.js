@@ -284,6 +284,7 @@ module.exports = {
             });
         } else if (status === 'delivered') {
             const $operator = await operatorModel.findById(o?.operator?._id);
+            const p = await productModel.findById(o?.product?._id);
             const s = await settingModel.find();
             if (o?.flow) {
                 const $admin = await userModel.findOne({ id: o?.flow });
@@ -298,6 +299,8 @@ module.exports = {
                     // 
                     o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
                     // 
+
+                    p.set({ solded: o?.product?.solded + o?.count }).save();
                     res.send({
                         ok: true,
                         msg: "Tasdiqlandi!"
@@ -306,6 +309,8 @@ module.exports = {
                     $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
                     $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
                     o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins }).save();
+
+                    p.set({ solded: o?.product?.solded + o?.count }).save();
                     res.send({
                         ok: true,
                         msg: "Tasdiqlandi!"
@@ -314,6 +319,8 @@ module.exports = {
             } else {
                 $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
                 o?.set({ status: 'delivered', for_operator: s[0]?.for_operators }).save();
+
+                p.set({ solded: p?.solded + o?.count }).save();
                 res.send({
                     ok: true,
                     msg: "Tasdiqlandi!"
