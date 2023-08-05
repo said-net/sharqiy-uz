@@ -58,7 +58,7 @@ function Navbar() {
                         {/* <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" /> */}
                     </div>
                     <div className="flex items-center justify-center relative">
-                        <IconButton color="light-blue" className="rounded-full text-[20px]">
+                        <IconButton onClick={() => nv('/chats')} color="light-blue" className="rounded-full text-[20px]">
                             <FaComment />
                         </IconButton>
                         {/* <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" /> */}

@@ -30,7 +30,7 @@ function Navbar() {
                 setCategories(data);
             }
         }).catch(() => {
-            toast.error("Aloqani tekshirib qayta urunib koring!")
+            toast.error("Aloqani tekshirib qayta urunib koring!");
         });
     }, []);
     return (

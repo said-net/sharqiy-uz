@@ -14,6 +14,8 @@ import { setInformations } from "./managers/authManager";
 import Settings from "./user/settings";
 import VideoPlayers from "./pages/video";
 import Search from './pages/search'
+import Chat from "./pages/chat";
+import Home from "./pages/home";
 
 function App() {
   const { refresh } = useSelector(e => e.auth);
@@ -45,6 +47,8 @@ function App() {
             {/*  */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/messanger" element={<Chat />} />
+            <Route path="*" element={<Home />} />
           </Routes>
           <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
         </>}

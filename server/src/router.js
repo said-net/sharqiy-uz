@@ -7,3 +7,4 @@ module.exports = require('express').Router()
     .use('/shop', require('./routers/shop.router'))
     // 
     .use('/user', require('./routers/user.router'))
+    .use('/chat', require('./routers/chat.router'))
