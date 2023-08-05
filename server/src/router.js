@@ -5,6 +5,7 @@ module.exports = require('express').Router()
     .use('/product', require('./routers/product.router'))
     .use('/operator', require('./routers/operator.router'))
     .use('/shop', require('./routers/shop.router'))
+    .use('/main', require('./routers/main.router'))
     // 
     .use('/user', require('./routers/user.router'))
     .use('/chat', require('./routers/chat.router'))

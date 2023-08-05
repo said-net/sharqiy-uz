@@ -19,6 +19,7 @@ import HistoryOrders from "./pages/historyorders/historyorders";
 import WaitOrders from "./pages/waitorders/waitorders";
 import Chats from "./pages/chat/chats";
 import SelectChat from "./pages/chat/selectchat";
+import MenuSettings from "./pages/main/mainmenu";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -47,7 +48,6 @@ function App() {
       <>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Dashboard />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/products" element={<Products />} />
           <Route path="/operators" element={<Operator />} />
@@ -58,6 +58,8 @@ function App() {
           <Route path="/wait-orders" element={<WaitOrders />} />
           <Route path="/chats" element={<Chats />} />
           <Route path="/select-chat/:id" element={<SelectChat />} />
+          <Route path="/main-menu" element={<MenuSettings />} />
+          <Route path="*" element={<Dashboard />} />
         </Routes>
         {/* <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" /> */}
         <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />

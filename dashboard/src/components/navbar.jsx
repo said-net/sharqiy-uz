@@ -4,7 +4,7 @@ import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaCalendarDay, FaClockRotateLeft, FaGear } from "react-icons/fa6";
+import { FaCalendarDay, FaClockRotateLeft, FaGear, FaGears } from "react-icons/fa6";
 function Navbar() {
     const { phone, name } = useSelector(e => e.auth);
     // 
@@ -84,6 +84,11 @@ function Navbar() {
                                 <FaBox className="mr-[10px]" />
                                 Mahsulotlar
                                 {pathname === '/products' && <FaCaretLeft />}
+                            </MenuItem>
+                            <MenuItem onClick={() => nv('/main-menu')} className="flex items-center justify-start">
+                                <FaGears className="mr-[10px]" />
+                                Bosh ekran
+                                {pathname === '/main-menu' && <FaCaretLeft />}
                             </MenuItem>
                             <MenuItem onClick={() => nv('/operators')} className="flex items-center justify-start">
                                 <FaUsers className="mr-[10px]" />
