@@ -206,7 +206,7 @@ module.exports = {
         })
         res.send({
             ok: true,
-            data: $modded
+            data: $modded?.reverse()
         })
     },
     setLike: async (req, res) => {

@@ -9,7 +9,7 @@ import ConfirmChanges from "./confirmchanges";
 function ViewOrder({ open, setOpen }) {
     const [order, setOrder] = useState({});
     const [select, setSelect] = useState({ open: false, del: false, wait: false, success: false });
-    const disableAll = order?.status !== 'pending';
+    const disableAll = order?.status !== 'wait';
     const [disabed, setDisabled] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     useEffect(() => {

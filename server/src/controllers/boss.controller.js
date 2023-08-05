@@ -71,7 +71,7 @@ module.exports = {
                     sales += e?.price;
                     shopHistory++;
                     profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
-                } else if (e?.status === 'pending' || e?.status === 'success' || e?.status === 'wait') {
+                } else if (e?.status === 'sended' || e?.status === 'success') {
                     shopHistory++
                 } else if (e?.status === 'reject') {
                     rejected++;
@@ -131,7 +131,7 @@ module.exports = {
                     sales += e?.price;
                     shopHistory++;
                     profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
-                } else if (e?.status === 'pending' || e?.status === 'success' || e?.status === 'wait') {
+                } else if (e?.status === 'sended' || e?.status === 'success') {
                     shopHistory++
                 } else if (e?.status === 'reject') {
                     rejected++;
@@ -368,5 +368,72 @@ module.exports = {
             ok: true,
             data: $modded
         });
+    },
+    getHistoryOrders: async (req, res) => {
+        const $orders = await shopModel.find().populate('product operator')
+        const $modded = [];
+        $orders?.forEach(o => {
+            if (o?.status !== 'pending' && o?.status !== 'wait' && o?.status !== 'success') {
+                $modded.push({
+                    _id: o?._id,
+                    id: o?.id,
+                    title: o?.product?.title,
+                    count: o?.count,
+                    price: o?.price,
+                    bonus: o?.bonus,
+                    status: o?.status,
+                    image: SERVER_LINK + o?.product?.images[0],
+                    cheque: SERVER_LINK + '/public/cheques/' + o?.id + '.pdf',
+                    operator_name: o?.operator?.name,
+                    operator_phone: o?.operator?.phone
+                });
+            }
+        });
+        res.send({
+            ok: true,
+            data: $modded.reverse()
+        });
+    },
+    setStatusByDate: async (req, res) => {
+        const { date } = req.body;
+        const month = +date.split('-')[1] - 1;
+        const year = +date.split('-')[0];
+        const $orders = await shopModel.find({ month, year, status: 'sended' }).populate('product operator');
+        for (let o of $orders) {
+            const $operator = await operatorModel.findById(o?.operator?._id);
+            const p = await productModel.findById(o?.product?._id);
+            const s = await settingModel.find();
+            if (o?.flow) {
+                const $admin = await userModel.findOne({ id: o?.flow });
+                if ($admin?.ref_id) {
+                    const $ref = await userModel?.findOne({ id: $admin.ref_id });
+                    // 
+                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                    // 
+                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
+                    // 
+                    $ref.set({ balance: $ref?.balance + s[0]?.for_ref }).save();
+                    // 
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
+                    // 
+                    p.set({ solded: o?.product?.solded + o?.count }).save();
+                } else {
+                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins }).save();
+
+                    p.set({ solded: o?.product?.solded + o?.count }).save();
+                }
+            } else {
+                $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                o?.set({ status: 'delivered', for_operator: s[0]?.for_operators }).save();
+
+                p.set({ solded: p?.solded + o?.count }).save();
+            }
+        }
+        res.send({
+            ok: true,
+            msg: "Saqlandi!"
+        })
     }
 }

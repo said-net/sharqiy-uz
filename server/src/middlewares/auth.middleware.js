@@ -108,8 +108,8 @@ module.exports = {
                             msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
                         });
                     } else {
-                        const { name, phone, balance } = $operator;
-                        req.operator = { id, name, phone, balance };
+                        const { name, phone, balance, telegram } = $operator;
+                        req.operator = { id, name, phone, balance, telegram };
                         next();
                     }
                 }

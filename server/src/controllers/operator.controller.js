@@ -152,6 +152,16 @@ module.exports = {
             data: req.operator
         })
     },
+    setInfo: async (req, res) => {
+        const $operator = await operatorModel.findById(req.operator.id);
+        console.log(req.body);
+        $operator.set(req.body).save().then(() => {
+            res.send({
+                ok: true,
+                msg: "Saqlandi!"
+            })
+        })
+    },
     getNewOrders: async (req, res) => {
         const $orders = await shopModel.find({ status: 'pending' }).populate('product')
         const $modded = [];
@@ -248,27 +258,27 @@ module.exports = {
         const { bonus_gived: bonus, about, city, region, status, count, phone, name, price } = req.body;
         console.log(status);
         const $order = await shopModel.findById(id);
-        if (status === 'reject' && $order?.status === 'pending') {
+        if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'reject',
-                about, city, region, bonus, count, phone, name, price
+                about, city, region, bonus, count: 0, phone, name, price
             }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "Bekor qilindi!"
                 });
             });
-        } else if (status === 'wait' && $order?.status === 'pending') {
+        } else if (status === 'wait' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'wait',
-                about, city, region, bonus, count, phone, name
+                about, city, region, bonus, count: 0, phone, name
             }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "Keyinroqqa qoldirildi!"
                 });
             });
-        } else if (status === 'success' && $order?.status === 'pending') {
+        } else if (status === 'success' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'success',
                 about, city, region, bonus, count, phone, name, price
@@ -279,5 +289,25 @@ module.exports = {
                 });
             });
         }
-    }
+    },
+    getWaitOrders: async (req, res) => {
+        const $orders = await shopModel.find({ operator: req.operator.id }).populate('product')
+        const myOrders = [];
+        const $settings = await settingModel.find();
+        $orders.forEach(e => {
+            if (e?.status === 'wait') {
+                myOrders.push({
+                    _id: e?._id,
+                    ...e?._doc,
+                    image: SERVER_LINK + e?.product?.images[0],
+                    comming_pay: $settings[0]?.for_operators
+                });
+            }
+        });
+        res.send({
+            ok: true,
+            data: myOrders.reverse()
+        });
+        console.log(myOrders);
+    },
 }

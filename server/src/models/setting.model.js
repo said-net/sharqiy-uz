@@ -6,4 +6,4 @@ const schema = new Schema({
         default: 1000
     },
 });
-module.exports = model('Settings', schema)
+module.exports = model('Settings', schema);

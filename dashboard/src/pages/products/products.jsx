@@ -1,6 +1,6 @@
 import { Button, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
-import { FaMoneyBill, FaPencilAlt, FaPlus, FaPlusCircle, FaRegFrown, FaSearch, FaTrash, } from 'react-icons/fa'
+import { FaAd, FaMoneyBill, FaPencilAlt, FaPlus, FaPlusCircle, FaRegFrown, FaSearch, FaTrash, } from 'react-icons/fa'
 import { TbGift, TbGiftOff } from 'react-icons/tb'
 import { MdGraphicEq } from 'react-icons/md'
 import AddProduct from "./addnew";
@@ -16,6 +16,7 @@ import StatProduct from "./statproduct";
 import RemoveBonus from "./removebonus";
 import EditProduct from "./editproduct";
 import SetNewPrices from "./setnewprices";
+import AdsAdd from "./adsadd";
 function Products() {
     const [search, setSearch] = useState('');
     const [openAdd, setOpenAdd] = useState(false);
@@ -24,7 +25,7 @@ function Products() {
     const [openBonusRemove, setOpenBonusRemove] = useState('');
     const [openProductStat, setOpenProductStat] = useState('');
     const [products, setProducts] = useState([]);
-
+    const [adsOpen, setAdsOpen] = useState('');
     const [select, setSelect] = useState({ del: false, edit: false, join_value: false, id: '', recovery: false });
 
     const [openPrice, setOpenPrice] = useState({ price: 0, new_price: 0, id: '' });
@@ -87,6 +88,9 @@ function Products() {
                                                     </div>
                                                 </MenuHandler>
                                                 <MenuList>
+                                                    <MenuItem className="flex items-center" onClick={() => setAdsOpen(e?._id)}>
+                                                        <FaAd className="mr-[10px]" /> Reklama posti
+                                                    </MenuItem>
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
                                                         <FaPlus className="mr-[10px]" /> Qo'shish
                                                     </MenuItem>
@@ -150,6 +154,9 @@ function Products() {
                                                     </div>
                                                 </MenuHandler>
                                                 <MenuList>
+                                                    <MenuItem className="flex items-center" onClick={() => setAdsOpen(e?._id)}>
+                                                        <FaAd className="mr-[10px]" /> Reklama posti
+                                                    </MenuItem>
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
                                                         <FaPlus className="mr-[10px]" /> Qo'shish
                                                     </MenuItem>
@@ -179,7 +186,7 @@ function Products() {
                                         <p className="text-black">{e?.title?.slice(0, 20)}...</p>
                                         <div className="w-full h-[15px]">
                                             {e?.old_price &&
-                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(e?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((e?.old_price - e?.price) / (e?.old_price) * 100).slice(0, 5)}%</span></p>
+                                                <p className="text-gray-700 text-[12px] font-normal w-full px-[2%]"><s>{Number(e?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((e?.old_price - e?.sold_price) / (e?.old_price) * 100).slice(0, 5)}%</span></p>
                                             }
                                         </div>
                                         {/* NEW PRICE || PRICE */}
@@ -203,6 +210,7 @@ function Products() {
             <StatProduct open={openProductStat} setOpen={setOpenProductStat} />
             <EditProduct select={select} setSelect={setSelect} />
             <SetNewPrices open={openPrice} setOpen={setOpenPrice} />
+            <AdsAdd open={adsOpen} setOpen={setAdsOpen} />
         </div>
     );
 }

@@ -151,10 +151,15 @@ function Profile() {
                                                 </div>
                                                 <p>{e?.count ? e?.count : 0} ta</p>
                                                 {e?.status === 'reject' && <Chip className="font-light text-[11px] rounded" color="red" value={'Rad etildi'} />}
-                                                {(e?.status === 'pending' || e?.status === 'wait') && <Chip className="font-light text-[11px] rounded" color="blue" value={'Kutulmoqda'} />}
+
+                                                {(e?.status === 'pending') && <Chip className="font-light text-[11px] rounded" color="blue" value={'Kutulmoqda'} />}
+
                                                 {e?.status === 'wait' && <Chip className="font-light text-[11px] rounded" color="orange" value={'Qayta aloqa'} />}
+
                                                 {e?.status === 'success' && <Chip className="font-light text-[11px] rounded" color="cyan" value={'Tekshiruvda'} />}
+
                                                 {e?.status === 'sended' && <Chip className="font-light text-[11px] rounded" color="indigo" value={'Yuborildi'} />}
+                                                
                                                 {e?.status === 'delivered' && <Chip className="font-light text-[11px] rounded" color="green" value={'Yetkazildi'} />}
                                             </div>
                                         )

@@ -2,27 +2,36 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { Button, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
+import { Dialog, DialogBody, DialogHeader, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
-import { FaSearch } from "react-icons/fa";
+import { FaPhone, FaSearch, FaThList } from "react-icons/fa";
 import { FaBars, FaCheck, FaXmark } from "react-icons/fa6";
-import RejectOrder from "./rejectorder";
-import DeliveredOrder from "./deliveredorder";
-import SetByDate from "./setbydate";
 
-function SendedOrders() {
+function HistoryOrders() {
     const [orders, setOrders] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const { refresh } = useSelector(e => e?.order);
     const [search, setSearch] = useState('');
-    const [select, setSelect] = useState({ reject: false, delivered: false, id: 0, _id: '' });
-    const [searched, setSearched] = useState([]);
-    const [openMonth, setOpenMonth] = useState(false);
+    const [openOperator, setOpenOperator] = useState({ phone: '', name: '', id: '' })
+    function getChequeOrder(id) {
+        axios(`${API_LINK}/boss/get-cheque-order/${id}`, {
+            headers: {
+                'x-auth-token': `Bearer ${localStorage.getItem('access')}`
+            }
+        }).then(res => {
+            const { data, ok } = res.data;
+            if (ok) {
+                window.open(data);
+            }
+        }).catch(() => {
+            toast.error("Aloqani tekshirib qayta urunib ko'ring!")
+        });
+    }
     useEffect(() => {
         setIsLoad(false);
         setOrders([]);
         setSearch('');
-        axios(`${API_LINK}/boss/get-sended-orders`, {
+        axios(`${API_LINK}/boss/get-history-orders`, {
             headers: {
                 'x-auth-token': `Bearer ${localStorage.getItem('access')}`
             }
@@ -36,33 +45,12 @@ function SendedOrders() {
             toast.error("Aloqani tekshirib qayta urunib ko'ring!")
         });
     }, [refresh]);
-    useEffect(() => {
-        if (search) {
-            setIsLoad(false);
-            setSearched([]);
-            axios(`${API_LINK}/boss/get-searched-sended-orders/${search}`, {
-                headers: {
-                    'x-auth-token': `Bearer ${localStorage.getItem('access')}`
-                }
-            }).then(res => {
-                const { data, ok } = res.data;
-                setIsLoad(true)
-                if (ok) {
-                    setSearched(data);
-                }
-            }).catch(() => {
-                toast.error("Aloqani tekshirib qayta urunib ko'ring!")
-            });
-        }
-    }, [search])
+
     return (
         <div className="flex items-center justify-start flex-col w-full mt-[10px]">
             <div className="flex items-center justify-between w-full h-[70px] bg-white mb-[10px] shadow-sm p-[0_10px]">
                 <div className="flex items-center justify-center w-[200px] ">
                     <Input type="search" value={search} onChange={e => setSearch(e.target.value)} label="Qidiruv: ID" icon={<FaSearch />} />
-                </div>
-                <div className="flex items-center justify-center w-[200px] ">
-                    <Button className="rounded" onClick={() => setOpenMonth(true)}>OY BO'YICHA</Button>
                 </div>
             </div>
             {!isLoad && <Spinner />}
@@ -81,7 +69,12 @@ function SendedOrders() {
                                 </div>
                                 <p className="w-[20%] hidden md:inline">Miqdor: {o?.count} ta</p>
                                 <p className="w-[20%] hidden md:inline">Bonus: +{o?.bonus} ta</p>
-                                <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end">Narx: {Number(o?.price).toLocaleString()} so'm</p>
+                                {/*  */}
+                                {o?.status === 'reject' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-red-500"><s>Narx: {Number(o?.price).toLocaleString()} so'm</s></p>}
+                                {/*  */}
+                                {o?.status === 'sended' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-blue-500">Narx: ~{Number(o?.price).toLocaleString()} so'm</p>}
+                                {/*  */}
+                                {o?.status === 'delivered' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-green-500">Narx: +{Number(o?.price).toLocaleString()} so'm</p>}
                                 <Menu>
                                     <MenuHandler>
                                         <IconButton className="rounded-full" color="blue-gray">
@@ -89,13 +82,13 @@ function SendedOrders() {
                                         </IconButton>
                                     </MenuHandler>
                                     <MenuList>
-                                        <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, delivered: true, _id: o?._id, id: o?.id })}>
-                                            <FaCheck className="mr-[10px]" />
-                                            Yetgazildi
+                                        <MenuItem className="flex items-center" onClick={() => getChequeOrder(o?._id)}>
+                                            <FaThList className="mr-[10px]" />
+                                            Chek
                                         </MenuItem>
-                                        <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, reject: true, _id: o?._id, id: o?.id })}>
-                                            <FaXmark className="mr-[10px]" />
-                                            Qaytarildi
+                                        <MenuItem className="flex items-center" onClick={() => setOpenOperator({ name: o?.operator_name, phone: o?.operator_phone, id: o?.id })}>
+                                            <FaPhone className="mr-[10px]" />
+                                            Operator
                                         </MenuItem>
                                     </MenuList>
                                 </Menu>
@@ -104,12 +97,11 @@ function SendedOrders() {
                     })}
                 </div>
             }
-            {isLoad && search && !searched[0] && <h1>Buyurtmalar yuborilmagan!</h1>}
-            {isLoad && search && searched[0] &&
+            {isLoad && search && orders[0] &&
                 <div className="flex items-center justify-start flex-col w-full bg-white shadow-sm p-[5px]">
-                    {searched?.map((o, i) => {
+                    {orders?.map((o, i) => {
                         return (
-                            <div key={i} onClick={() => setOpen(o?._id)} className={`flex items-center justify-between w-full p-[0_10px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-200'} shadow-sm h-[50px] cursor-pointer`}>
+                            String(o?.id).includes(search) && <div key={i} onClick={() => setOpen(o?._id)} className={`flex items-center justify-between w-full p-[0_10px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-200'} shadow-sm h-[50px] cursor-pointer`}>
                                 <div className="flex items-center justify-center">
                                     <p className="mr-[10px] text-[12px] md:text-[15px]">ID: {o?.id}</p>
                                     <div className="flex items-center justify-center w-[40px] h-[40px] rounded-full border overflow-hidden">
@@ -119,7 +111,12 @@ function SendedOrders() {
                                 </div>
                                 <p className="w-[20%] hidden md:inline">Miqdor: {o?.count} ta</p>
                                 <p className="w-[20%] hidden md:inline">Bonus: +{o?.bonus} ta</p>
-                                <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end">Narx: {Number(o?.price).toLocaleString()} so'm</p>
+                                {/*  */}
+                                {o?.status === 'reject' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-red-500"><s>Narx: {Number(o?.price).toLocaleString()} so'm</s></p>}
+                                {/*  */}
+                                {o?.status === 'sended' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-blue-500">Narx: ~{Number(o?.price).toLocaleString()} so'm</p>}
+                                {/*  */}
+                                {o?.status === 'delivered' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-green-500">Narx: +{Number(o?.price).toLocaleString()} so'm</p>}
                                 <Menu>
                                     <MenuHandler>
                                         <IconButton className="rounded-full" color="blue-gray">
@@ -127,13 +124,13 @@ function SendedOrders() {
                                         </IconButton>
                                     </MenuHandler>
                                     <MenuList>
-                                        <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, delivered: true, _id: o?._id, id: o?.id })}>
-                                            <FaCheck className="mr-[10px]" />
-                                            Yetgazildi
+                                        <MenuItem className="flex items-center" onClick={() => getChequeOrder(o?._id)}>
+                                            <FaThList className="mr-[10px]" />
+                                            Chek
                                         </MenuItem>
-                                        <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, reject: true, _id: o?._id, id: o?.id })}>
-                                            <FaXmark className="mr-[10px]" />
-                                            Qaytarildi
+                                        <MenuItem className="flex items-center" onClick={() => setOpenOperator({ name: o?.operator_name, phone: o?.operator_phone, id: o?.id })}>
+                                            <FaPhone className="mr-[10px]" />
+                                            Operator
                                         </MenuItem>
                                     </MenuList>
                                 </Menu>
@@ -142,11 +139,19 @@ function SendedOrders() {
                     })}
                 </div>
             }
-            <RejectOrder select={select} setSelect={setSelect} />
-            <DeliveredOrder select={select} setSelect={setSelect} />
-            <SetByDate open={openMonth} setOpen={setOpenMonth} />
+            <Dialog open={openOperator?.name !== ''} size="xxl" className="flex items-center justify-center bg-[#1b424a80] backdrop-blur-md">
+                <div className="flex items-center justify-start flex-col md:w-[700px] w-[90%] p-[10px] bg-white shadow-lg rounded-md">
+                    <DialogHeader className="w-full">
+                        <p>#{openOperator?.id} ID buyurtma uchun Operator</p>
+                    </DialogHeader>
+                    <DialogBody className="border-y w-full">
+                        <p className="text-black">Ismi: {openOperator?.name}</p>
+                        <p className="text-black">Raqami: {openOperator?.phone}</p>
+                    </DialogBody>
+                </div>
+            </Dialog>
         </div>
     );
 }
 
-export default SendedOrders;
+export default HistoryOrders;

@@ -6,9 +6,8 @@ import { toast } from "react-toastify";
 import { setRefreshOrders } from "../managers/order.manager";
 
 function ConfirmChanges({ select, setSelect, setOpen }) {
-    const dp = useDispatch();
+    const dp = useDispatch();   
     function Reject() {
-        console.log('ok');
         axios.post(`${API_LINK}/operator/set-status/${select?._id}`, { ...select, status: 'reject' }, {
             headers: {
                 'x-auth-token': `Bearer ${localStorage.getItem('access')}`
@@ -19,7 +18,7 @@ function ConfirmChanges({ select, setSelect, setOpen }) {
                 toast.error(msg);
             } else {
                 toast.success(msg);
-                setSelect({ del: false, wiew: false, success: false });
+                setSelect({ del: false, view: false, success: false });
                 setOpen('');
                 setTimeout(() => {
                     dp(setRefreshOrders())
@@ -41,7 +40,7 @@ function ConfirmChanges({ select, setSelect, setOpen }) {
                 toast.error(msg);
             } else {
                 toast.success(msg);
-                setSelect({ del: false, wiew: false, success: false });
+                setSelect({ del: false, view: false, success: false });
                 setOpen('');
                 setTimeout(() => {
                     dp(setRefreshOrders())
@@ -63,7 +62,7 @@ function ConfirmChanges({ select, setSelect, setOpen }) {
                 toast.error(msg);
             } else {
                 toast.success(msg);
-                setSelect({ del: false, wiew: false, success: false });
+                setSelect({ del: false, view: false, success: false });
                 setOpen('');
                 setTimeout(() => {
                     dp(setRefreshOrders())

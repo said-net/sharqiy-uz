@@ -1,5 +1,5 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
-import { FaBars, FaBox, FaCaretLeft, FaComment, FaList, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
+import { FaBars, FaBox, FaCaretLeft, FaComment, FaHistory, FaList, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
 import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
@@ -48,6 +48,10 @@ function Navbar() {
                                 <MenuItem className="flex items-center" onClick={() => nv('/wait-orders')}>
                                     <FaClockRotateLeft className="mr-[10px]" />
                                     Eslatmalar
+                                </MenuItem>
+                                <MenuItem className="flex items-center" onClick={() => nv('/history-orders')}>
+                                    <FaList className="mr-[10px]" />
+                                    Tarix
                                 </MenuItem>
                             </MenuList>
                         </Menu>

@@ -391,7 +391,7 @@ module.exports = {
         const { id } = req.params;
         const { about } = req.body;
         const image = req?.files?.image;
-        if (about || !image) {
+        if (!about || !image) {
             res.send({
                 ok: false,
                 msg: "Qatorlarni to'ldiring yoki rasm tanlang!"

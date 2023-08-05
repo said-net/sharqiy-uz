@@ -55,7 +55,7 @@ function Operator() {
                 </div>
                 :
                 !search ?
-                    operator.map(({ name, phone, password, _id, banned }, key) => {
+                    operator.map(({ name, phone, _id, banned }, key) => {
                         return (
                             <div key={key} className="flex items-center justify-between w-full h-[70px] p-[0_10px] bg-[#fff] shadow-md border rounded mb-[10px] hover:shadow-lg backdrop-blur-md">
                                 <div className="flex items-center justify-center rounded-full " >
@@ -76,8 +76,8 @@ function Operator() {
                                             <h1 className="pl-[10px]">O'zgartirish</h1>
                                         </MenuItem>
                                         {!banned ?
-                                            <MenuItem className="flex items-center justify-start" onClick={e=>setSelect({
-                                                banned: false, edit: false, name , ban: true, _id
+                                            <MenuItem className="flex items-center justify-start" onClick={e => setSelect({
+                                                banned: false, edit: false, name, ban: true, _id
                                             })}>
                                                 <FaTrash className="text-[red]" />
                                                 <h1 className="text-[red] pl-[10px] ">Ban berish</h1>
@@ -94,10 +94,49 @@ function Operator() {
                             </div>
                         )
                     })
-                    : null
+                    : operator.map(({ name, phone, _id, banned }, key) => {
+                        return (
+                            name?.toLowerCase()?.includes(search?.toLowerCase()) || phone?.includes(search)
+                                ? <div key={key} className="flex items-center justify-between w-full h-[70px] p-[0_10px] bg-[#fff] shadow-md border rounded mb-[10px] hover:shadow-lg backdrop-blur-md">
+                                    <div className="flex items-center justify-center rounded-full " >
+                                        {name}
+                                    </div>
+                                    <div className="flex items-center justify-center rounded-full " >
+                                        {phone}
+                                    </div>
+                                    <Menu>
+                                        <MenuHandler>
+                                            <IconButton className="rounded-full" color="blue-gray">
+                                                <FaAlignRight />
+                                            </IconButton>
+                                        </MenuHandler>
+                                        <MenuList>
+                                            <MenuItem className="flex items-center justify-start" >
+                                                <FaPenAlt />
+                                                <h1 className="pl-[10px]">O'zgartirish</h1>
+                                            </MenuItem>
+                                            {!banned ?
+                                                <MenuItem className="flex items-center justify-start" onClick={e => setSelect({
+                                                    banned: false, edit: false, name, ban: true, _id
+                                                })}>
+                                                    <FaTrash className="text-[red]" />
+                                                    <h1 className="text-[red] pl-[10px] ">Ban berish</h1>
+                                                </MenuItem>
+                                                :
+                                                <MenuItem className="flex items-center justify-start" >
+                                                    <FaTrash className="text-[red]" />
+                                                    <h1 className="text-[green] pl-[10px] ">Bandan chiqarish</h1>
+                                                </MenuItem>
+                                            }
+                                        </MenuList>
+                                    </Menu>
+
+                                </div> : null
+                        )
+                    })
 
             }
-            <BanOperator select={select} setSelect={setSelect}/>
+            <BanOperator select={select} setSelect={setSelect} />
         </>
     );
 }

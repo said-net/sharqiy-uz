@@ -10,6 +10,8 @@ import Navbar from "./components/navbar";
 import { Route, Routes } from "react-router-dom";
 import NewOrders from "./pages/neworders";
 import MyOrders from "./pages/myorders";
+import WaitOrders from "./pages/wiatorders";
+import Settings from "./pages/settings";
 function App() {
   const { id, refresh, name } = useSelector(e => e.auth);
   const dp = useDispatch();
@@ -40,6 +42,8 @@ function App() {
         <Routes>
           <Route path="/new-orders" element={<NewOrders />} />
           <Route path="/my-orders" element={<MyOrders />} />
+          <Route path="/wait-orders" element={<WaitOrders />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
         <ToastContainer autoClose={2000} closeButton={false} position="top-center" style={{ zIndex: '9999999' }} />
 

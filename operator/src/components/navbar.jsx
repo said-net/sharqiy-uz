@@ -1,5 +1,5 @@
 import { Chip, IconButton } from "@material-tailwind/react";
-import { FaCartShopping, FaGear, FaList, FaListCheck } from "react-icons/fa6";
+import { FaCartShopping, FaClock, FaGear, FaList, FaListCheck } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
@@ -15,7 +15,7 @@ function Navbar() {
                         <h1 className="uppercase text-[23px]">{name}</h1>
                         <Chip className="rounded tracking-widest" value={`Hisob: ${Number(balance).toLocaleString()} so'm`} />
                     </div>
-                    <div className="flex items-center justify-between sm:w-[200px]">
+                    <div className="flex items-center justify-between sm:w-[260px]">
                         <div className="sm:flex items-center justify-center flex-col hidden">
                             <IconButton onClick={() => nv('/new-orders')} color="green" className="rounded-full text-[20px]">
                                 <FaList />
@@ -28,8 +28,14 @@ function Navbar() {
                             </IconButton>
                             <p className="text-[12px]">Egallangan</p>
                         </div>
+                        <div className="sm:flex items-center justify-center flex-col hidden">
+                            <IconButton onClick={() => nv('/wait-orders')} color="light-blue" className="rounded-full text-[20px]">
+                                <FaClock />
+                            </IconButton>
+                            <p className="text-[12px]">Eslatma</p>
+                        </div>
                         <div className="flex items-center justify-center flex-col">
-                            <IconButton onClick={() => nv('/my-orders')} color="indigo" className="rounded-full text-[20px]">
+                            <IconButton onClick={() => nv('/settings')} color="indigo" className="rounded-full text-[20px]">
                                 <FaGear />
                             </IconButton>
                             <p className="text-[12px]">Sozlamalar</p>
@@ -45,6 +51,10 @@ function Navbar() {
                 <div className={`flex items-center justify-center flex-col ${pathname === '/my-orders' ? 'text-black' : 'text-gray-500'}`} onClick={() => nv('/my-orders')}>
                     <FaListCheck className="text-[25px]" />
                     <p className="text-[12px]">Egallangan</p>
+                </div>
+                <div className={`flex items-center justify-center flex-col ${pathname === '/wait-orders' ? 'text-black' : 'text-gray-500'}`} onClick={() => nv('/wait-orders')}>
+                    <FaClock className="text-[25px]" />
+                    <p className="text-[12px]">Eslatma</p>
                 </div>
             </div>
         </>
