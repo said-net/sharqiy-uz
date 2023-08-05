@@ -9,7 +9,7 @@ import ConfirmChanges from "./confirmchanges";
 function ViewOrder({ open, setOpen }) {
     const [order, setOrder] = useState({});
     const [select, setSelect] = useState({ open: false, del: false, wait: false, success: false });
-    const disableAll = order?.status !== 'wait';
+    const disableAll = (order?.status !== 'wait' && order?.status !== 'pending');
     const [disabed, setDisabled] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     useEffect(() => {
@@ -103,8 +103,8 @@ function ViewOrder({ open, setOpen }) {
                             </div>
                         </DialogBody>
                         <DialogFooter className="w-full flex items-center justify-between">
-                            <Button disabled={disabed || disableAll} onClick={() => setSelect({ ...select, open: true, ...order, del: true })} color="red" className="rounded w-[100px] text-[12px]">Bekor</Button>
-                            <Button disabled={disabed || disableAll} onClick={() => setSelect({ ...select, open: true, ...order, wait: true })} color="orange" className="rounded w-[100px] text-[12px]">Eslatma</Button>
+                            <Button disabled={disableAll} onClick={() => setSelect({ ...select, open: true, ...order, del: true })} color="red" className="rounded w-[100px] text-[12px]">Bekor</Button>
+                            <Button disabled={disableAll} onClick={() => setSelect({ ...select, open: true, ...order, wait: true })} color="orange" className="rounded w-[100px] text-[12px]">Eslatma</Button>
                             <Button disabled={disabed || disableAll} onClick={() => setSelect({ ...select, open: true, ...order, success: true })} color="green" className="rounded w-[100px] text-[12px]">Olindi</Button>
                         </DialogFooter>
                     </>

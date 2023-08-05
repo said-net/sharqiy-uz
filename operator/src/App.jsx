@@ -15,7 +15,7 @@ import Settings from "./pages/settings";
 function App() {
   const { id, refresh, name } = useSelector(e => e.auth);
   const dp = useDispatch();
-  document.title = name?`Operator: ${name}`:'Kirish';
+  document.title = name ? `Operator: ${name}` : 'Kirish';
   useEffect(() => {
     axios(`${API_LINK}/operator/verify-session`, {
       headers: {
@@ -44,6 +44,7 @@ function App() {
           <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/wait-orders" element={<WaitOrders />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="*" element={<NewOrders />} />
         </Routes>
         <ToastContainer autoClose={2000} closeButton={false} position="top-center" style={{ zIndex: '9999999' }} />
 

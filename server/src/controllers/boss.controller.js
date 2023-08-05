@@ -435,5 +435,34 @@ module.exports = {
             ok: true,
             msg: "Saqlandi!"
         })
+    },
+    getWaitOrders: async (req, res) => {
+        const $orders = await shopModel.find({ status: 'wait' }).populate('product')
+        const myOrders = [];
+        $orders.forEach(e => {
+            myOrders.push({
+                _id: e?._id,
+                ...e?._doc,
+                image: SERVER_LINK + e?.product?.images[0],
+            });
+        });
+        res.send({
+            ok: true,
+            data: myOrders.reverse()
+        });
+    },
+    setStatusToNew: async (req, res) => {
+        await shopModel.updateMany({ status: 'wait' }, { status: 'pending', operator: null }).then(() => {
+            res.send({
+                ok: true,
+                msg: "O'tkazildi!"
+            })
+        }).catch(err => {
+            console.log(err);
+            res.send({
+                ok: false,
+                msg: "nimadir xato!"
+            })
+        })
     }
 }

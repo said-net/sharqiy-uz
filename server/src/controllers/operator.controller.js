@@ -261,7 +261,7 @@ module.exports = {
         if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'reject',
-                about, city, region, bonus, count: 0, phone, name, price
+                about, city, region, bonus, count: 0, phone, name, price:0
             }).save().then(() => {
                 res.send({
                     ok: true,
@@ -271,7 +271,7 @@ module.exports = {
         } else if (status === 'wait' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'wait',
-                about, city, region, bonus, count: 0, phone, name
+                about, city, region, bonus, count: 0, phone, name, price: 0
             }).save().then(() => {
                 res.send({
                     ok: true,
@@ -308,6 +308,5 @@ module.exports = {
             ok: true,
             data: myOrders.reverse()
         });
-        console.log(myOrders);
     },
 }
