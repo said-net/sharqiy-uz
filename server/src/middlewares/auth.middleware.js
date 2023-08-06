@@ -71,8 +71,8 @@ module.exports = {
                             msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
                         });
                     } else {
-                        const { name, phone, created, balance, location, telegram } = $user;
-                        req.user = { id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), balance, location, telegram };
+                        const { id: uId, name, phone, created, balance, location, telegram } = $user;
+                        req.user = { uId, id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), balance: balance ? balance : 0, location, telegram };
                         next();
                     }
                 }

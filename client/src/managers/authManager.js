@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const AuthManager = createSlice({
     name: 'auth',
     initialState: {
+        uId: '',
         refresh: false,
         name: '',
         phone: '',
@@ -18,15 +19,16 @@ const AuthManager = createSlice({
             state.refresh = !state.refresh;
         },
         setInformations: (state, { payload }) => {
-            const { name, phone, id, role, created, balance, telegram, location } = payload;
+            const { name, phone, id, role, created, balance, telegram, location, uId } = payload;
             state.name = name;
             state.phone = phone;
             state.role = role;
             state.id = id;
             state.created = created;
             state.balance = balance;
-            state.telegram = telegram
-            state.location = location
+            state.telegram = telegram;
+            state.location = location;
+            state.uId = uId
         }
     }
 });

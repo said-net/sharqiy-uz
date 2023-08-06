@@ -17,9 +17,11 @@ import Search from './pages/search'
 import Chat from "./pages/chat";
 import Home from "./pages/home";
 import AdminNavbar from "./admin/navbar";
+import NotAuth from "./user/notauth";
+import AdminMain from "./admin/main";
 
 function App() {
-  const { refresh } = useSelector(e => e.auth);
+  const { refresh, id } = useSelector(e => e.auth);
   const dp = useDispatch()
   const { pathname } = useLocation();
   useEffect(() => {
@@ -55,7 +57,14 @@ function App() {
         </>}
       {pathname === '/dashboard' &&
         <>
-          <AdminNavbar />
+          {!id ? <NotAuth /> :
+            <>
+              <AdminNavbar />
+              <Routes>
+                <Route path="/dashboard" element={<AdminMain />} />
+              </Routes>
+            </>
+          }
         </>
       }
     </>
