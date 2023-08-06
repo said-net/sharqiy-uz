@@ -271,5 +271,5 @@ module.exports = {
             ok: true,
             data: $modlist
         });
-    },
+    }
 }

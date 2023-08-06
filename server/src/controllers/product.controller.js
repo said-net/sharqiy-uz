@@ -422,5 +422,70 @@ module.exports = {
                 });
             }
         }
+    },
+    // 
+    // 
+    getAllToAdmins: async (req, res) => {
+        const { id } = req.params;
+        const $settings = await settingModel.find()
+        try {
+            if (id === 'all') {
+                const $products = await productModel.find({ hidden: false }).populate('category');
+                const $modlist = [];
+                $products.forEach(p => {
+                    $modlist.push({
+                        ...p._doc,
+                        id: p._id,
+                        image: SERVER_LINK + p.images[0],
+                        original_price: 0,
+                        price: p?.price + p?.for_admins + $settings[0].for_operators,
+                        value: p.value - p.solded,
+                        old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
+                        bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                        bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                        category: {
+                            id: p.category._id,
+                            title: p.category.title,
+                            image: SERVER_LINK + p.category.image
+                        }
+                    });
+                });
+                res.send({
+                    ok: true,
+                    data: $modlist
+                });
+            } else {
+                const $products = await productModel.find({ category: id, hidden: false }).populate('category');
+                const $modlist = [];
+                $products.forEach(p => {
+                    $modlist.push({
+                        ...p._doc,
+                        id: p._id,
+                        image: SERVER_LINK + p.images[0],
+                        original_price: 0,
+                        price: p?.price + p?.for_admins + $settings[0].for_operators,
+                        value: p.value - p.solded,
+                        old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
+                        bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                        bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                        category: {
+                            id: p.category._id,
+                            title: p.category.title,
+                            image: SERVER_LINK + p.category.image
+                        }
+                    });
+                });
+                res.send({
+                    ok: true,
+                    data: $modlist
+                });
+            }
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Nimadir Xato"
+            })
+        }
     }
 }

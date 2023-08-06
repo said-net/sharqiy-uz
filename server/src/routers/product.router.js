@@ -18,3 +18,5 @@ module.exports = require('express').Router()
     .get('/get-by-category/:id', productController.getProductsByCategory)
     .get('/get-videos', productController.getVideos)
     .get('/get-search/:prefix', productController.getSearch)
+    // 
+    .get('/get-for-admins/:id', authMiddleware.user, productController.getAllToAdmins)

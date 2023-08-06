@@ -19,6 +19,7 @@ import Home from "./pages/home";
 import AdminNavbar from "./admin/navbar";
 import NotAuth from "./user/notauth";
 import AdminMain from "./admin/main";
+import AdminMarket from "./admin/market";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -38,7 +39,7 @@ function App() {
   }, [refresh]);
   return (
     <>
-      {pathname !== '/dashboard' &&
+      {!pathname.includes('/dashboard') &&
         <>
           <Navbar />
           <Routes>
@@ -55,13 +56,14 @@ function App() {
           </Routes>
           <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
         </>}
-      {pathname === '/dashboard' &&
+      {pathname.includes('/dashboard') &&
         <>
           {!id ? <NotAuth /> :
             <>
               <AdminNavbar />
               <Routes>
                 <Route path="/dashboard" element={<AdminMain />} />
+                <Route path="/dashboard/market" element={<AdminMarket />} />
               </Routes>
             </>
           }
