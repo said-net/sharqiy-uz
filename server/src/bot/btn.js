@@ -16,4 +16,8 @@ module.exports = {
         [{ text: 'Oylik', callback_data: 'stat_month' }],
         [{ text: 'Umumiy', callback_data: 'stat_all' }],
     ]),
+    // 
+    contacts: inlineKeyboard([
+        [{text: '📞Bog\'lanish', url: 'https://t.me/KATTA_INVESTOR'}]
+    ])
 }
