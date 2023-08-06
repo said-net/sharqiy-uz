@@ -10,7 +10,7 @@ const shopModel = require("../models/shop.model");
 const bot = require("../bot/app");
 const path = require('path')
 module.exports = {
-    create: (req, res) => {
+    create: async (req, res) => {
         const { title, about, price, original_price, video, category, value, for_admins } = req.body;
         const images = req?.files?.images[0] ? [...req?.files?.images] : [req?.files?.images];
         if (!title || !about || !price || !video || !category || !original_price || !value || !for_admins) {
@@ -30,6 +30,7 @@ module.exports = {
             });
         } else {
             const imgs = [];
+            const $products = await productModel.find().countDocuments()
             images?.forEach((img, i) => {
                 const filePath = `/public/products/${md5(img?.name + new Date() + i)}.png`;
                 imgs.push(filePath);
@@ -37,6 +38,7 @@ module.exports = {
             })
             new productModel({
                 title,
+                id: $products + 1,
                 about,
                 price,
                 original_price,

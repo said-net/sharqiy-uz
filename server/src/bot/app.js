@@ -131,7 +131,13 @@ bot.on('callback_query', async msg => {
             msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         }
         // 
-
+        else if (data === 'request_pay') {
+            if (!$user?.balance || $user?.balance < 50_000) {
+                msg.replyWithHTML(`❗Pulni chiqarib olish <b>50 000</b> so'mdan boshlanadi!`)
+            }else{
+                
+            }
+        }
     } catch (error) {
         console.log(error);
     }
