@@ -3,6 +3,7 @@ const { BOT_TOKEN } = require('../configs/env');
 const userModel = require('../models/user.model');
 const btn = require('./btn');
 const shopModel = require('../models/shop.model');
+const payModel = require('../models/pay.model');
 const bot = new Telegraf(BOT_TOKEN)
 bot.start(async msg => {
     const { id } = msg.from;
@@ -34,9 +35,15 @@ bot.on('text', async msg => {
             let $total = 0;
 
             $deliver?.forEach(d => {
-                $total += d?.price;
+                $total += d?.for_admin;
             })
 
+            // const $pays = await payModel.find({ from: $user._id });
+            // let pays = 0;
+
+            // $pays.forEach(p => {
+            //     pays += p.count
+            // })
             msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (tx === '⚙Sozlamalar') {
             msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
@@ -55,9 +62,8 @@ bot.on('callback_query', async msg => {
         const $user = await userModel.findOne({ telegram: id });
         if (data === 'stat_today') {
             const day = new Date().getDate();
-            const month = new Date().getMonth() + 1;
+            const month = new Date().getMonth();
             const year = new Date().getFullYear()
-            console.log(month);
             const $news = await shopModel.find({ flow: $user?.id, status: 'pending', month, day, year }).countDocuments();
             const $success = await shopModel.find({ flow: $user?.id, status: 'success', month, day, year }).countDocuments();
             const $sended = await shopModel.find({ flow: $user?.id, status: 'sended', month, day, year }).countDocuments();
@@ -75,7 +81,7 @@ bot.on('callback_query', async msg => {
             msg.replyWithHTML(`<b>📈Bugunlik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (data === 'stat_yesterday') {
             const day = new Date().getDate() - 1;
-            const month = new Date().getMonth() + 1;
+            const month = new Date().getMonth();
             const year = new Date().getFullYear()
             console.log(month);
             const $news = await shopModel.find({ flow: $user?.id, status: 'pending', month, day, year }).countDocuments();
@@ -94,7 +100,7 @@ bot.on('callback_query', async msg => {
 
             msg.replyWithHTML(`<b>📈Kechagi hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (data === 'stat_month') {
-            const month = new Date().getMonth() + 1;
+            const month = new Date().getMonth();
             const year = new Date().getFullYear()
             console.log(month);
             const $news = await shopModel.find({ flow: $user?.id, status: 'pending', month, year }).countDocuments();
@@ -125,7 +131,7 @@ bot.on('callback_query', async msg => {
             let $total = 0;
 
             $deliver?.forEach(d => {
-                $total += d?.price;
+                $total += d?.for_admin;
             })
 
             msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
@@ -134,8 +140,8 @@ bot.on('callback_query', async msg => {
         else if (data === 'request_pay') {
             if (!$user?.balance || $user?.balance < 50_000) {
                 msg.replyWithHTML(`❗Pulni chiqarib olish <b>50 000</b> so'mdan boshlanadi!`)
-            }else{
-                
+            } else {
+
             }
         }
     } catch (error) {

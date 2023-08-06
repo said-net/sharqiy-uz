@@ -192,7 +192,7 @@ module.exports = {
                 phone: o?.phone,
                 about: o?.about,
                 date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
-                for_admin: o?.flow ? o?.product?.for_admin : 0,
+                for_admin: o?.flow ? o?.product?.for_admins : 0,
                 for_operator: $settings[0]?.for_operators,
                 for_ref: !f || !f?.ref_id ? 0 : $settings[0]?.for_ref
             }

@@ -21,15 +21,15 @@ function RequestShop({ openShop, setOpenShop }) {
     // 
     function Submit() {
         setDisablet(true);
-        const { name, phone, region } = openShop;
-        axios.post(`${API_LINK}/shop/create`, { id: openShop.id, name, phone, region }).then(res => {
+        const { name, phone, region, flow } = openShop;
+        axios.post(`${API_LINK}/shop/create`, { id: openShop.id, name, phone, region, flow: flow ? flow : '' }).then(res => {
             const { ok, msg } = res.data;
             setDisablet(false);
             if (!ok) {
                 toast.error(msg);
             } else {
                 toast.success(msg);
-                setOpenShop({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '', city: '' });
+                setOpenShop({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '', city: '', flow: '' });
             }
         }).catch(() => {
             toast.warning("Aloqani tekshirib qayta urunib ko'ring!");

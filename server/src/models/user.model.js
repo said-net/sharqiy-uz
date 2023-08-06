@@ -1,4 +1,4 @@
-const {Types, Schema, model} = require('mongoose');
+const { Schema, model } = require('mongoose');
 
 const schema = new Schema({
     id: Number,
@@ -8,9 +8,12 @@ const schema = new Schema({
     verify_code: String,
     created: Number,
     telegram: Number,
-    balance: Number,
+    balance: {
+        type: Number,
+        default: 0
+    },
     password: String,
-    ref_id:String,
+    ref_id: String,
     access: String
 });
 

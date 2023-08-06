@@ -1,7 +1,6 @@
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input, Option, Select } from "@material-tailwind/react";
 import axios from "axios";
-import { useState } from "react";
-import { FaImage } from "react-icons/fa6";
+
 import { API_LINK } from "../../config";
 import { setRefreshProduct } from "../../managers/product.manager";
 import { useDispatch } from "react-redux";

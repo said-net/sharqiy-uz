@@ -20,6 +20,7 @@ import AdminNavbar from "./admin/navbar";
 import NotAuth from "./user/notauth";
 import AdminMain from "./admin/main";
 import AdminMarket from "./admin/market";
+import Flow from "./pages/flow";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -46,6 +47,7 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/get-by-category/:id" element={<GetProductsByCategory />} />
             <Route path="/product/:id" element={<Product />} />
+            <Route path="/flow/:flow/:id" element={<Flow />} />
             <Route path="/videos" element={<VideoPlayers />} />
             <Route path="/search/:search" element={<Search />} />
             {/*  */}
