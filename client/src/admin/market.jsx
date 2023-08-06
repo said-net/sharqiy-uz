@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { FaBoxes } from "react-icons/fa";
-import { Button } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input } from "@material-tailwind/react";
 
 function AdminMarket() {
     const [state, setState] = useState([]);
@@ -13,7 +13,7 @@ function AdminMarket() {
     const [isLoad, setIsLoad] = useState(false);
     const [category, setCategory] = useState('all')
     const { uId } = useSelector(e => e.auth);
-    const [openFlow, setOpenFlow] = useState('');
+    const [openFlow, setOpenFlow] = useState({ id: '', title: '' });
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/category/getall`).then(res => {
@@ -90,7 +90,7 @@ function AdminMarket() {
                                     <div className="w-full h-[1px] bg-blue-gray-100"></div>
                                     <p className="text-[12px]">To'lov: <span className="text-[15px]">{Number(p?.for_admins).toLocaleString()} s'om</span></p>
                                     {/*  */}
-                                    <span className="w-full h-[30px] border-[2px] rounded border-green-500 flex items-center justify-center uppercase tracking-[2px] mb-[10px]" onClick={()=>setOpenFlow(p?.id)}>
+                                    <span className="w-full h-[30px] border-[2px] rounded border-green-500 flex items-center justify-center uppercase tracking-[2px] mb-[10px]" onClick={() => setOpenFlow({ id: p?.id, title: p?.title })}>
                                         Oqim
                                     </span>
                                     {/*  */}
@@ -103,6 +103,17 @@ function AdminMarket() {
                     })}
                 </div>
             }
+            <Dialog open={openFlow?.id !== ''} className="p-[5px]">
+                <DialogHeader>
+                    <h1 className="text-[14px]">{openFlow?.title}</h1>
+                </DialogHeader>
+                <DialogBody className="border-y">
+                    <Input label="Siz uchun oqim" disabled value={`https://sharqiy.uz/flow/${uId}/${openFlow.id}`} />
+                </DialogBody>
+                <DialogFooter>
+                    <Button color="orange" className="rounded" onClick={() => setOpenFlow({ id: '', title: '' })}>Yopish</Button>
+                </DialogFooter>
+            </Dialog>
         </div>
     );
 }

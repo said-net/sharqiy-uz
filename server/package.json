@@ -20,7 +20,8 @@
     "mongoose": "^7.3.4",
     "pdfkit": "^0.13.0",
     "phone": "^3.1.37",
-    "qrcode": "^1.5.3"
+    "qrcode": "^1.5.3",
+    "telegraf": "^4.12.2"
   },
   "devDependencies": {
     "dotenv": "^16.3.1",

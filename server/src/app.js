@@ -13,4 +13,10 @@ app.use(express.json());
 app.use(file());
 app.use('/public', express.static('public'));
 app.use('/api', router);
-app.listen(APP_PORT);
+app.listen(APP_PORT, () => {
+    try {
+        require('./bot/app').launch()
+    } catch (error) {
+        console.log(error);
+    }
+});
