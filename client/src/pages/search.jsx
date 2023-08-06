@@ -62,7 +62,8 @@ function Search() {
                 }
             });
         }
-    }, [refreshLikes])
+    }, [refreshLikes]);
+    
     return (
         <div className="flex items-center justify-start w-full m-[0px_0_60px_0]">
             {!isLoad && <Spinner />}

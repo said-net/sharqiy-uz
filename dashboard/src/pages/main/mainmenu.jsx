@@ -1,16 +1,17 @@
 import { IconButton, Spinner } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaCirclePlus } from 'react-icons/fa6'
+import { FaCirclePlus, FaTrash } from 'react-icons/fa6'
 import { useSelector } from "react-redux";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
 import AddMain from "./add";
+import DeleteMain from "./delete";
 function MenuSettings() {
     const [state, setState] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const { refresh } = useSelector(e => e.product);
-    const [del, openDel] = useState('');
+    const [del, setDel] = useState('');
     const [add, setAdd] = useState(false);
     const [products, setProducts] = useState([]);
     useEffect(() => {
@@ -34,7 +35,6 @@ function MenuSettings() {
         });
     }, [refresh]);
 
-
     return (
         <div className="flex items-center justify-start flex-col w-full mt-[10px]">
             <div className="flex items-center justify-end w-full">
@@ -50,8 +50,13 @@ function MenuSettings() {
                         state?.map((p, i) => {
                             return (
                                 <div key={i} className="flex shadow-md bg-white rounded m-[10px] flex-col hover:shadow-lg p-[10px]">
-                                    <div className="flex items-center justify-center w-[320px] h-[180px] overflow-hidden">
-                                        <img src={p?.image} alt="" />
+                                    <div className="flex items-center justify-center w-[320px] h-[180px] overflow-hidden relative">
+                                        <img src={p?.image} alt="s" />
+                                        <div className="absolute top-[0px] right-[0px]">
+                                            <IconButton onClick={() => setDel(p?.id)} color="red" className="rounded text-[20px]">
+                                                <FaTrash />
+                                            </IconButton>
+                                        </div>
                                     </div>
                                     <p className="w-full p-[0_10px]">{p?.product}</p>
                                 </div>
@@ -61,6 +66,7 @@ function MenuSettings() {
                 </div>
             }
             <AddMain open={add} setOpen={setAdd} products={products} />
+            <DeleteMain open={del} setOpen={setDel} />
         </div>
     );
 }

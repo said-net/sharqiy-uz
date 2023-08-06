@@ -3,6 +3,8 @@ const mainModel = require("../models/main.model");
 const fs = require("fs");
 const productModel = require("../models/product.model");
 const { SERVER_LINK } = require("../configs/env");
+const settingModel = require("../models/setting.model");
+const moment = require("moment");
 module.exports = {
     getMainMenu: async (req, res) => {
         const $ads = await mainModel.find().populate('product');
@@ -70,6 +72,51 @@ module.exports = {
                 ok: false,
                 msg: "Nimadir xato!"
             });
+        });
+    },
+    getMainForClient: async (req, res) => {
+        const $main = await mainModel.find();
+        const main = []
+        const $products = await productModel.find({ hidden: false });
+        const $settings = await settingModel.find();
+        const videos = [];
+        const products = [];
+        $products.forEach(p => {
+            products.push({
+                ...p._doc,
+                id: p._id,
+                image: SERVER_LINK + p.images[0],
+                original_price: 0,
+                price: p?.price + p?.for_admins + $settings[0].for_operators,
+                value: p.value - p.solded,
+                old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
+                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                // bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                category: {
+                    id: p.category._id,
+                    title: p.category.title,
+                    image: SERVER_LINK + p.category.image
+                }
+            });
+            videos.push({
+                id: p._id,
+                product: p.title,
+                video: p.video
+            });
+        });
+        $main.forEach(m => {
+            main.push({
+                id: m.product,
+                image: SERVER_LINK + m?.image
+            })
+        })
+        res.send({
+            ok: true,
+            data: {
+                products,
+                main,
+                videos
+            }
         });
     }
 }

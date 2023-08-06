@@ -16,6 +16,7 @@ import VideoPlayers from "./pages/video";
 import Search from './pages/search'
 import Chat from "./pages/chat";
 import Home from "./pages/home";
+import AdminNavbar from "./admin/navbar";
 
 function App() {
   const { refresh } = useSelector(e => e.auth);
@@ -42,8 +43,8 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/get-by-category/:id" element={<GetProductsByCategory />} />
             <Route path="/product/:id" element={<Product />} />
-            <Route path="/videos" element={<VideoPlayers/>}/>
-            <Route path="/search/:search" element={<Search/>}/>
+            <Route path="/videos" element={<VideoPlayers />} />
+            <Route path="/search/:search" element={<Search />} />
             {/*  */}
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
@@ -53,7 +54,9 @@ function App() {
           <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
         </>}
       {pathname === '/dashboard' &&
-        <h1>ADMIN</h1>
+        <>
+          <AdminNavbar />
+        </>
       }
     </>
   );
