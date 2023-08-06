@@ -7,6 +7,8 @@ const settingModel = require("../models/setting.model");
 const adsModel = require("../models/ads.model");
 const fs = require('fs');
 const shopModel = require("../models/shop.model");
+const bot = require("../bot/app");
+const path = require('path')
 module.exports = {
     create: (req, res) => {
         const { title, about, price, original_price, video, category, value, for_admins } = req.body;
@@ -485,6 +487,37 @@ module.exports = {
             res.send({
                 ok: false,
                 msg: "Nimadir Xato"
+            })
+        }
+    },
+
+    getAdsPost: async (req, res) => {
+        const { id } = req.params;
+        const $ads = await adsModel.findOne({ product: id });
+        if (!$ads) {
+            res.send({
+                ok: false,
+                msg: "Ushbu maxsulot uchun reklama posti mavjud emas!"
+            });
+        } else {
+            bot.telegram.sendPhoto(req.user.telegram, { source: path.join(`public`, 'ads', $ads.image?.split('/')[3]) }, {
+                caption: `${$ads.about}\n\nhttps://sharqiy.uz/flow/${req?.user?.uId}/${id}`, reply_markup: {
+                    inline_keyboard: [
+                        [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/flow/${req?.user?.uId}/${id}` }],
+                        [{ text: '📋Batafsil', url: `https://sharqiy.uz/flow/${req?.user?.uId}/${id}` }]
+                    ]
+                }
+            }).then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Telegramga yuborildi!"
+                })
+            }).catch(err => {
+                console.log(err);
+                res.send({
+                    ok: false,
+                    msg: "Siz telegram botni profilingizga bog'lamagansiz!"
+                })
             })
         }
     }

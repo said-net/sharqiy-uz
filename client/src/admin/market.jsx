@@ -43,6 +43,23 @@ function AdminMarket() {
         });
     }, [category]);
 
+    function getAds(id) {
+        axios(`${API_LINK}/product/get-ads-post/${id}`, {
+            headers: {
+                'x-user-token': `Bearer ${localStorage.getItem('access')}`
+            }
+        }).then(res => {
+            const { ok, msg } = res.data;
+            if (!ok) {
+                toast.error(msg);
+            } else {
+                toast.success(msg)
+            }
+        }).catch(err=>{
+            console.log(err);
+            toast.error("Aloqani tekshirib qayta urunib koring!")
+        })
+    }
     return (
         <div className="flex items-center justify-start flex-col w-full p-[0_10px]">
             <Link to={`/dashboard`} className="w-full underline">Ortga</Link>
@@ -94,7 +111,7 @@ function AdminMarket() {
                                         Oqim
                                     </span>
                                     {/*  */}
-                                    <span className="w-full h-[30px] rounded bg-green-500 flex items-center justify-center uppercase tracking-[1px] mb-[10px] text-white shadow-md">
+                                    <span className="w-full h-[30px] rounded bg-green-500 flex items-center justify-center uppercase tracking-[1px] mb-[10px] text-white shadow-md" onClick={()=>getAds(p?.id)}>
                                         Reklama posti
                                     </span>
                                 </div>

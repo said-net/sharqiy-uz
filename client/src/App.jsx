@@ -65,6 +65,7 @@ function App() {
                 <Route path="/dashboard" element={<AdminMain />} />
                 <Route path="/dashboard/market" element={<AdminMarket />} />
               </Routes>
+              <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
             </>
           }
         </>
