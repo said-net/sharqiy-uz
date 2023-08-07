@@ -9,6 +9,7 @@ const md5 = require('md5');
 const shopModel = require('../models/shop.model');
 const likeModel = require('../models/like.model');
 const productModel = require('../models/product.model');
+const settingModel = require('../models/setting.model');
 module.exports = {
     requestSMS: async (req, res) => {
         const { phone, ref_id } = req.body;
@@ -272,23 +273,219 @@ module.exports = {
             data: $modlist
         });
     },
-    getStats: (req, res) => {
+    getStats: async (req, res) => {
         const { date } = req.params;
-        async function getStat() {
-            if (date === 'all') {
-                const $shops = await shopModel.find({ flow: req.user.uId });
-                const $refShops = await shopModel.find({ ref_id: req.user.uId });
-                let reject = 0;
-                let success = 0;
-                let wait = 0;
-                let sended = 0;
-                let delivered = 0;
-                let profit = 0;
+        if (date === 'all') {
+            const $shops = await shopModel.find({ flow: req.user.uId });
+            const $refs = await userModel.find({ ref_id: req.user.uId });
+            let reject = 0;
+            let success = 0;
+            let wait = 0;
+            let sended = 0;
+            let delivered = 0;
+            let profit = 0;
+            let pending = 0;
+            let refProfit = 0;
+            // 
+            for (let ref of $refs) {
+                const $rflows = await shopModel.find({ flow: ref.id });
+                $rflows.forEach(rf => {
+                    refProfit += rf.for_ref
+                });
             }
+            $shops.forEach(o => {
+                if (o.status === 'reject') {
+                    reject++;
+                } else if (o.status === 'wait') {
+                    wait++;
+                } else if (o.status === 'success') {
+                    success++;
+                } else if (o.status === 'sended') {
+                    sended++;
+                } else if (o.status === 'delivered') {
+                    delivered++;
+                    profit += o.for_admin
+                } else if (o.status === 'pending') {
+                    pending++;
+                }
+            });
+            res.send({
+                ok: true,
+                data: {
+                    reject,
+                    success,
+                    wait,
+                    sended,
+                    delivered,
+                    profit,
+                    refProfit,
+                    pending,
+                    all: $shops.length,
+                    refferals: $refs.length
+                }
+            })
+        } else if (date === 'today') {
+            const d = new Date();
+            const day = d.getDate();
+            const month = d.getMonth();
+            const year = d.getFullYear();
+            const $shops = await shopModel.find({ flow: req.user.uId, day, month, year });
+            let reject = 0;
+            let success = 0;
+            let wait = 0;
+            let sended = 0;
+            let delivered = 0;
+            let profit = 0;
+            let pending = 0;
+            $shops.forEach(o => {
+                if (o.status === 'reject') {
+                    reject++;
+                } else if (o.status === 'wait') {
+                    wait++;
+                } else if (o.status === 'success') {
+                    success++;
+                } else if (o.status === 'sended') {
+                    sended++;
+                } else if (o.status === 'delivered') {
+                    delivered++;
+                    profit += o.for_admin
+                } else if (o.status === 'pending') {
+                    pending++;
+                }
+            });
+            res.send({
+                ok: true,
+                data: {
+                    reject,
+                    success,
+                    wait,
+                    sended,
+                    delivered,
+                    profit,
+                    pending,
+                    all: $shops.length,
+                }
+            })
+        } else if (date === 'yesterday') {
+            const d = new Date();
+            const day = d.getDate() - 1;
+            const month = d.getMonth();
+            const year = d.getFullYear();
+            const $shops = await shopModel.find({ flow: req.user.uId, day, month, year });
+            let reject = 0;
+            let success = 0;
+            let wait = 0;
+            let sended = 0;
+            let delivered = 0;
+            let profit = 0;
+            let pending = 0;
+            $shops.forEach(o => {
+                if (o.status === 'reject') {
+                    reject++;
+                } else if (o.status === 'wait') {
+                    wait++;
+                } else if (o.status === 'success') {
+                    success++;
+                } else if (o.status === 'sended') {
+                    sended++;
+                } else if (o.status === 'delivered') {
+                    delivered++;
+                    profit += o.for_admin
+                } else if (o.status === 'pending') {
+                    pending++;
+                }
+            });
+            res.send({
+                ok: true,
+                data: {
+                    reject,
+                    success,
+                    wait,
+                    sended,
+                    delivered,
+                    profit,
+                    pending,
+                    all: $shops.length,
+                }
+            })
+        } else if (date === 'month') {
+            const d = new Date();
+            const month = d.getMonth();
+            const year = d.getFullYear();
+            const $shops = await shopModel.find({ flow: req.user.uId, month, year });
+            let reject = 0;
+            let success = 0;
+            let wait = 0;
+            let sended = 0;
+            let delivered = 0;
+            let profit = 0;
+            let pending = 0;
+            $shops.forEach(o => {
+                if (o.status === 'reject') {
+                    reject++;
+                } else if (o.status === 'wait') {
+                    wait++;
+                } else if (o.status === 'success') {
+                    success++;
+                } else if (o.status === 'sended') {
+                    sended++;
+                } else if (o.status === 'delivered') {
+                    delivered++;
+                    profit += o.for_admin
+                } else if (o.status === 'pending') {
+                    pending++;
+                }
+            });
+            res.send({
+                ok: true,
+                data: {
+                    reject,
+                    success,
+                    wait,
+                    sended,
+                    delivered,
+                    profit,
+                    pending,
+                    all: $shops.length,
+                }
+            })
         }
+    },
+    getRefs: async (req, res) => {
+        const $refs = await userModel.find({ ref_id: req.user.uId });
+        let refProfit = 0;
+        // 
+        for (let ref of $refs) {
+            const $rflows = await shopModel.find({ flow: ref.id });
+            $rflows.forEach(rf => {
+                refProfit += rf.for_ref
+            });
+        }
+        const $setting = await settingModel.find();
         res.send({
             ok: true,
-            data: getStat()
-        })
+            data: {
+                refs: $refs.length,
+                profit: refProfit,
+                comission: $setting[0].for_ref
+            }
+        });
+    },
+    setTelegram: async (req, res) => {
+        const { telegram } = req.body;
+        if (isNaN(telegram)) {
+            res.send({
+                ok: false,
+                msg: "Telegram ID ni to'g'ri kiriting!"
+            });
+        } else {
+            const $user = await userModel.findById(req.user.id);
+            $user.set({ telegram }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Saqlandi!"
+                });
+            });
+        }
     }
 }

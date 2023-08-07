@@ -14,7 +14,8 @@ const schema = new Schema({
     },
     password: String,
     ref_id: String,
-    access: String
+    access: String,
+    step: String,
 });
 
 module.exports = model('User', schema);

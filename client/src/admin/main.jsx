@@ -4,9 +4,12 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ImStatsDots } from 'react-icons/im'
 import { FaGear, FaMoneyBill1, FaMoneyBillTransfer } from "react-icons/fa6";
+import { useState } from "react";
+import AdminTelegram from "./addtelegram";
 function AdminMain() {
     const { balance } = useSelector(e => e.auth);
-    const nv = useNavigate()
+    const nv = useNavigate();
+    const [open, setOpen] = useState(false);
     return (
         <div className="flex items-center justify-start flex-col w-full p-[0_10px]">
             <div className="flex items-center justify-between w-full h-[100px] bg-white shadow-md rounded p-[10px] relative mb-[10px]">
@@ -23,19 +26,19 @@ function AdminMain() {
                     <FaShoppingCart className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Market
                 </MenuItem>
-                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/market')}>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/stats')}>
                     <ImStatsDots className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Statistika
                 </MenuItem>
-                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/market')}>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => window.open('https://t.me/Sharqiybot?start=pay')}>
                     <FaMoneyBill1 className="mr-[10px] text-[20px] text-blue-gray-500" />
                     To'lov
                 </MenuItem>
-                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/market')}>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => window.open('https://t.me/Sharqiybot?start=pay_history')}>
                     <FaMoneyBillTransfer className="mr-[10px] text-[20px] text-blue-gray-500" />
                     To'lovlar tarixi
                 </MenuItem>
-                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/market')}>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/refs')}>
                     <FaUsers className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Referal
                 </MenuItem>
@@ -43,11 +46,12 @@ function AdminMain() {
                     <FaGift className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Konkurs
                 </MenuItem>
-                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/market')}>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => setOpen(true)}>
                     <FaTelegram className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Telegramga bog'lash
                 </MenuItem>
             </div>
+            <AdminTelegram open={open} setOpen={setOpen} />
         </div>
     );
 }

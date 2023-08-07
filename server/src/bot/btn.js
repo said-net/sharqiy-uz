@@ -6,6 +6,10 @@ module.exports = {
         ['⚙Sozlamalar', '📞Bog\'lanish']
     ]).resize(true),
     // 
+    back: keyboard([
+        ['🔙Ortga']
+    ]).resize(true),
+    // 
     balance: inlineKeyboard([
         [{ text: '💳Pulni chiqarib olish', callback_data: 'request_pay' }],
         [{ text: '🕐Tolovlar tarixi', callback_data: 'payment_history' }]

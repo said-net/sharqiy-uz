@@ -3,6 +3,8 @@ const { BOT_TOKEN } = require('../configs/env');
 const userModel = require('../models/user.model');
 const btn = require('./btn');
 const shopModel = require('../models/shop.model');
+const payModel = require('../models/pay.model');
+// const payMaker = require('../middlewares/pay.maker');
 // const payModel = require('../models/pay.model');
 const bot = new Telegraf(BOT_TOKEN)
 bot.start(async msg => {
@@ -11,7 +13,30 @@ bot.start(async msg => {
     if (!$user) {
         msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sahrqiy.uz</a> sayti orqali aktivlashtiring!`)
     } else {
-        msg.replyWithHTML(`<b>📋Bosh sahifa</b>`, { ...btn.menu });
+        const command = msg.startPayload;
+        if (!command) {
+            msg.replyWithHTML(`<b>📋Bosh sahifa</b>`, { ...btn.menu });
+        } else {
+            if (command === 'pay') {
+                if (!$user?.balance || $user?.balance < 1000) {
+                    msg.replyWithHTML(`❗Pulni chiqarib olish <b>1 000</b> so'mdan boshlanadi!`)
+                } else {
+                    $user.set({ step: 'request_card' }).save();
+                    msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860160147090205</b>", { ...btn.back })
+                }
+            } else if (command === 'pay_history') {
+                const $pays = await payModel.find({ from: $user._id });
+                if (!$pays[0]) {
+                    msg.replyWithHTML("❗Siz pul yechmagansiz!")
+                } else {
+                    let tx = `<b>📋To'lovlar tarixi</b>\n\n`;
+                    $pays?.forEach((p, i) => {
+                        txt += `${(i + 1)} - to'lov: ${Number(p.count).toLocaleString} so'm\n`
+                    });
+                    msg.replyWithHTML(tx)
+                }
+            }
+        }
     }
 });
 
@@ -20,7 +45,10 @@ bot.on('text', async msg => {
     const tx = msg.message.text
     try {
         const $user = await userModel.findOne({ telegram: id });
-        if (tx === '💳Hisobim') {
+        if (tx === '🔙Ortga') {
+            $user.set({ step: '' }).save();
+            msg.replyWithHTML("📋Bosh sahifa", { ...btn.menu });
+        } else if (tx === '💳Hisobim') {
             msg.replyWithHTML(`💳Hisobingiz: <b>${Number($user?.balance || 0).toLocaleString()}</b> so'm`, { ...btn.balance })
         } else if (tx === '📈Statistika') {
             const $news = await shopModel.find({ flow: $user?.id, status: 'pending' }).countDocuments();
@@ -50,9 +78,13 @@ bot.on('text', async msg => {
             msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
         } else if (tx === '📞Bog\'lanish') {
             msg.replyWithHTML("<b>👀Biz bilan aloqaga chiqish uchun pastdagi tugmachaga bosing!</b>", { ...btn.contacts })
+        }else{
+            if($user.step === 'request_card'){
+                
+            }
         }
     } catch (error) {
-        console.log(err);
+        console.log(error);
     }
 });
 
@@ -146,10 +178,22 @@ bot.on('callback_query', async msg => {
         }
         // 
         else if (data === 'request_pay') {
-            if (!$user?.balance || $user?.balance < 50_000) {
-                msg.replyWithHTML(`❗Pulni chiqarib olish <b>50 000</b> so'mdan boshlanadi!`)
+            if (!$user?.balance || $user?.balance < 1000) {
+                msg.replyWithHTML(`❗Pulni chiqarib olish <b>1 000</b> so'mdan boshlanadi!`)
             } else {
-
+                $user.set({ step: 'request_card' }).save();
+                msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860160147090205</b>", { ...btn.back })
+            }
+        } else if (data === 'payment_history') {
+            const $pays = await payModel.find({ from: $user._id });
+            if (!$pays[0]) {
+                msg.replyWithHTML("❗Siz pul yechmagansiz!")
+            } else {
+                let tx = `<b>📋To'lovlar tarixi</b>\n\n`;
+                $pays?.forEach((p, i) => {
+                    txt += `${(i + 1)} - to'lov: ${Number(p.count).toLocaleString} so'm\n`
+                });
+                msg.replyWithHTML(tx)
             }
         }
     } catch (error) {

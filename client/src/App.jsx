@@ -22,6 +22,8 @@ import AdminMain from "./admin/main";
 import AdminMarket from "./admin/market";
 import Flow from "./pages/flow";
 import Refferer from "./pages/ref";
+import AdminStats from "./admin/stats";
+import AdminRefs from "./admin/refs";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -68,6 +70,8 @@ function App() {
               <Routes>
                 <Route path="/dashboard" element={<AdminMain />} />
                 <Route path="/dashboard/market" element={<AdminMarket />} />
+                <Route path="/dashboard/stats" element={<AdminStats />} />
+                <Route path="/dashboard/refs" element={<AdminRefs />} />
               </Routes>
               <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
             </>
