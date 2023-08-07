@@ -271,5 +271,24 @@ module.exports = {
             ok: true,
             data: $modlist
         });
+    },
+    getStats: (req, res) => {
+        const { date } = req.params;
+        async function getStat() {
+            if (date === 'all') {
+                const $shops = await shopModel.find({ flow: req.user.uId });
+                const $refShops = await shopModel.find({ ref_id: req.user.uId });
+                let reject = 0;
+                let success = 0;
+                let wait = 0;
+                let sended = 0;
+                let delivered = 0;
+                let profit = 0;
+            }
+        }
+        res.send({
+            ok: true,
+            data: getStat()
+        })
     }
 }
