@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { Button, Spinner } from "@material-tailwind/react";
+import { BiRefresh } from 'react-icons/bi'
+import { Button, IconButton, Spinner } from "@material-tailwind/react";
 import Regions from '../components/regions.json';
 import { setRefreshOrders } from "../managers/order.manager";
 function NewOrders() {
@@ -58,7 +59,12 @@ function NewOrders() {
     }
     return (
         <div className="flex items-center justify-start flex-col w-full">
-            <h1 className="bg-white p-[10px_20px] rounded-[0_0_10px_10px] text-[20px] mb-[20px]">YANGI BUYURTMALAR</h1>
+            <h1 className="bg-white p-[10px_20px] rounded-[0_0_10px_10px] mb-[20px] text-[12px] sm:text-[20px]">YANGI BUYURTMALAR</h1>
+            <div className="fixed top-[80px] right-[10px]">
+                <IconButton color="orange" className="text-[20px] rounded-full" onClick={() => dp(setRefreshOrders())}>
+                    <BiRefresh />
+                </IconButton>
+            </div>
             {!isLoad && <Spinner />}
             {isLoad && !orders[0] &&
                 <div className="flex items-center justify-start flex-col w-full">

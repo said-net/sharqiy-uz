@@ -495,5 +495,5 @@ module.exports = {
                 msg: "nimadir xato!"
             })
         })
-    }
+    },
 }

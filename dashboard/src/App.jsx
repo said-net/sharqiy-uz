@@ -20,6 +20,7 @@ import WaitOrders from "./pages/waitorders/waitorders";
 import Chats from "./pages/chat/chats";
 import SelectChat from "./pages/chat/selectchat";
 import MenuSettings from "./pages/main/mainmenu";
+import Competition from "./pages/competition/competition";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -59,6 +60,7 @@ function App() {
           <Route path="/chats" element={<Chats />} />
           <Route path="/select-chat/:id" element={<SelectChat />} />
           <Route path="/main-menu" element={<MenuSettings />} />
+          <Route path="/competition" element={<Competition />} />
           <Route path="*" element={<Dashboard />} />
         </Routes>
         {/* <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" /> */}

@@ -1,5 +1,5 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
-import { FaBars, FaBox, FaCaretLeft, FaComment, FaHistory, FaList, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
+import { FaBars, FaBox, FaCaretLeft, FaComment, FaGift, FaHistory, FaList, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
 import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
@@ -99,6 +99,11 @@ function Navbar() {
                                 <FaGear className="mr-[10px]" />
                                 Sozlamalar
                                 {pathname === '/settings' && <FaCaretLeft />}
+                            </MenuItem>
+                            <MenuItem onClick={() => nv('/competition')} className="flex items-center justify-start">
+                                <FaGift className="mr-[10px]" />
+                                Konkurs
+                                {pathname === '/competition' && <FaCaretLeft />}
                             </MenuItem>
                             <div className="w-full h-[1px] bg-blue-gray-200"></div>
                             <MenuItem onClick={LogOut} className="flex items-center justify-start text-red-400">
