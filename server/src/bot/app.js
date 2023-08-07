@@ -3,7 +3,7 @@ const { BOT_TOKEN } = require('../configs/env');
 const userModel = require('../models/user.model');
 const btn = require('./btn');
 const shopModel = require('../models/shop.model');
-const payModel = require('../models/pay.model');
+// const payModel = require('../models/pay.model');
 const bot = new Telegraf(BOT_TOKEN)
 bot.start(async msg => {
     const { id } = msg.from;
@@ -29,22 +29,23 @@ bot.on('text', async msg => {
             const $wait = await shopModel.find({ flow: $user?.id, status: 'wait' }).countDocuments();
             const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
             const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
-            const $refs = await userModel.find({ ref_id: $user._id }).countDocuments();
+            const $refs = await userModel.find({ ref_id: $user.id });
 
             const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
             let $total = 0;
 
             $deliver?.forEach(d => {
                 $total += d?.for_admin;
-            })
+            });
+            let $tref = 0;
+            for (let ref of $refs) {
+                const $rflows = await shopModel.find({ flow: ref.id });
+                $rflows.forEach(rf => {
+                    $tref += rf.for_ref
+                })
+            }
 
-            // const $pays = await payModel.find({ from: $user._id });
-            // let pays = 0;
-
-            // $pays.forEach(p => {
-            //     pays += p.count
-            // })
-            msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
+            msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (tx === '⚙Sozlamalar') {
             msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
         } else if (tx === '📞Bog\'lanish') {
@@ -125,16 +126,23 @@ bot.on('callback_query', async msg => {
             const $wait = await shopModel.find({ flow: $user?.id, status: 'wait' }).countDocuments();
             const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
             const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
-            const $refs = await userModel.find({ ref_id: $user._id }).countDocuments();
+            const $refs = await userModel.find({ ref_id: $user.id });
 
             const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
             let $total = 0;
 
             $deliver?.forEach(d => {
                 $total += d?.for_admin;
-            })
+            });
+            let $tref = 0;
+            for (let ref of $refs) {
+                const $rflows = await shopModel.find({ flow: ref.id });
+                $rflows.forEach(rf => {
+                    $tref += rf.for_ref
+                })
+            }
 
-            msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
+            msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
         }
         // 
         else if (data === 'request_pay') {

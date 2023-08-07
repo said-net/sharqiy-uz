@@ -9,7 +9,8 @@ const userModel = require("../models/user.model");
 const operatorModel = require("../models/operator.model");
 const settingModel = require("../models/setting.model");
 const chequeMaker = require("../middlewares/cheque.maker");
-const path = require('path')
+const path = require('path');
+const bot = require("../bot/app");
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -177,6 +178,7 @@ module.exports = {
         try {
             const o = await shopModel.findById(id).populate('product operator');
             const f = await userModel.findOne({ phone: o?.phone });
+            const a = await userModel.findOne({ id: o?.flow }) || null;
             const data = {
                 _id: o?._id,
                 id: o?.id,
@@ -194,7 +196,7 @@ module.exports = {
                 date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
                 for_admin: o?.flow ? o?.product?.for_admins : 0,
                 for_operator: $settings[0]?.for_operators,
-                for_ref: !f || !f?.ref_id ? 0 : $settings[0]?.for_ref
+                for_ref: !a ? 0 : $settings[0]?.for_ref
             }
             res.send({
                 ok: true,
@@ -244,11 +246,19 @@ module.exports = {
         const o = await shopModel.findById(id).populate('product operator');
         const { status } = req.body;
         if (status === 'reject') {
-            o.set({ status: 'reject' }).save().then(() => {
+            o.set({ status: 'reject' }).save().then(async () => {
                 res.send({
                     ok: true,
                     msg: "Buyurtma bekor qilindi!"
                 });
+                if (o?.flow) {
+                    const $flower = await userModel.findOne({ id: o?.flow });
+                    if ($flower && $flower?.telegram) {
+                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
+                            console.log(err);
+                        });
+                    }
+                }
             });
         } else if (status === 'sended') {
             o.set({ status: 'sended' }).save().then(() => {
@@ -268,12 +278,20 @@ module.exports = {
                     phone: o?.phone,
                     date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
                 }
-                chequeMaker(data).then(() => {
+                chequeMaker(data).then(async () => {
                     res.send({
                         ok: true,
                         msg: "Buyurtma yuborildi!",
                         data: SERVER_LINK + '/public/cheques/' + o?.id + '.pdf'
-                    })
+                    });
+                    if (o?.flow) {
+                        const $flower = await userModel.findOne({ id: o?.flow });
+                        if ($flower && $flower?.telegram) {
+                            bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yuborildi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
+                                console.log(err);
+                            });
+                        }
+                    }
                 }).catch((err) => {
                     console.log(err);
                     res.send({
@@ -297,9 +315,11 @@ module.exports = {
                     // 
                     $ref.set({ balance: $ref?.balance + s[0]?.for_ref }).save();
                     // 
+                    bot.telegram.sendMessage($ref?.telegram, `sharqiy.uz\n👥Hisobga +${Number(s[0]?.for_ref).toLocaleString()} so'm referaldan qo'shildi`).catch(err => {
+                        console.log(err);
+                    });
                     o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
                     // 
-
                     p.set({ solded: o?.product?.solded + o?.count }).save();
                     res.send({
                         ok: true,
@@ -314,6 +334,11 @@ module.exports = {
                     res.send({
                         ok: true,
                         msg: "Tasdiqlandi!"
+                    });
+                }
+                if ($admin && $admin?.telegram) {
+                    bot.telegram.sendMessage($admin?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yetkazildi!\n🆔Buyurtma uchun id: #${o?.id}\n💳Hisobga +${Number(o?.for_admin).toLocaleString()} so'm qo'shildi`).catch(err => {
+                        console.log(err);
                     });
                 }
             } else {
@@ -413,6 +438,9 @@ module.exports = {
                     $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
                     // 
                     $ref.set({ balance: $ref?.balance + s[0]?.for_ref }).save();
+                    bot.telegram.sendMessage($ref?.telegram, `sharqiy.uz\n👥Hisobga +${Number(s[0]?.for_ref).toLocaleString()} so'm referaldan qo'shildi`).catch(err => {
+                        console.log(err);
+                    });
                     // 
                     o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
                     // 
@@ -424,6 +452,9 @@ module.exports = {
 
                     p.set({ solded: o?.product?.solded + o?.count }).save();
                 }
+                bot.telegram.sendMessage($admin?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yetkazildi!\n🆔Buyurtma uchun id: #${o?.id}\n💳Hisobga +${Number(o?.for_admin).toLocaleString()} so'm qo'shildi`).catch(err => {
+                    console.log(err);
+                });
             } else {
                 $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
                 o?.set({ status: 'delivered', for_operator: s[0]?.for_operators }).save();

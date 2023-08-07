@@ -2,6 +2,7 @@ const moment = require("moment");
 const productModel = require("../models/product.model");
 const shopModel = require("../models/shop.model");
 const userModel = require("../models/user.model");
+const bot = require("../bot/app");
 
 module.exports = {
     create: async (req, res) => {
@@ -38,11 +39,20 @@ module.exports = {
                         month: new Date().getMonth(),
                         day: new Date().getDate(),
                         year: new Date().getFullYear()
-                    }).save().then(() => {
+                    }).save().then(async () => {
                         res.send({
                             ok: true,
                             msg: "Qabul qilindi! Tez orada operatorlar aloqaga chiqishadi!"
-                        });
+                        })
+                        if (flow) {
+                            const $flower = await userModel.findOne({ id: flow });
+                            if ($flower && $flower?.telegram) {
+                                bot.telegram.sendMessage($flower?.telegram,`sharqiy.uz\n🆕Yangi buyurtma\n🆔Buyurtma uchun id: #${$orders?.length + 1}`).catch(err => {
+                                    console.log(err);
+                                })
+                            }
+                        }
+
                     });
                 }
             } catch {

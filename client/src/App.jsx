@@ -21,6 +21,7 @@ import NotAuth from "./user/notauth";
 import AdminMain from "./admin/main";
 import AdminMarket from "./admin/market";
 import Flow from "./pages/flow";
+import Refferer from "./pages/ref";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -54,6 +55,7 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/messanger" element={<Chat />} />
+            <Route path="/ref/:id" element={<Refferer />} />
             <Route path="*" element={<Home />} />
           </Routes>
           <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />

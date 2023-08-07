@@ -5,6 +5,8 @@ const { OPERATOR_SECRET, SERVER_LINK } = require("../configs/env");
 const shopModel = require("../models/shop.model");
 const settingModel = require("../models/setting.model");
 const moment = require("moment");
+const userModel = require("../models/user.model");
+const bot = require("../bot/app");
 module.exports = {
     create: (req, res) => {
         const { name, phone, password } = req.body;
@@ -261,32 +263,56 @@ module.exports = {
         if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'reject',
-                about, city, region, bonus, count: 0, phone, name, price:0
-            }).save().then(() => {
+                about, city, region, bonus, count: 0, phone, name, price: 0
+            }).save().then(async () => {
                 res.send({
                     ok: true,
                     msg: "Bekor qilindi!"
                 });
+                if ($order?.flow) {
+                    const $flower = await userModel.findOne({ id: $order?.flow });
+                    if ($flower && $flower?.telegram) {
+                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                            console.log(err);
+                        });
+                    }
+                }
             });
         } else if (status === 'wait' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'wait',
                 about, city, region, bonus, count: 0, phone, name, price: 0
-            }).save().then(() => {
+            }).save().then(async () => {
                 res.send({
                     ok: true,
                     msg: "Keyinroqqa qoldirildi!"
                 });
+                if ($order?.flow) {
+                    const $flower = await userModel.findOne({ id: $order?.flow });
+                    if ($flower && $flower?.telegram) {
+                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🔃Buyurtma uchun qayta aloqa!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                            console.log(err);
+                        });
+                    }
+                }
             });
         } else if (status === 'success' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
                 status: 'success',
                 about, city, region, bonus, count, phone, name, price
-            }).save().then(() => {
+            }).save().then(async () => {
                 res.send({
                     ok: true,
                     msg: "Yetkazish bo'limiga yuborildi!"
                 });
+                if ($order?.flow) {
+                    const $flower = await userModel.findOne({ id: $order?.flow });
+                    if ($flower && $flower?.telegram) {
+                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n📦Buyurtma dostavkaga tayyor!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                            console.log(err);
+                        });
+                    }
+                }
             });
         }
     },

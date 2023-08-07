@@ -273,7 +273,7 @@ module.exports = {
         const { id } = req.params;
         const $settings = await settingModel.find();
         try {
-            const $product = await productModel.findById(id).populate('category', 'title background image');
+            const $product = await productModel.findOne({ _id: id, hidden: false }).populate('category', 'title background image');
             const product = {
                 ...$product._doc,
                 id: $product._id,
