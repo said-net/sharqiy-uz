@@ -11,6 +11,7 @@ const settingModel = require("../models/setting.model");
 const chequeMaker = require("../middlewares/cheque.maker");
 const path = require('path');
 const bot = require("../bot/app");
+const payOperatorModel = require("../models/pay.operator.model");
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -496,4 +497,47 @@ module.exports = {
             })
         })
     },
+    getOperatorPays: async (req, res) => {
+        const $pays = await payOperatorModel.find({ status: 'pending' }).populate('from');
+        res.send({
+            ok: true,
+            data: $pays
+        });
+    },
+    setStatusOperatorPay: async (req, res) => {
+        const { id, status } = req.body;
+        if (!id || !status) {
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
+            })
+        } else {
+            try {
+                const $pay = await payOperatorModel.findById(id);
+                if (status === 'success') {
+                    const $operator = await operatorModel.findById($pay.from);
+                    $pay.set({ status: 'success' }).save().then(() => {
+                        $operator.set({ balance: $operator.balance - $pay.count }).save().then(() => {
+                            res.send({
+                                ok: true,
+                                msg: "Saqlandi!"
+                            });
+                        })
+                    })
+                } else if (status === 'reject') {
+                    $pay.set({ status: 'reject' }).save().then(() => {
+                        res.send({
+                            ok: true,
+                            msg: "Rad etildi!"
+                        });
+                    })
+                }
+            } catch (error) {
+                res.send({
+                    ok: false,
+                    msg: "Xatolik!"
+                })
+            }
+        }
+    }
 }

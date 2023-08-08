@@ -1,12 +1,38 @@
-import { Chip, IconButton } from "@material-tailwind/react";
-import { FaCartShopping, FaClock, FaGear, FaList, FaListCheck } from "react-icons/fa6";
-import { useSelector } from "react-redux";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Button, Chip, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import axios from "axios";
+import { useState } from "react";
+import { FaClock, FaCreditCard, FaList, FaListCheck } from "react-icons/fa6";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
+import { API_LINK } from "../config";
+import { toast } from "react-toastify";
+import { setRefreshOrders } from "../managers/order.manager";
 
 function Navbar() {
     const { name, balance } = useSelector(e => e.auth);
     const nv = useNavigate();
-    const { pathname } = useLocation()
+    const { pathname } = useLocation();
+    const [openPay, setOpenPay] = useState(false);
+    const dp = useDispatch()
+    const [payment, setPayment] = useState({ card: '', amount: '' });
+    function Submit() {
+        axios.post(`${API_LINK}/operator/create-pay`, payment, {
+            headers: {
+                'x-auth-token': `Bearer ${localStorage.getItem('access')}`
+            }
+        }).then(res => {
+            const { ok, msg } = res.data;
+            if (!ok) {
+                toast.error(msg);
+            } else {
+                toast.success(msg);
+                setOpenPay(false);
+                dp(setRefreshOrders());
+            }
+        }).catch(() => {
+            toast.error("Aloqani tekshirib qayta urunib ko'ring!");
+        });
+    }
     return (
         <>
             <div className="w-full h-[80px]">
@@ -34,11 +60,17 @@ function Navbar() {
                             </IconButton>
                             <p className="text-[12px]">Eslatma</p>
                         </div>
-                        <div className="flex items-center justify-center flex-col">
+                        {/* <div className="flex items-center justify-center flex-col">
                             <IconButton onClick={() => nv('/settings')} color="indigo" className="rounded-full text-[20px]">
                                 <FaGear />
                             </IconButton>
                             <p className="text-[12px]">Sozlamalar</p>
+                        </div> */}
+                        <div className="flex items-center justify-center flex-col">
+                            <IconButton onClick={() => setOpenPay(true)} color="indigo" className="rounded-full text-[20px]">
+                                <FaCreditCard />
+                            </IconButton>
+                            <p className="text-[12px]">To'lov</p>
                         </div>
                     </div>
                 </div>
@@ -57,6 +89,26 @@ function Navbar() {
                     <p className="text-[12px]">Eslatma</p>
                 </div>
             </div>
+
+            <Dialog open={openPay} size="xxl" className="flex items-center justify-center bg-[#0000005b] backdrop-blur-sm">
+                <div className="flex items-center justify-center sm:w-[500px] w-[97%] bg-white shadow-sm  rounded flex-col p-[5px]">
+                    <DialogHeader className="w-full">
+                        <p className="text-[20px]">Pul chiqarish</p>
+                    </DialogHeader>
+                    <DialogBody className="border-y w-full">
+                        <div className="flex items-center justify-center mb-[10px]">
+                            <Input label="Karta raqamingiz" variant="standard" required onChange={e => setPayment({ ...payment, card: e.target.value })} />
+                        </div>
+                        <div className="flex items-center justify-center mb-[10px]">
+                            <Input label={`Summa: min. 1 000 max. ${Number(balance).toLocaleString()}`} variant="standard" required onChange={e => setPayment({ ...payment, amount: e.target.value })} />
+                        </div>
+                    </DialogBody>
+                    <DialogFooter className="w-full">
+                        <Button className="rounded mr-[10px]" color="red" onClick={() => setOpenPay(false)}>Bekor qilish</Button>
+                        <Button disabled={payment?.card?.length < 16 || Number(payment?.amount) < 1000 || Number(payment?.amount) > balance} className="rounded" color="green" onClick={() => Submit()}>Yuborish</Button>
+                    </DialogFooter>
+                </div>
+            </Dialog>
         </>
     );
 }

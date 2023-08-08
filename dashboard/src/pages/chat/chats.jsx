@@ -2,14 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { BiRefresh } from "react-icons/bi";
+import { setRefreshChat } from "../../managers/chat.manager";
+import { IconButton } from "@material-tailwind/react";
 
 function Chats() {
     const [state, setState] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const { refresh } = useSelector(e => e.chat);
-    const nv = useNavigate()
+    const nv = useNavigate();
+    const dp = useDispatch()
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/chat/get-chats`, {
@@ -28,6 +32,11 @@ function Chats() {
     }, [refresh]);
     return (
         <div className="flex items-center justify-start flex-col w-full min-h-[500px] bg-white mt-[10px] rounded shadow-sm p-[10px]">
+            <div className="flex items-center justify-end mb-[10px] w-full">
+                <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshChat())}>
+                    <BiRefresh />
+                </IconButton>
+            </div>
             {!isLoad && <p>Kuting...</p>}
             {isLoad && !state[0] && <p>Habarlar mavjud emas!</p>}
             {isLoad && state[0] &&
@@ -40,7 +49,7 @@ function Chats() {
                                 </div>
                                 <p className="ml-[10px]">{e?.from?.name}</p>
                             </div>
-                            <p>{e?.sender === 'user'?'Buyurtmachi: ':'Siz: '}{e?.message?.slice(0, 10)}...</p>
+                            <p>{e?.sender === 'user' ? 'Buyurtmachi: ' : 'Siz: '}{e?.message?.slice(0, 10)}...</p>
                         </div>
                     )
                 })

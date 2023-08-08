@@ -22,6 +22,7 @@ import SelectChat from "./pages/chat/selectchat";
 import MenuSettings from "./pages/main/mainmenu";
 import Competition from "./pages/competition/competition";
 import CompetitionGetOne from "./pages/competition/getone";
+import OperatorPays from "./pages/operatorpays/operatorpays";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -61,6 +62,7 @@ function App() {
           <Route path="/chats" element={<Chats />} />
           <Route path="/select-chat/:id" element={<SelectChat />} />
           <Route path="/main-menu" element={<MenuSettings />} />
+          <Route path="/operator-pays" element={<OperatorPays />} />
           <Route path="/competition" element={<Competition />} />
           <Route path="/get-competition-one/:id" element={<CompetitionGetOne />} />
           <Route path="*" element={<Dashboard />} />

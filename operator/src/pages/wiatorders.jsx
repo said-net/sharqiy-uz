@@ -3,10 +3,11 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { Chip, Spinner } from "@material-tailwind/react";
+import { Chip, IconButton, Spinner } from "@material-tailwind/react";
 import Regions from '../components/regions.json';
 import { setRefreshOrders } from "../managers/order.manager";
 import ViewOrder from "./vieworder";
+import { BiRefresh } from "react-icons/bi";
 function Wait() {
     const { refresh } = useSelector(e => e.order);
     const dp = useDispatch();
@@ -33,11 +34,16 @@ function Wait() {
     }, [refresh]);
     return (
         <div className="flex items-center justify-start flex-col w-full">
-            <h1 className="bg-white p-[10px_20px] rounded-[0_0_10px_10px] text-[20px] mb-[20px]">MENING BUYURTMALARIM</h1>
+            <div className="flex items-center justify-between w-full h-[50px] bg-white shadow-md rounded p-[0_10px] my-[20px]">
+                <h1 className="text-[12px] sm:text-[14px]">YANGI BUYURTMALAR</h1>
+                <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrders())}>
+                    <BiRefresh />
+                </IconButton>
+            </div>
             {!isLoad && <Spinner />}
             {isLoad && !orders[0] &&
                 <div className="flex items-center justify-start flex-col w-full">
-                    <h1>Olingan buyurtmalar mavjud emas :-(</h1>
+                    <h1>Eslatmalar mavjud emas :-)</h1>
                 </div>
             }
             {isLoad && orders[0] &&

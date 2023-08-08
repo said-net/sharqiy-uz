@@ -59,9 +59,10 @@ function NewOrders() {
     }
     return (
         <div className="flex items-center justify-start flex-col w-full">
-            <h1 className="bg-white p-[10px_20px] rounded-[0_0_10px_10px] mb-[20px] text-[12px] sm:text-[20px]">YANGI BUYURTMALAR</h1>
-            <div className="fixed top-[80px] right-[10px]">
-                <IconButton color="orange" className="text-[20px] rounded-full" onClick={() => dp(setRefreshOrders())}>
+            <div className="flex items-center justify-between w-full h-[50px] bg-white shadow-md rounded p-[0_10px] my-[20px]">
+                <h1 className="text-[12px] sm:text-[14px]">YANGI BUYURTMALAR</h1>
+
+                <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrders())}>
                     <BiRefresh />
                 </IconButton>
             </div>

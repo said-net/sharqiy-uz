@@ -37,7 +37,7 @@ function MenuSettings() {
 
     return (
         <div className="flex items-center justify-start flex-col w-full mt-[10px]">
-            <div className="flex items-center justify-end w-full">
+            <div className="flex items-center justify-end w-full bg-white p-[10px] rounded shadow-md">
                 <IconButton onClick={() => setAdd(true)} className="rounded-full text-[20px]" color="blue-gray">
                     <FaCirclePlus />
                 </IconButton>

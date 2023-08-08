@@ -2,11 +2,13 @@ import { Chip, IconButton, Input, Spinner } from "@material-tailwind/react";
 import { useEffect, useState } from "react";
 import { FaClock, FaPlus, FaSearch } from 'react-icons/fa'
 import CreateCompetition from "./create";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { API_LINK } from "../../config";
 import { useNavigate } from "react-router-dom";
+import { BiRefresh } from 'react-icons/bi'
+import { setRefreshCategory } from "../../managers/category.manager";
 function Competition() {
     const [search, setSearch] = useState('');
     const [openCreate, setOpenCreate] = useState(false);
@@ -14,6 +16,7 @@ function Competition() {
     const [isLoad, setIsLoad] = useState(false);
     const { refresh } = useSelector(e => e.category);
     const nv = useNavigate()
+    const dp = useDispatch()
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/competition/get-all`, {
@@ -39,6 +42,9 @@ function Competition() {
                     <Input label="Qidiruv" onChange={e => setSearch(e.target.value)} icon={<FaSearch />} />
                 </div>
                 <div className="flex items-center justify-center">
+                    <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshCategory())}>
+                        <BiRefresh />
+                    </IconButton>
                     <IconButton className="rounded-full text-[20px]" color="green" onClick={() => setOpenCreate(true)}>
                         <FaPlus />
                     </IconButton>
@@ -48,11 +54,27 @@ function Competition() {
             {isLoad && !state[0] &&
                 <p>Konkurslar mavjud emas!</p>
             }
-            {isLoad && state[0] &&
+            {isLoad && state[0] && !search &&
                 <div className="flex items-center justify-around flex-col w-full mt-[20px]">
                     {state?.map((k, i) => {
                         return (
-                            <div onClick={()=>nv('/get-competition-one/'+k.id)} key={i} className="flex items-center justify-between w-full h-[80px] bg-white shadow-md mb-[10px] rounded hover:shadow-lg cursor-pointer p-[0_10px]">
+                            <div onClick={() => nv('/get-competition-one/' + k.id)} key={i} className="flex items-center justify-between w-full h-[80px] bg-white shadow-md mb-[10px] rounded hover:shadow-lg cursor-pointer p-[0_10px]">
+                                <p className="text-[12px] sm:text-[14px]">{k?.title?.slice(0, 15)}...</p>
+                                <div className="flex items-start justify-center flex-col">
+                                    <p className="text-[12px] sm:text-[14px]">{k?.start} dan</p>
+                                    <p className="text-[12px] sm:text-[14px]">{k?.end} gacha</p>
+                                </div>
+                                <Chip value={k?.ended ? 'Tugatilgan' : 'Jarayonda'} color={k?.ended ? 'red' : 'green'} className="rounded tracking-[2px] font-light" />
+                            </div>
+                        )
+                    })}
+                </div>
+            }
+            {isLoad && state[0] && search &&
+                <div className="flex items-center justify-around flex-col w-full mt-[20px]">
+                    {state?.map((k, i) => {
+                        return (
+                            k?.title?.toLowerCase()?.includes(search?.toLowerCase()) && <div onClick={() => nv('/get-competition-one/' + k.id)} key={i} className="flex items-center justify-between w-full h-[80px] bg-white shadow-md mb-[10px] rounded hover:shadow-lg cursor-pointer p-[0_10px]">
                                 <p className="text-[12px] sm:text-[14px]">{k?.title?.slice(0, 15)}...</p>
                                 <div className="flex items-start justify-center flex-col">
                                     <p className="text-[12px] sm:text-[14px]">{k?.start} dan</p>

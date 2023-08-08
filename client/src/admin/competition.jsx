@@ -57,7 +57,7 @@ function Competition() {
                                     <div key={i} className={`flex items-center justify-between w-full ${(i + 1) % 2 !== 0 ? 'bg-gray-200' : 'bg-white'} h-[50px]`}>
                                         <p className="w-[10%] text-center text-[12px] sm:text-[14px]">{i + 1}</p>
                                         <p className="w-[30%] text-center text-[12px] sm:text-[14px]">{l?.name}</p>
-                                        <p onClick={() => window.location.href = 'tel:' + l.phone} className="w-[30%] text-center text-[12px] sm:text-[14px] cursor-pointer">{l?.phone}</p>
+                                        <p onClick={() => window.location.href = 'tel:' + l.phone} className="w-[30%] text-center text-[12px] sm:text-[14px] cursor-pointer">{l?.phone?.slice(0,9)}****</p>
                                         <p className="w-[30%] text-center text-[12px] sm:text-[14px]">{l?.flows} ta</p>
                                     </div>
                                 )

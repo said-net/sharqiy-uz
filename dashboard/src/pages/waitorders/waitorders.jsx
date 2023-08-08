@@ -2,9 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { Button, Dialog, DialogFooter, DialogHeader, Spinner } from "@material-tailwind/react";
+import { Button, Dialog, DialogFooter, DialogHeader, IconButton, Spinner } from "@material-tailwind/react";
 import { useDispatch, useSelector } from "react-redux";
 import { setRefreshOrder } from "../../managers/order.manager";
+import { BiRefresh } from "react-icons/bi";
 
 function WaitOrders() {
     const [orders, setOrders] = useState([]);
@@ -28,8 +29,8 @@ function WaitOrders() {
             toast.error("Aloqani tekshirib qayta urunib ko'ring!")
         })
     }, [refresh]);
-    function Submit() { 
-        axios.post(`${API_LINK}/boss/set-status-to-new`, { }, {
+    function Submit() {
+        axios.post(`${API_LINK}/boss/set-status-to-new`, {}, {
             headers: {
                 'x-auth-token': `Bearer ${localStorage.getItem('access')}`
             }
@@ -46,6 +47,11 @@ function WaitOrders() {
     }
     return (
         <div className="flex items-center justify-start flex-col w-full mt-[10px]">
+            <div className="flex items-center justify-end w-full h-[50px] bg-white shadow-md rounded">
+                <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrder())}>
+                    <BiRefresh />
+                </IconButton>
+            </div>
             {!isLoad && <Spinner />}
             {isLoad && !orders[0] && <h1>Eslatma buyurtmalar mavjud emas!</h1>}
             {isLoad && orders[0] &&

@@ -15,3 +15,6 @@ module.exports = require('express').Router()
     .post('/set-status-by-date', authMiddleware.boss, bossController.setStatusByDate)
     .get('/get-wait-orders', authMiddleware.boss, bossController.getWaitOrders)
     .post('/set-status-to-new', authMiddleware.boss, bossController.setStatusToNew)
+    // 
+    .get('/get-operator-pays', authMiddleware.boss, bossController.getOperatorPays)
+    .post('/set-operator-pay-status', authMiddleware.boss, bossController.setStatusOperatorPay)

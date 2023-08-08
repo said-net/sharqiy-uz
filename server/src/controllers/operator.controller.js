@@ -7,6 +7,7 @@ const settingModel = require("../models/setting.model");
 const moment = require("moment");
 const userModel = require("../models/user.model");
 const bot = require("../bot/app");
+const payOperatorModel = require("../models/pay.operator.model");
 module.exports = {
     create: (req, res) => {
         const { name, phone, password } = req.body;
@@ -335,4 +336,55 @@ module.exports = {
             data: myOrders.reverse()
         });
     },
+    createPay: async (req, res) => {
+        const $lastPay = await payOperatorModel.findOne({ from: req.operator.id, status: 'pending' });
+        if ($lastPay) {
+            res.send({
+                ok: false,
+                msg: "Sizda tekshuruvga yuborilgan " + $lastPay.count + " so'm miqdordagi to'lov mavjud iltimos tekshiruvni kuting!"
+            });
+        } else {
+            const { card, amount } = req.body;
+            if (!card || !amount) {
+                res.send({
+                    ok: false,
+                    msg: "Qatorlarni to'ldiring!"
+                });
+            } else if (card?.length < 16) {
+                res.send({
+                    ok: false,
+                    msg: "Karta raqamini to'g'ri kiriting!"
+                });
+            } else if (amount < 1000) {
+                res.send({
+                    ok: false,
+                    msg: "Kamida 1 000 so'm to'lov bo'ladi!"
+                });
+            } else if (amount > req?.operator?.balance) {
+                res.send({
+                    ok: false,
+                    msg: "Ko'pi bilan " + req?.operator?.balance + " so'm to'lov bo'ladi!"
+                });
+            } else {
+                new payOperatorModel({
+                    from: req.operator.id,
+                    count: amount,
+                    created: moment.now() / 1000,
+                    card
+                }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Qabul qilindi!"
+                    });
+                });
+            }
+        }
+    },
+    getHistoryPay: async (req, res) => {
+        const $pays = await payOperatorModel.find({ from: req.operator.id });
+        res.send({
+            ok: true,
+            data: $pays.reverse()
+        })
+    }
 }

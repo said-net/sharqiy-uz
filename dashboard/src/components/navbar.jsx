@@ -4,7 +4,7 @@ import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaCalendarDay, FaClockRotateLeft, FaGear, FaGears } from "react-icons/fa6";
+import { FaCalendarDay, FaClockRotateLeft, FaCreditCard, FaGear, FaGears } from "react-icons/fa6";
 function Navbar() {
     const { phone, name } = useSelector(e => e.auth);
     // 
@@ -29,6 +29,9 @@ function Navbar() {
                     <Chip className=" rounded" value={phone} color="green" />
                 </div>
                 <div className="flex items-center justify-between w-[200px]">
+                    <IconButton onClick={() => nv('/operator-pays')} className="rounded-full text-[20px]">
+                        <FaCreditCard />
+                    </IconButton>
                     <div className="flex items-center justify-center relative">
                         <Menu>
                             <MenuHandler>

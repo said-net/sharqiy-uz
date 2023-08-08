@@ -2,15 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { Spinner } from "@material-tailwind/react";
-import { useSelector } from "react-redux";
+import { IconButton, Spinner } from "@material-tailwind/react";
+import { useDispatch, useSelector } from "react-redux";
 import ViewOrder from "./view";
+import { setRefreshOrder } from "../../managers/order.manager";
+import { BiRefresh } from "react-icons/bi";
 
 function NewOrders() {
     const [orders, setOrders] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const { refresh } = useSelector(e => e?.order);
     const [open, setOpen] = useState('');
+    const dp = useDispatch()
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/boss/get-new-orders`, {
@@ -29,6 +32,11 @@ function NewOrders() {
     }, [refresh]);
     return (
         <div className="flex items-center justify-start flex-col w-full mt-[10px]">
+            <div className="flex items-center justify-end w-full h-[50px] bg-white shadow-md rounded">
+                <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrder())}>
+                    <BiRefresh />
+                </IconButton>
+            </div>
             {!isLoad && <Spinner />}
             {isLoad && !orders[0] && <h1>Yangi buyurtmalar mavjud emas!</h1>}
             {isLoad && orders[0] &&

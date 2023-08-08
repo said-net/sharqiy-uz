@@ -20,3 +20,6 @@ module.exports = require('express').Router()
     .get('/get-info-order/:id', authMiddleware.operator, operatorController.getInfoOrder)
     .post('/set-status/:id', authMiddleware.operator, operatorController.setStatus)
     .get('/get-wait-orders', authMiddleware.operator, operatorController.getWaitOrders)
+    // 
+    .post('/create-pay', authMiddleware.operator, operatorController.createPay)
+    .post('/get-pays', authMiddleware.operator, operatorController.getHistoryPay)
