@@ -8,6 +8,7 @@ const app = express();
 require('mongoose').connect(MONGO_URI);
 require('./controllers/boss.controller').default();
 require('./controllers/setting.controller').default();
+require('./configs/folder.config')()
 app.use(cors());
 app.use(express.json());
 app.use(file());
