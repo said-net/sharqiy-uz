@@ -67,7 +67,7 @@ module.exports = () => {
         } else {
             fs.readdir('./public/competitions', (err) => {
                 if (err) {
-                    fs.mkdir(path.join('./', 'public', 'competitons'), (err) => {
+                    fs.mkdir(path.join('./', 'public', 'competitions'), (err) => {
                         if (err) {
                             console.log("Competitons error");
                         }
@@ -116,10 +116,10 @@ module.exports = () => {
                         if (err) {
                             console.log("Main error");
                         }
-                    })
+                    });
                 }
-            })
+            });
         }
-    })
+    });
 
 }

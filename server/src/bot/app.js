@@ -6,15 +6,17 @@ const shopModel = require('../models/shop.model');
 const payModel = require('../models/pay.model');
 const { inlineKeyboard } = require('telegraf').Markup;
 const moment = require('moment/moment');
-// const payMaker = require('../middlewares/pay.maker');
-// const payModel = require('../models/pay.model');
+const tguserModel = require('../models/tguser.model');
 const channel = "@sharqiy_tolov";
 const bot = new Telegraf(BOT_TOKEN)
 bot.start(async msg => {
     const { id } = msg.from;
     const $user = await userModel.findOne({ telegram: id });
+    new tguserModel({
+        id: id
+    }).save().catch(() => { });
     if (!$user) {
-        msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sahrqiy.uz</a> sayti orqali aktivlashtiring!`)
+        msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sharqiy.uz</a> sayti orqali aktivlashtiring!`)
     } else {
         const command = msg.startPayload;
         if (!command) {
@@ -54,7 +56,7 @@ bot.on('text', async msg => {
     try {
         const $user = await userModel.findOne({ telegram: id });
         if (!$user) {
-            msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sahrqiy.uz</a> sayti orqali aktivlashtiring!`)
+            msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sharqiy.uz</a> sayti orqali aktivlashtiring!`)
         } else {
             if (tx === '🔙Ortga') {
                 $user.set({ step: '' }).save();
@@ -81,9 +83,8 @@ bot.on('text', async msg => {
                     const $rflows = await shopModel.find({ flow: ref.id });
                     $rflows.forEach(rf => {
                         $tref += rf.for_ref
-                    })
+                    });
                 }
-
                 msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
             } else if (tx === '⚙Sozlamalar') {
                 msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
@@ -255,7 +256,7 @@ bot.on('callback_query', async msg => {
                 console.log(err);
             }
 
-        }else if (data?.includes('reject_pay_')) {
+        } else if (data?.includes('reject_pay_')) {
             try {
                 const card = data.split('_')[2]
                 const amount = +data.split('_')[3]
