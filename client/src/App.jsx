@@ -24,11 +24,13 @@ import Flow from "./pages/flow";
 import Refferer from "./pages/ref";
 import AdminStats from "./admin/stats";
 import AdminRefs from "./admin/refs";
+import Competition from "./admin/competition";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
   const dp = useDispatch()
   const { pathname } = useLocation();
+  console.dirxml("%c 💻Dasturchi - TG: @Saidweb", "color:red; font-size:30px")
   useEffect(() => {
     axios(`${API_LINK}/user/verify-auth`, {
       headers: {
@@ -72,6 +74,7 @@ function App() {
                 <Route path="/dashboard/market" element={<AdminMarket />} />
                 <Route path="/dashboard/stats" element={<AdminStats />} />
                 <Route path="/dashboard/refs" element={<AdminRefs />} />
+                <Route path="/dashboard/comps" element={<Competition />} />
               </Routes>
               <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
             </>

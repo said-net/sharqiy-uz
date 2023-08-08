@@ -2,16 +2,14 @@ const moment = require('moment');
 const competitionModel = require('../models/competition.model');
 const md5 = require('md5');
 const shopModel = require('../models/shop.model');
+const userModel = require('../models/user.model');
+const { SERVER_LINK } = require('../configs/env');
 module.exports = {
     createCompetition: async (req, res) => {
         const { title, about, duration } = req.body;
         const image = req?.files?.image;
         const start = moment.now() / 1000;
         const end = (moment.now() / 1000) + (duration * 86400);
-        // console.log(`start ${start}`);
-        // console.log(`end ${end}`);
-        // const date = moment.unix(start).format("d:M:yyyy")
-        // console.log(`start ${date}`);
 
         if (!title || !about || !duration || !image) {
             res.send({
@@ -58,8 +56,66 @@ module.exports = {
             data: c.reverse()
         })
     },
-    getOne: async (req,res)=>{
-        const {id} = req.params;
-        
+    getOne: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $c = await competitionModel.findById(id);
+            const $users = await userModel.find();
+            const $modlist = [];
+            for (let u of $users) {
+                const $shops = await shopModel.find({ competition: $c._id, flow: u?.id, status: 'delivered' });
+                $modlist.push({
+                    name: u.name,
+                    id: u.id,
+                    phone: u.phone,
+                    flows: $shops.length,
+                    telegram: u.telegram,
+                });
+            }
+            res.send({
+                ok: true,
+                competition: {
+                    title: $c.title,
+                    about: $c.about,
+                    image: SERVER_LINK + $c.image,
+                    start: moment.unix($c.start).format('DD.MM.YYYY'),
+                    end: moment.unix($c.end).format('DD.MM.YYYY'),
+                },
+                data: $modlist.sort((a, b) => b - a).slice(0, 50)
+            });
+        } catch (error) {
+            console.log(error);
+        }
+    },
+    getOneForAdmins: async (req, res) => {
+        try {
+            const c = (await competitionModel.find()).reverse()
+            const $c = c[0];
+            const $users = await userModel.find();
+            const $modlist = [];
+            for (let u of $users) {
+                const $shops = await shopModel.find({ competition: $c._id, flow: u?.id, status: 'delivered' });
+                $modlist.push({
+                    name: u.name,
+                    id: u.id,
+                    phone: u.phone,
+                    flows: $shops.length,
+                    telegram: u.telegram,
+                });
+            }
+            res.send({
+                ok: true,
+                competition: {
+                    title: $c.title,
+                    about: $c.about,
+                    image: SERVER_LINK + $c.image,
+                    start: moment.unix($c.start).format('DD.MM.YYYY'),
+                    end: moment.unix($c.end).format('DD.MM.YYYY'),
+                },
+                data: $modlist.sort((a, b) => b - a).slice(0, 50)
+            });
+        } catch (error) {
+            console.log(error);
+        }
     }
 }

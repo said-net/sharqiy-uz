@@ -42,7 +42,7 @@ function AdminMain() {
                     <FaUsers className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Referal
                 </MenuItem>
-                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/market')}>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/comps')}>
                     <FaGift className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Konkurs
                 </MenuItem>
