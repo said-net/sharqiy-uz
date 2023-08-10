@@ -95,19 +95,19 @@ function EditProduct({ select, setSelect }) {
                                 </div>
                                 {/* ORIGINAL PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Asl narxi/dona" required onChange={e => !isNaN(e.target.value) && setSelect({ ...select, original_price: Math.floor(e.target.value.trim()) })} value={select.original_price} icon={<FaMoneyBill />} />
+                                    <Input label="Asl narxi/dona" required onChange={e => setSelect({ ...select, original_price: e.target.value })} type="number" value={select.original_price} icon={<FaMoneyBill />} />
                                 </div>
                                 {/* SOLD PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Sotuv narxi/dona" required onChange={e => !isNaN(e.target.value) && setSelect({ ...select, price: Math.floor(e.target.value.trim()) })} value={select.price} icon={<FaMoneyCheck />} />
+                                    <Input label="Sotuv narxi/dona" required onChange={e => setSelect({ ...select, price: e.target.value })} type="number" value={select.price} icon={<FaMoneyCheck />} />
                                 </div>
                                 {/* FOR ADMINS */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Adminlar uchun" required onChange={e => !isNaN(e.target.value) && setSelect({ ...select, for_admins: Math.floor(e.target.value.trim()) })} value={select.for_admins} icon={<FaPercent />} />
+                                    <Input label="Adminlar uchun" required onChange={e => setSelect({ ...select, for_admins: e.target.value })} type="number" value={select.for_admins} icon={<FaPercent />} />
                                 </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Nechta mahsulot mavjud" required onChange={e => !isNaN(e.target.value) && setSelect({ ...select, value: Math.floor(e.target.value.trim()) })} value={select.value} icon={<FaBoxes />} />
+                                    <Input label="Nechta mahsulot mavjud" required onChange={e => setSelect({ ...select, value: e.target.value })} type="number" value={select.value} icon={<FaBoxes />} />
                                 </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">

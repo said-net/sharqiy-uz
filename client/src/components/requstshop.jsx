@@ -82,12 +82,12 @@ function RequestShop({ openShop, setOpenShop }) {
                                 </Select>
                             </div> : null
                     } */}
-                    <div className="flex items-center justify-center w-full mb-[10px]">
+                    {/* <div className="flex items-center justify-center w-full mb-[10px]">
                         <Input value={openShop.count} label="Qancha mahsulot olasiz?" onChange={e => !isNaN(e.target.value.trim()) && setOpenShop({ ...openShop, count: Math.floor(e.target.value.trim()) })} required icon={<FaBoxes />} />
                     </div>
                     {openShop?.bonus &&
                         <p className="text-[20px] w-fullh-[30px] bg-red-50 flex items-center justify-center rounded text-black">Bonus sifatida: +<b>{Math.floor(openShop?.count / openShop.bonus_count * openShop?.bonus_given)}</b> ta</p>
-                    }
+                    } */}
                 </DialogBody>
                 <DialogFooter className="w-full">
                     <Button disabled={disabled} className="w-full rounded" color='red' onClick={Submit}>Sotib olish</Button>

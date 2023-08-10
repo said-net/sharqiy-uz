@@ -8,7 +8,7 @@ import { useDispatch } from "react-redux";
 import { setRefreshProduct } from "../../managers/product.manager";
 
 function AddBonus({ open, setOpen }) {
-    const [state, setState] = useState({ bonus_given: 0, bonus_count: 0, bonus_duration: 0, bonus_about: '' });
+    const [state, setState] = useState({ bonus_given: '', bonus_count: '', bonus_duration: '', bonus_about: '' });
     const dp = useDispatch();
     function Submit() {
         if (state.bonus_given < 1 || state.bonus_count < 1 || state.bonus_duration < 1 || !state.bonus_about) {
@@ -40,11 +40,11 @@ function AddBonus({ open, setOpen }) {
                 <DialogBody className="w-full border-y overflow-y-scroll">
                     {/* BONUSNI AKTIVLASH TIRISH UCHUN */}
                     <div className="flex items-center justify-center w-full mb-[10px]">
-                        <Input label="Sotib olish kerak / dona" required onChange={e => !isNaN(e.target.value) && setState({ ...state, bonus_count: Math.floor(e.target.value.trim()) })} value={state.bonus_count} icon={<FaBoxes />} />
+                        <Input label="Sotib olish kerak / dona" required onChange={e => setState({ ...state, bonus_count: e.target.value })} type="number" value={state.bonus_count} icon={<FaBoxes />} />
                     </div>
                     {/* BONUSNI AKTIVLASH TIRISH UCHUN */}
                     <div className="flex items-center justify-center w-full mb-[10px]">
-                        <Input label="Bonus sifatida beriladi / dona" required onChange={e => !isNaN(e.target.value) && setState({ ...state, bonus_given: Math.floor(e.target.value.trim()) })} value={state.bonus_given} icon={<FaBox />} />
+                        <Input label="Bonus sifatida beriladi / dona" required onChange={e => setState({ ...state, bonus_given: e.target.value })} type="number" value={state.bonus_given} icon={<FaBox />} />
                     </div>
                     {/* BONUS HAQIDA BATAFSIL */}
                     <div className="flex items-center justify-center w-full mb-[10px]">
@@ -52,7 +52,7 @@ function AddBonus({ open, setOpen }) {
                     </div>
                     {/* BONUSNI AKTIVLASH TIRISH UCHUN */}
                     <div className="flex items-center justify-center w-full mb-[10px]">
-                        <Input label="Bonus necha kun davom etadi?" required onChange={e => !isNaN(e.target.value) && setState({ ...state, bonus_duration: Math.floor(e.target.value.trim()) })} value={state.bonus_duration} icon={<FaCalendar />} />
+                        <Input label="Bonus necha kun davom etadi?" required onChange={e => setState({ ...state, bonus_duration: e.target.value })} type="number" value={state.bonus_duration} icon={<FaCalendar />} />
                     </div>
                 </DialogBody>
                 <DialogFooter className="w-full">

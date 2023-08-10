@@ -31,12 +31,12 @@ function SetNewPrices({ open, setOpen }) {
                     <h1 className="text-[20px]">Narxni o'zgartirish</h1>
                 </DialogHeader>
                 <DialogBody className="w-full border-y">
-                    <Input value={open?.price} label="Eski narxi" onChange={e => !isNaN(e.target.value) && setOpen({ ...open, price: Math.floor(e.target.value.trim()) })} required />
+                    <Input value={open?.price} label="Eski narxi" onChange={e => setOpen({ ...open, price: e.target.value })} type="number" required />
                     <div className="my-[10px]"></div>
-                    <Input value={open?.new_price} label="Yangi narxi" onChange={e => !isNaN(e.target.value) && setOpen({ ...open, new_price: Math.floor(e.target.value.trim()) })} required />
+                    <Input value={open?.new_price} label="Yangi narxi" onChange={e => setOpen({ ...open, new_price: e.target.value })} type="number" required />
                 </DialogBody>
                 <DialogFooter className="w-full">
-                    <Button onClick={() => setOpen({ id: '', price: 0, new_price: 0 })} className="rounded ml-[10px]" color="orange">Bekor qilish</Button>
+                    <Button onClick={() => setOpen({ id: '', price: '', new_price: '' })} className="rounded ml-[10px]" color="orange">Bekor qilish</Button>
                     <Button disabled={open?.new_price < 10 || !open?.price} className="rounded ml-[10px]" color="green" onClick={Submit}>Saqlash</Button>
                 </DialogFooter>
             </div>

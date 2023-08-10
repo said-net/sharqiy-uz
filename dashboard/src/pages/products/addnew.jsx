@@ -10,7 +10,7 @@ function AddProduct({ open, setOpen }) {
     const [msg, setMsg] = useState({ error: false, msg: '' });
     const [categories, setCategories] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
-    const [state, setState] = useState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '', for_admins: 0 });
+    const [state, setState] = useState({ title: '', about: '', images: [], video: '', price: '', original_price: '', category: '', value: '', for_admins: '' });
     const [disableBtn, setDisableBtn] = useState(false);
     const dp = useDispatch();
     useEffect(() => {
@@ -116,19 +116,19 @@ function AddProduct({ open, setOpen }) {
                                 </div>
                                 {/* ORIGINAL PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Asl narxi/dona" required onChange={e => !isNaN(e.target.value) && setState({ ...state, original_price: Math.floor(e.target.value.trim()) })} value={state.original_price} icon={<FaMoneyBill />} />
+                                    <Input label="Asl narxi/dona" required onChange={e => setState({ ...state, original_price: e.target.value })} type="number" value={state.original_price} icon={<FaMoneyBill />} />
                                 </div>
                                 {/* SOLD PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Sotuv narxi/dona" required onChange={e => !isNaN(e.target.value) && setState({ ...state, price: Math.floor(e.target.value.trim()) })} value={state.price} icon={<FaMoneyCheck />} />
+                                    <Input label="Sotuv narxi/dona" required onChange={e => setState({ ...state, price: e.target.value })} type="number" value={state.price} icon={<FaMoneyCheck />} />
                                 </div>
                                 {/* SOLD PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Adminlar uchun" required onChange={e => !isNaN(e.target.value) && setState({ ...state, for_admins: Math.floor(e.target.value.trim()) })} value={state.for_admins} icon={<FaPercent />} />
+                                    <Input label="Adminlar uchun" required onChange={e => setState({ ...state, for_admins: e.target.value })} type="number" value={state.for_admins} icon={<FaPercent />} />
                                 </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Nechta mahsulot mavjud" required onChange={e => !isNaN(e.target.value) && setState({ ...state, value: Math.floor(e.target.value.trim()) })} value={state.value} icon={<FaBoxes />} />
+                                    <Input label="Nechta mahsulot mavjud" required onChange={e => setState({ ...state, value: e.target.value })} type="number" value={state.value} icon={<FaBoxes />} />
                                 </div>
                                 {/* VIDEO */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
