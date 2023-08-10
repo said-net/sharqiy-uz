@@ -66,7 +66,7 @@ function ViewOrder({ open, setOpen }) {
                             </div>
                             {/*  */}
                             <div className="flex items-center justify-center w-full mb-[10px]">
-                                <Input disabled={disableAll} label="Qancha mahsulot olinadi/dona" required variant="standard" onChange={e => setOrder({ ...order, count: +e?.target?.value, price: +e.target.value * (order?.product?.price + order?.product?.for_admins + order?.for_operators), bonus_gived: order?.bonus ? Math.floor(+e.target.value / order?.bonus_count * order?.bonus_given) : 0 })} value={order?.count} icon={<FaBoxesStacked />} />
+                                <Input disabled={disableAll} label="Qancha mahsulot olinadi/dona" required variant="standard" onChange={e => setOrder({ ...order, count: +e?.target?.value, price: +e.target.value * (order?.product?.price + order?.product?.for_admins + order?.for_operators), bonus_gived: order?.bonus ? Math.floor(+e.target.value / order?.bonus_count * order?.bonus_given) : 0 })} value={order?.count===0?'':order?.count} icon={<FaBoxesStacked />} type="number" />
                             </div>
                             {/*  */}
                             <div className="flex items-start justify-start w-full mb-[10px] flex-col">

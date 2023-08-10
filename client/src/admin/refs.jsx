@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { FaMoneyBill, FaUsers } from "react-icons/fa6";
-import { Spinner } from "@material-tailwind/react";
+import { Button, Spinner } from "@material-tailwind/react";
 
 function AdminRefs() {
     const { uId } = useSelector(e => e.auth);
@@ -35,12 +35,13 @@ function AdminRefs() {
             <Link to={`/dashboard`} className="w-full underline mb-[10px]">Ortga</Link>
             <div className="flex items-start justify-start flex-col w-full bg-white shadow-md rounded min-h-[300px] p-[10px]">
                 <p className="mb-[10px] flex items-center justify-center"><FaCheckCircle className="text-blue-500 mr-[10px]" />Eslatma:</p>
-                <p className="pb-[10px] border-b mb-[10px] text-[14px]">Referallar bu siz saytga taklif qilgan adminlar hisoblanadi. Taklif qilgan adminlaringiz amalga oshirgan sotuvidan sizga <span className="mx-[0px] text-blue-500">{!isLoad?<Spinner/>:Number(state?.comission).toLocaleString()}</span> so'm taqdim etiladi. Quyidagi havola orqali adminlarni taklif qiling va ko'proq daromad oling!</p>
+                <p className="pb-[10px] border-b mb-[10px] text-[14px]">Referallar bu siz saytga taklif qilgan adminlar hisoblanadi. Taklif qilgan adminlaringiz amalga oshirgan sotuvidan sizga <span className="mx-[0px] text-blue-500">{!isLoad ? <Spinner /> : Number(state?.comission).toLocaleString()}</span> so'm taqdim etiladi. Quyidagi havola orqali adminlarni taklif qiling va ko'proq daromad oling!</p>
                 <p className="flex items-center justify-center text-[15px] mb-[10px]"><FaLink className="mr-[5px]" />Referal havolangiz: <span className="ml-[5px] text-blue-500">https://sharqiy.uz/ref/{uId}</span></p>
                 {/*  */}
                 <p className="flex items-center justify-center text-[15px] mb-[10px]"><FaUsers className="mr-[5px]" />Referallar soni: <span className="ml-[5px] text-blue-500">{!isLoad ? <Spinner /> : state?.refs} ta</span></p>
                 {/*  */}
                 <p className="flex items-center justify-center text-[15px] mb-[10px]"><FaMoneyBill className="mr-[5px]" />Foyda: <span className="ml-[5px] text-blue-500">{!isLoad ? <Spinner /> : Number(state?.profit).toLocaleString()} so'm</span></p>
+                <Button color="green" className="rounded w-full" onClick={() => { navigator.clipboard.writeText(`https://sharqiy.uz/ref/${uId}`); toast.success("Nusxa olindi!", { autoClose: 1000 }) }}>Nusxa olish</Button>
             </div>
         </div>
     );
