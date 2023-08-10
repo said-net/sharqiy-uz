@@ -25,6 +25,7 @@ import Refferer from "./pages/ref";
 import AdminStats from "./admin/stats";
 import AdminRefs from "./admin/refs";
 import Competition from "./admin/competition";
+import AdminProductStats from "./admin/getproductstats";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -52,7 +53,7 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/get-by-category/:id" element={<GetProductsByCategory />} />
             <Route path="/product/:id" element={<Product />} />
-            <Route path="/flow/:flow/:id" element={<Flow />} />
+            <Route path="/oqim/:flow/:id" element={<Flow />} />
             <Route path="/videos" element={<VideoPlayers />} />
             <Route path="/search/:search" element={<Search />} />
             {/*  */}
@@ -75,6 +76,7 @@ function App() {
                 <Route path="/dashboard/stats" element={<AdminStats />} />
                 <Route path="/dashboard/refs" element={<AdminRefs />} />
                 <Route path="/dashboard/comps" element={<Competition />} />
+                <Route path="/dashboard/product-stats" element={<AdminProductStats />} />
               </Routes>
               <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
             </>

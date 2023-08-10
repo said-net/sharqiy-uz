@@ -30,7 +30,11 @@ function Flow() {
     useEffect(() => {
         setIsLoad(false);
         setProduct({});
-        axios(`${API_LINK}/product/get-one/${id}`).then((res) => {
+        axios(`${API_LINK}/product/get-one/${id}`, {
+            headers: {
+                flow: flow
+            }
+        }).then((res) => {
             const { ok, data } = res.data;
             if (ok) {
                 setProduct(data);

@@ -20,4 +20,5 @@ module.exports = require('express').Router()
     .get('/get-search/:prefix', productController.getSearch)
     // 
     .get('/get-for-admins/:id', authMiddleware.user, productController.getAllToAdmins)
+    .get('/get-stats-for-admins', authMiddleware.user, productController.getProductStatToAdmins)
     .get('/get-ads-post/:id', authMiddleware.user, productController.getAdsPost)

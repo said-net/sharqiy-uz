@@ -39,7 +39,7 @@ module.exports = {
                         id: $orders?.length + 1,
                         phone,
                         competition: !$c[0] || $c[0].end < (moment.now() / 1000) ? null : $c[0]._id,
-                        flow: !flow || flow == $user?.id ? '' : flow,
+                        flow: !flow ? '' : flow,
                         region,
                         month: new Date().getMonth(),
                         day: new Date().getDate(),

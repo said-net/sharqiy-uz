@@ -28,12 +28,14 @@ module.exports = {
                             ok: false,
                             msg: "Admin topilmadi!"
                         });
-                    } else if ($admin.access !== signature) {
-                        res.send({
-                            ok: false,
-                            msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
-                        });
-                    } else {
+                    } 
+                    // else if ($admin.access !== signature) {
+                    //     res.send({
+                    //         ok: false,
+                    //         msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
+                    //     });
+                    // }
+                     else {
                         const { name, phone, image } = $admin;
                         req.admin = { id, name, phone, image: image ? SERVER_LINK + image : '' };
                         next();

@@ -17,9 +17,9 @@ module.exports = {
         const $admin = await adminModel.find();
         if (!$admin[0]) {
             new adminModel({
-                name: "Saidislom",
-                phone: "+998931042255",
-                password: md5('555555')
+                name: "Otabek",
+                phone: "+998938003803",
+                password: md5('Otabek571_')
             }).save();
         }
     },

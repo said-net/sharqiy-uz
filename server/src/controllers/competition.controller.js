@@ -91,29 +91,37 @@ module.exports = {
         try {
             const c = (await competitionModel.find()).reverse()
             const $c = c[0];
-            const $users = await userModel.find();
-            const $modlist = [];
-            for (let u of $users) {
-                const $shops = await shopModel.find({ competition: $c._id, flow: u?.id, status: 'delivered' });
-                $modlist.push({
-                    name: u.name,
-                    id: u.id,
-                    phone: u.phone,
-                    flows: $shops.length,
-                    telegram: u.telegram,
+            if (!$c) {
+                res.send({
+                    pk: true,
+                    competition: {},
+                    data: []
+                })
+            } else {
+                const $users = await userModel.find();
+                const $modlist = [];
+                for (let u of $users) {
+                    const $shops = await shopModel.find({ competition: $c._id, flow: u?.id, status: 'delivered' });
+                    $modlist.push({
+                        name: u.name,
+                        id: u.id,
+                        phone: u.phone,
+                        flows: $shops.length,
+                        telegram: u.telegram,
+                    });
+                }
+                res.send({
+                    ok: true,
+                    competition: {
+                        title: $c.title,
+                        about: $c.about,
+                        image: SERVER_LINK + $c.image,
+                        start: moment.unix($c.start).format('DD.MM.YYYY'),
+                        end: moment.unix($c.end).format('DD.MM.YYYY'),
+                    },
+                    data: $modlist.sort((a, b) => b - a).slice(0, 50)
                 });
             }
-            res.send({
-                ok: true,
-                competition: {
-                    title: $c.title,
-                    about: $c.about,
-                    image: SERVER_LINK + $c.image,
-                    start: moment.unix($c.start).format('DD.MM.YYYY'),
-                    end: moment.unix($c.end).format('DD.MM.YYYY'),
-                },
-                data: $modlist.sort((a, b) => b - a).slice(0, 50)
-            });
         } catch (error) {
             console.log(error);
         }

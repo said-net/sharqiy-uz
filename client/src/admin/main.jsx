@@ -30,6 +30,10 @@ function AdminMain() {
                     <ImStatsDots className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Statistika
                 </MenuItem>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/product-stats')}>
+                    <ImStatsDots className="mr-[10px] text-[20px] text-blue-gray-500" />
+                    Mahsulotlar bo'yicha statistika
+                </MenuItem>
                 <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => window.open('https://t.me/Sharqiybot?start=pay')}>
                     <FaMoneyBill1 className="mr-[10px] text-[20px] text-blue-gray-500" />
                     To'lov

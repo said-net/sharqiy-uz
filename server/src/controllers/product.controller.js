@@ -8,7 +8,8 @@ const adsModel = require("../models/ads.model");
 const fs = require('fs');
 const shopModel = require("../models/shop.model");
 const bot = require("../bot/app");
-const path = require('path')
+const path = require('path');
+const viewModel = require("../models/view.model");
 module.exports = {
     create: async (req, res) => {
         const { title, about, price, original_price, video, category, value, for_admins } = req.body;
@@ -272,8 +273,9 @@ module.exports = {
     getOne: async (req, res) => {
         const { id } = req.params;
         const $settings = await settingModel.find();
+        const { flow } = req.headers;
         try {
-            const $product = await productModel.findOne({ _id: id, hidden: false }).populate('category', 'title background image');
+            const $product = await productModel.findOne({ id, hidden: false }).populate('category', 'title background image');
             const product = {
                 ...$product._doc,
                 id: $product._id,
@@ -288,17 +290,23 @@ module.exports = {
                 bonus_duration: $product.bonus ? moment.unix($product.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                 bonus_count: $product.bonus ? $product.bonus_count : 0,
                 bonus_given: $product.bonus ? $product.bonus_given : 0,
-                // category: {
-                //     id: $product.category._id,
-                //     title: $product.category.title,
-                //     background: $product.category.background,
-                //     image: SERVER_LINK + $product.category.image
-                // }
             }
             res.send({
                 ok: true,
                 data: product
             });
+            if (flow) {
+                const $flow = await viewModel.findOne({ flow, product: $product?._id });
+                if (!$flow) {
+                    new viewModel({
+                        product: $product?._id,
+                        flow,
+                        views: 1
+                    }).save()
+                } else {
+                    $flow.set({ views: $flow.views + 1 }).save()
+                }
+            }
         } catch (error) {
             console.log(error);
             res.send({
@@ -428,7 +436,6 @@ module.exports = {
         }
     },
     // 
-    // 
     getAllToAdmins: async (req, res) => {
         const { id } = req.params;
         const $settings = await settingModel.find()
@@ -440,18 +447,13 @@ module.exports = {
                     $modlist.push({
                         ...p._doc,
                         id: p._id,
+                        pid: p.id,
                         image: SERVER_LINK + p.images[0],
                         original_price: 0,
                         price: p?.price + p?.for_admins + $settings[0].for_operators,
-                        value: p.value - p.solded,
                         old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
                         bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                         bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                        category: {
-                            id: p.category._id,
-                            title: p.category.title,
-                            image: SERVER_LINK + p.category.image
-                        }
                     });
                 });
                 res.send({
@@ -492,10 +494,10 @@ module.exports = {
             })
         }
     },
-
+    // 
     getAdsPost: async (req, res) => {
         const { id } = req.params;
-        const $ads = await adsModel.findOne({ product: id });
+        const $ads = await adsModel.findOne({ product: id }).populate('product')
         if (!$ads) {
             res.send({
                 ok: false,
@@ -503,10 +505,10 @@ module.exports = {
             });
         } else {
             bot.telegram.sendPhoto(req.user.telegram, { source: path.join(`public`, 'ads', $ads.image?.split('/')[3]) }, {
-                caption: `${$ads.about}\n\nhttps://sharqiy.uz/flow/${req?.user?.uId}/${id}`, reply_markup: {
+                caption: `${$ads.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${$ads?.product?.id}`, reply_markup: {
                     inline_keyboard: [
-                        [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/flow/${req?.user?.uId}/${id}` }],
-                        [{ text: '📋Batafsil', url: `https://sharqiy.uz/flow/${req?.user?.uId}/${id}` }]
+                        [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${$ads?.product?.id}` }],
+                        [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${$ads?.product?.id}` }]
                     ]
                 }
             }).then(() => {
@@ -521,6 +523,50 @@ module.exports = {
                     msg: "Siz telegram botni profilingizga bog'lamagansiz!"
                 })
             })
+        }
+    },
+    getProductStatToAdmins: async (req, res) => {
+        const $views = await viewModel.find({ flow: req.user.uId }).populate('product')
+        const mod = [];
+        const $settings = await settingModel.find()
+        if (!$views[0]) {
+            res.send({
+                ok: true,
+                data: mod
+            });
+        } else {
+            for (let v of $views) {
+                const p = v?.product
+                const pending = await shopModel.find({ flow: String(req.user.uId), status: 'pending', product: p?._id }).countDocuments();
+
+                const success = await shopModel.find({ flow: req.user.uId, status: 'success', product: p?._id }).countDocuments();
+
+                const sended = await shopModel.find({ flow: req.user.uId, status: 'sended', product: p?._id }).countDocuments();
+
+                const delivered = await shopModel.find({ flow: req.user.uId, status: 'delivered', product: p?._id }).countDocuments();
+
+                mod.push({
+                    ...p._doc,
+                    id: p._id,
+                    pid: p.id,
+                    image: SERVER_LINK + p.images[0],
+                    original_price: 0,
+                    price: p?.price + p?.for_admins + $settings[0].for_operators,
+                    old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
+                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    // 
+                    pending,
+                    views: v.views,
+                    success,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data: mod
+            });
         }
     }
 }

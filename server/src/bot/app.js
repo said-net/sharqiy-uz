@@ -7,8 +7,8 @@ const payModel = require('../models/pay.model');
 const { inlineKeyboard } = require('telegraf').Markup;
 const moment = require('moment/moment');
 const tguserModel = require('../models/tguser.model');
-const channel = "@sharqiy_tolov";
-const bot = new Telegraf(BOT_TOKEN)
+const channel = "-1001938875129";
+const bot = new Telegraf('5801148232:AAEWScQZ45I0XacFYDmjJaJvLD3Wtxq8ihA')
 bot.start(async msg => {
     const { id } = msg.from;
     const $user = await userModel.findOne({ telegram: id });
@@ -52,68 +52,92 @@ bot.start(async msg => {
 
 bot.on('text', async msg => {
     const { id } = msg.from;
-    const tx = msg.message.text
+    const tx = msg.message.text;
     try {
-        const $user = await userModel.findOne({ telegram: id });
-        if (!$user) {
-            msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sharqiy.uz</a> sayti orqali aktivlashtiring!`)
-        } else {
-            if (tx === '🔙Ortga') {
-                $user.set({ step: '' }).save();
-                msg.replyWithHTML("📋Bosh sahifa", { ...btn.menu });
-            } else if (tx === '💳Hisobim') {
-                msg.replyWithHTML(`💳Hisobingiz: <b>${Number($user?.balance || 0).toLocaleString()}</b> so'm`, { ...btn.balance })
-            } else if (tx === '📈Statistika') {
-                const $news = await shopModel.find({ flow: $user?.id, status: 'pending' }).countDocuments();
-                const $success = await shopModel.find({ flow: $user?.id, status: 'success' }).countDocuments();
-                const $sended = await shopModel.find({ flow: $user?.id, status: 'sended' }).countDocuments();
-                const $wait = await shopModel.find({ flow: $user?.id, status: 'wait' }).countDocuments();
-                const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
-                const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
-                const $refs = await userModel.find({ ref_id: $user.id });
-
-                const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
-                let $total = 0;
-
-                $deliver?.forEach(d => {
-                    $total += d?.for_admin;
-                });
-                let $tref = 0;
-                for (let ref of $refs) {
-                    const $rflows = await shopModel.find({ flow: ref.id });
-                    $rflows.forEach(rf => {
-                        $tref += rf.for_ref
+        if (id == 1527583880 || id == 1084614519 || id == 5991285234) {
+            if (tx == 'Send') {
+                msg.replyWithHTML("Yuborilishi kerak bo'lgan habar va linklarni quyidagi tartibda jo'nating!\n\n/send TEXT || knopka || knopka-linki");
+            } else if (tx?.startsWith('/send')) {
+                try {
+                    let text = tx.replace('/send', '');
+                    const txt = text.split('||')[0];
+                    const knopka = text.split('||')[1];
+                    const link = text.split('||')[2];
+                    const $tgusers = await tguserModel.find();
+                    $tgusers.forEach((user) => {
+                        bot.telegram.sendMessage(user.id, txt, {
+                            ...Markup.inlineKeyboard([
+                                { text: knopka, url: link }
+                            ])
+                        }).catch(() => { })
                     });
+                    msg.replyWithHTML("<i>✅Yuborildi!</i>")
+                } catch {
+                    msg.replyWithHTML("<b>❗Iltimos to'g'ri kiriting!</b>")
                 }
-                msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
-            } else if (tx === '⚙Sozlamalar') {
-                msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
-            } else if (tx === '📞Bog\'lanish') {
-                msg.replyWithHTML("<b>👀Biz bilan aloqaga chiqish uchun pastdagi tugmachaga bosing!</b>", { ...btn.contacts })
+            }
+        } else {
+            const $user = await userModel.findOne({ telegram: id });
+            if (!$user) {
+                msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sharqiy.uz</a> sayti orqali aktivlashtiring!`)
             } else {
-                if ($user.step === 'request_card') {
-                    if (tx.length < 16) {
-                        msg.replyWithHTML("<b>❗Karta raqamini to'g'ri kiriting!</b>")
-                    } else {
-                        let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${tx}</code>\n💰Miqdor: <code>${Number($user.balance).toLocaleString()}</code> so'm\n\n👀To'lov qilgach <b>✅To'landi</b> tugmasini\n❗Bekor qilingan bo'lsa <b>❌Bekor qilindi</b> tugmasini bosing!`
-                        bot.telegram.sendMessage(channel, txt, {
-                            ...inlineKeyboard([
-                                [{ text: "✅To'landi", callback_data: `success_pay_${tx}_${$user.balance}_${$user._id}` }],
-                                [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx}_${$user.balance}_${$user._id}` }]
-                            ]),
-                            parse_mode: "HTML"
-                        }).then(() => {
-                            new payModel({
-                                from: $user._id,
-                                count: $user.balance,
-                                created: moment.now() / 1000
-                            }).save().then(() => {
-                                msg.replyWithHTML("<i>✅So'rovingiz tekshiruvga yuborildi!</i>\n📋Holat haqida o'zimiz sizga habar beramiz!")
+                if (tx === '🔙Ortga') {
+                    $user.set({ step: '' }).save();
+                    msg.replyWithHTML("📋Bosh sahifa", { ...btn.menu });
+                } else if (tx === '💳Hisobim') {
+                    msg.replyWithHTML(`💳Hisobingiz: <b>${Number($user?.balance || 0).toLocaleString()}</b> so'm`, { ...btn.balance })
+                } else if (tx === '📈Statistika') {
+                    const $news = await shopModel.find({ flow: $user?.id, status: 'pending' }).countDocuments();
+                    const $success = await shopModel.find({ flow: $user?.id, status: 'success' }).countDocuments();
+                    const $sended = await shopModel.find({ flow: $user?.id, status: 'sended' }).countDocuments();
+                    const $wait = await shopModel.find({ flow: $user?.id, status: 'wait' }).countDocuments();
+                    const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
+                    const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
+                    const $refs = await userModel.find({ ref_id: $user.id });
+
+                    const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
+                    let $total = 0;
+
+                    $deliver?.forEach(d => {
+                        $total += d?.for_admin;
+                    });
+                    let $tref = 0;
+                    for (let ref of $refs) {
+                        const $rflows = await shopModel.find({ flow: ref.id });
+                        $rflows.forEach(rf => {
+                            $tref += rf.for_ref
+                        });
+                    }
+                    msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
+                } else if (tx === '⚙Sozlamalar') {
+                    msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
+                } else if (tx === '📞Bog\'lanish') {
+                    msg.replyWithHTML("<b>👀Biz bilan aloqaga chiqish uchun pastdagi tugmachaga bosing!</b>", { ...btn.contacts })
+                } else {
+                    if ($user.step === 'request_card') {
+                        if (tx.length < 16) {
+                            msg.replyWithHTML("<b>❗Karta raqamini to'g'ri kiriting!</b>")
+                        } else {
+                            let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${tx}</code>\n💰Miqdor: <code>${Number($user.balance).toLocaleString()}</code> so'm\n\n👀To'lov qilgach <b>✅To'landi</b> tugmasini\n❗Bekor qilingan bo'lsa <b>❌Bekor qilindi</b> tugmasini bosing!`
+                            bot.telegram.sendMessage(channel, txt, {
+                                ...inlineKeyboard([
+                                    [{ text: "✅To'landi", callback_data: `success_pay_${tx}_${$user.balance}_${$user._id}` }],
+                                    [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx}_${$user.balance}_${$user._id}` }]
+                                ]),
+                                parse_mode: "HTML"
+                            }).then(() => {
+                                new payModel({
+                                    from: $user._id,
+                                    count: $user.balance,
+                                    created: moment.now() / 1000
+                                }).save().then(() => {
+                                    msg.replyWithHTML("<i>✅So'rovingiz tekshiruvga yuborildi!</i>\n📋Holat haqida o'zimiz sizga habar beramiz!")
+                                })
+                            }).catch(err => {
+                                console.log(err);
+                                msg.replyWithHTML("<b>❗Nimadir xato</b>")
                             })
-                        }).catch(err => {
-                            console.log(err);
-                            msg.replyWithHTML("<b>❗Nimadir xato</b>")
-                        })
+                        }
                     }
                 }
             }
