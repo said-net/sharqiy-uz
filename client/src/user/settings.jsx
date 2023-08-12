@@ -8,11 +8,13 @@ import { API_LINK } from "../config";
 import { setRefreshAuth } from "../managers/authManager";
 import Regions from '../components/regions.json'
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 function Settings() {
     const { refresh, id } = useSelector(e => e.auth);
     const [state, setState] = useState({ id: '', name: '', password: '', telegram: '', phone: '', location: '', balance: '' });
     const dp = useDispatch();
     const [disabled, setDisabled] = useState(false);
+    const nv = useNavigate()
     useEffect(() => {
         setDisabled(true)
         axios(`${API_LINK}/user/verify-auth`, {
@@ -40,7 +42,10 @@ function Settings() {
                 toast.error(msg);
             } else {
                 toast.success(msg);
-                dp(setRefreshAuth())
+                setTimeout(() => {
+                    dp(setRefreshAuth());
+                    nv('/profile')
+                }, 1000)
             }
         })
     }

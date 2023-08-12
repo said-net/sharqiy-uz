@@ -490,5 +490,48 @@ module.exports = {
                 });
             });
         }
+    },
+    getRequests: async (req, res) => {
+        const $shops = await shopModel.find({ flow: req.user.uId }).populate('operator product')
+        //Name, id, operatorId, title, raqam**, status, izoh, sana
+        const mod = [];
+        $shops?.forEach(e => {
+            mod.push({
+                id: e?.id,
+                name: e?.name,
+                operator_id: e?.operator ? e?.operator?.id : 'Aloqaga chiqilmagan',
+                title: e?.product?.title,
+                phone: e?.phone?.slice(0, 9) + '****',
+                status: e?.status,
+                about: e?.about ? e?.about : "Yangi",
+                date: moment.unix(e?.created).format('DD.MM.YYYY | HH:mm')
+            });
+        });
+        res.send({
+            ok: true,
+            data: mod?.reverse()
+        });
+    },
+    setStatusMySales: async (req, res) => {
+        try {
+            await shopModel.updateMany({ status: 'wait', flow: req.user.uId }, { status: 'pending', operator: null }).then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Bajarildi!"
+                });
+            }).catch(err => {
+                console.log(err);
+                res.send({
+                    ok: false,
+                    msg: "Saqlashda xatolik!"
+                });
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
+            })
+        }
     }
 }

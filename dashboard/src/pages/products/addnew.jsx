@@ -13,6 +13,7 @@ function AddProduct({ open, setOpen }) {
     const [state, setState] = useState({ title: '', about: '', images: [], video: '', price: '', original_price: '', category: '', value: '', for_admins: '' });
     const [disableBtn, setDisableBtn] = useState(false);
     const dp = useDispatch();
+    const [waitBtn, setWaitBtn] = useState(false);
     useEffect(() => {
         setIsLoad(false);
         if (open) {
@@ -41,6 +42,7 @@ function AddProduct({ open, setOpen }) {
         if (!title || !category || ![...images][0] || !about || !price || !original_price || !value || !video, !for_admins) {
             toast.error("Qatorlarni to'ldiring!")
         } else {
+            setWaitBtn(true)
             const form = new FormData();
             form.append('title', title);
             form.append('about', about);
@@ -58,7 +60,8 @@ function AddProduct({ open, setOpen }) {
                     'x-auth-token': `Bearer ${localStorage.getItem('access')}`
                 }
             }).then(res => {
-                const { ok, data, msg } = res.data;
+                const { ok, msg } = res.data;
+                setWaitBtn(false)
                 if (!ok) {
                     toast.error(msg);
                 } else {
@@ -68,6 +71,7 @@ function AddProduct({ open, setOpen }) {
                     setState({ title: '', about: '', images: [], video: '', price: 0, original_price: 0, category: '', value: '', for_admins: '' });
                 }
             }).catch(() => {
+                setWaitBtn(false)
                 toast.error("Aloqani tekshirib qayta urunib ko'ring!")
             })
         }
@@ -139,7 +143,7 @@ function AddProduct({ open, setOpen }) {
                 }
                 <DialogFooter className="w-full">
                     <Button onClick={() => setOpen(false)} className="rounded mr-[10px]" color="red">Bekor qilish</Button>
-                    <Button onClick={Submit} className="rounded" color="green" disabled={disableBtn}>Saqlash</Button>
+                    <Button onClick={Submit} className="rounded" color="green" disabled={disableBtn || waitBtn}>Saqlash</Button>
                 </DialogFooter>
             </div>
         </Dialog>

@@ -33,7 +33,7 @@ function AdminStats() {
 
     return (
         <div className="flex items-center justify-start flex-col w-full">
-            <Link to={`/dashboard`} className="w-full underline mb-[10px]">Ortga</Link>
+            <Link to={`/dashboard`} className="w-full underline mb-[10px] ml-[35px]">Ortga</Link>
             {!isLoad && <Spinner />}
             {isLoad &&
                 <div className="flex items-center justify-between w-[90%] h-[50px] bg-white shadow-md mb-[10px] rounded p-[0_10px]">

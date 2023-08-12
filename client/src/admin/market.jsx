@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { FaBoxes } from "react-icons/fa";
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Popover, PopoverContent, PopoverHandler } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
 import { FaX } from "react-icons/fa6";
 
 function AdminMarket() {
@@ -63,7 +63,7 @@ function AdminMarket() {
     }
     return (
         <div className="flex items-center justify-start flex-col w-full p-[0_10px]">
-            <Link to={`/dashboard`} className="w-full underline">Ortga</Link>
+            <Link to={`/dashboard`} className="w-full underline mb-[10px]">Ortga</Link>
             <div className="flex items-center justify-start w-full overflow-x-scroll h-[80px] bg-white rounded shadow-md p-[0_10px]">
                 <div onClick={() => setCategory('all')} className="flex items-center justify-start flex-col w-[50px] mr-[20px]">
                     <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full border overflow-hidden">

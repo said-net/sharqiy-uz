@@ -9,7 +9,7 @@ const userModel = require("../models/user.model");
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
 module.exports = {
-    create: (req, res) => {
+    create:async (req, res) => {
         const { name, phone, password } = req.body;
         console.log(req.body);
         if (!name || !phone || !password) {
@@ -28,7 +28,9 @@ module.exports = {
                 msg: "Parol min: 6 ta ishoradan va [A-z0-9] dan tashkil topgan bo'ladi!"
             })
         } else {
+            const $opers = await operatorModel.find().countDocuments();
             new operatorModel({
+                id: $opers+1,
                 name, phone: pv(phone, { country: 'uz' }).phoneNumber, password: md5(password),
             }).save().then(() => {
                 res.send({
@@ -120,9 +122,6 @@ module.exports = {
             });
         });
     },
-    // 
-    // 
-    // 
     signIn: async (req, res) => {
         const { phone, password } = req.body;
         if (!phone || !password) {

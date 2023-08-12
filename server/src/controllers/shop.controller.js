@@ -36,6 +36,7 @@ module.exports = {
                         product: id,
                         from: $user ? $user?._id : '',
                         name,
+                        created: moment.now() / 1000,
                         id: $orders?.length + 1,
                         phone,
                         competition: !$c[0] || $c[0].end < (moment.now() / 1000) ? null : $c[0]._id,

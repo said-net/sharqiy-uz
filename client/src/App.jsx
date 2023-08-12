@@ -27,6 +27,7 @@ import AdminRefs from "./admin/refs";
 import Competition from "./admin/competition";
 import AdminProductStats from "./admin/getproductstats";
 import Loading from "./components/loading";
+import AdminRequests from "./admin/requests";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -82,6 +83,7 @@ function App() {
                 <Route path="/dashboard/refs" element={<AdminRefs />} />
                 <Route path="/dashboard/comps" element={<Competition />} />
                 <Route path="/dashboard/product-stats" element={<AdminProductStats />} />
+                <Route path="/dashboard/requests" element={<AdminRequests />} />
               </Routes>
               <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
             </>

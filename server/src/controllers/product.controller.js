@@ -130,19 +130,19 @@ module.exports = {
                 c += co?.count;
             });
             $modlist.push({
-                ...p._doc,
-                id: p._id,
+                ...p?._doc,
+                id: p?._id,
                 solded: c,
                 image: SERVER_LINK + p?.images[0],
-                created: moment.unix(p.created).format('YYYY-MM-DD'),
+                created: moment.unix(p?.created).format('YYYY-MM-DD'),
                 for_admins: p?.for_admins,
-                value: p.value - c,
+                value: p?.value - c,
                 old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
                 sold_price: p?.price + p?.for_admins + $settings[0].for_operators,
-                bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                bonus_count: p.bonus ? p.bonus_count : 0,
-                bonus_given: p.bonus ? p.bonus_given : 0,
+                bonus: p?.bonus && p?.bonus_duration > moment.now() / 1000,
+                bonus_duration: p?.bonus ? moment.unix(p?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                bonus_count: p?.bonus ? p?.bonus_count : 0,
+                bonus_given: p?.bonus ? p?.bonus_given : 0,
                 category: p?.category
             });
         }
@@ -325,20 +325,20 @@ module.exports = {
         $products.forEach(p => {
             if (p?.title?.toLowerCase()?.includes(prefix?.toLowerCase()) || p?.about?.toLowerCase()?.includes(prefix?.toLowerCase())) {
                 $modlist.push({
-                    ...p._doc,
-                    id: p._id,
-                    pid: p.id,
-                    image: SERVER_LINK + p.images[0],
+                    ...p?._doc,
+                    id: p?._id,
+                    pid: p?.id,
+                    image: SERVER_LINK + p?.images[0],
                     original_price: 0,
                     price: p?.price + p?.for_admins + $settings[0].for_operators,
-                    value: p.value - p.solded,
+                    value: p?.value - p?.solded,
                     old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
-                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    bonus: p?.bonus && p?.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p?.bonus ? moment.unix(p?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     category: {
-                        id: p.category._id,
-                        title: p.category.title,
-                        image: SERVER_LINK + p.category.image
+                        id: p?.category._id,
+                        title: p?.category.title,
+                        image: SERVER_LINK + p?.category.image
                     }
                 });
             }
@@ -361,20 +361,20 @@ module.exports = {
             const $modlist = [];
             $products.forEach(p => {
                 $modlist.push({
-                    ...p._doc,
-                    id: p._id,
-                    pid: p.id,
-                    image: SERVER_LINK + p.images[0],
+                    ...p?._doc,
+                    id: p?._id,
+                    pid: p?.id,
+                    image: SERVER_LINK + p?.images[0],
                     original_price: 0,
                     price: p?.price + p?.for_admins + $settings[0].for_operators,
-                    value: p.value - p.solded,
+                    value: p?.value - p?.solded,
                     old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
-                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    bonus: p?.bonus && p?.bonus_duration > moment.now() / 1000,
+                    bonus_duration: p?.bonus ? moment.unix(p?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     category: {
-                        id: p.category._id,
-                        title: p.category.title,
-                        image: SERVER_LINK + p.category.image
+                        id: p?.category._id,
+                        title: p?.category.title,
+                        image: SERVER_LINK + p?.category.image
                     }
                 });
             });
@@ -447,15 +447,15 @@ module.exports = {
                 const $modlist = [];
                 $products.forEach(p => {
                     $modlist.push({
-                        ...p._doc,
-                        id: p._id,
-                        pid: p.id,
-                        image: SERVER_LINK + p.images[0],
+                        ...p?._doc,
+                        id: p?._id,
+                        pid: p?.id,
+                        image: SERVER_LINK + p?.images[0],
                         original_price: 0,
                         price: p?.price + p?.for_admins + $settings[0].for_operators,
                         old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
-                        bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                        bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                        bonus: p?.bonus && p?.bonus_duration > moment.now() / 1000,
+                        bonus_duration: p?.bonus ? moment.unix(p?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                     });
                 });
                 res.send({
@@ -467,19 +467,19 @@ module.exports = {
                 const $modlist = [];
                 $products.forEach(p => {
                     $modlist.push({
-                        ...p._doc,
-                        id: p._id,
-                        image: SERVER_LINK + p.images[0],
+                        ...p?._doc,
+                        id: p?._id,
+                        image: SERVER_LINK + p?.images[0],
                         original_price: 0,
                         price: p?.price + p?.for_admins + $settings[0].for_operators,
-                        value: p.value - p.solded,
+                        value: p?.value - p?.solded,
                         old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
-                        bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                        bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                        bonus: p?.bonus && p?.bonus_duration > moment.now() / 1000,
+                        bonus_duration: p?.bonus ? moment.unix(p?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
                         category: {
-                            id: p.category._id,
-                            title: p.category.title,
-                            image: SERVER_LINK + p.category.image
+                            id: p?.category._id,
+                            title: p?.category.title,
+                            image: SERVER_LINK + p?.category.image
                         }
                     });
                 });
@@ -537,38 +537,45 @@ module.exports = {
                 data: mod
             });
         } else {
-            for (let v of $views) {
-                const p = v?.product
-                const pending = await shopModel.find({ flow: String(req.user.uId), status: 'pending', product: p?._id }).countDocuments();
+            try {
+                for (let v of $views) {
+                    const p = v?.product
+                    const pending = await shopModel.find({ flow: String(req.user.uId), status: 'pending', product: p?._id }).countDocuments();
 
-                const success = await shopModel.find({ flow: req.user.uId, status: 'success', product: p?._id }).countDocuments();
+                    const success = await shopModel.find({ flow: req.user.uId, status: 'success', product: p?._id }).countDocuments();
 
-                const sended = await shopModel.find({ flow: req.user.uId, status: 'sended', product: p?._id }).countDocuments();
+                    const sended = await shopModel.find({ flow: req.user.uId, status: 'sended', product: p?._id }).countDocuments();
 
-                const delivered = await shopModel.find({ flow: req.user.uId, status: 'delivered', product: p?._id }).countDocuments();
+                    const delivered = await shopModel.find({ flow: req.user.uId, status: 'delivered', product: p?._id }).countDocuments();
 
-                mod.push({
-                    ...p._doc,
-                    id: p._id,
-                    pid: p.id,
-                    image: SERVER_LINK + p.images[0],
-                    original_price: 0,
-                    price: p?.price + p?.for_admins + $settings[0].for_operators,
-                    old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
-                    bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
-                    bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
-                    // 
-                    pending,
-                    views: v.views,
-                    success,
-                    sended,
-                    delivered
+                    mod.push({
+                        ...p?._doc,
+                        id: p?._id,
+                        pid: p?.id,
+                        image: SERVER_LINK + p?.images[0],
+                        original_price: 0,
+                        price: p?.price + p?.for_admins + $settings[0].for_operators,
+                        old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
+                        bonus: p?.bonus && p?.bonus_duration > moment.now() / 1000,
+                        bonus_duration: p?.bonus ? moment.unix(p?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                        // 
+                        pending,
+                        views: v.views,
+                        success,
+                        sended,
+                        delivered
+                    });
+                }
+                res.send({
+                    ok: true,
+                    data: mod
                 });
+            } catch (error) {
+                res.send({
+                    ok: true,
+                    data: mod
+                })
             }
-            res.send({
-                ok: true,
-                data: mod
-            });
         }
     }
 }

@@ -13,7 +13,11 @@ app.use(cors());
 app.use(express.json());
 app.use(file());
 app.use('/public', express.static('public'));
-app.use('/api', router);
+try {
+    app.use('/api', router);
+} catch (error) {
+    console.log(error);
+}
 app.listen(APP_PORT, () => {
     try {
         require('./bot/app').launch()

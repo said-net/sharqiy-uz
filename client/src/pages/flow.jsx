@@ -89,7 +89,7 @@ function Flow() {
             {isLoad && product?.title &&
                 <>
                     <div className="flex items-center justify-center w-full relative" onDoubleClick={() => setLike(p?.id)}>
-                        <Carousel autoplay loop className="rounded-xl">
+                        <Carousel autoplay navigation={false} loop className="rounded-xl">
                             {product?.images?.map((i, k) => {
                                 return (<img src={i} alt={k} key={k} className="h-full w-full object-cover" />)
                             })}

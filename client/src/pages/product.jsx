@@ -85,7 +85,7 @@ function Product() {
             {isLoad && product?.title &&
                 <>
                     <div className="flex items-center justify-center w-full relative" onDoubleClick={() => setLike(p?.id)}>
-                        <Carousel autoplay loop className="rounded-xl">
+                        <Carousel autoplay loop navigation={false} className="rounded-xl">
                             {product?.images?.map((i, k) => {
                                 return (<img src={i} alt={k} key={k} className="h-full w-full object-cover" />)
                             })}
@@ -122,7 +122,7 @@ function Product() {
                         {showMore && <p onClick={() => setShowMore(false)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Qisqartma</p>}
                     </div>
                     <div className="flex items-center justify-center w-full fixed bottom-[60px] left-0">
-                        <Button onClick={() => (setOpenShop({ ...openShop, id: p?.id, title: p?.title, bonus: p?.bonus, bonus_count: p?.bonus_count, bonus_given: p?.bonus_given }))} className="w-[98%] h-[50px] rounded-full text-[16px]" color="red">Sotib olish</Button>
+                        <Button onClick={() => (setOpenShop({ ...openShop, id: p?.id, title: p?.title, bonus: p?.bonus, bonus_count: p?.bonus_count, bonus_given: p?.bonus_given }))} className="w-[98%] h-[50px] rounded-full text-[16px] z-[9999999]" color="red">Sotib olish</Button>
                     </div>
                 </>
             }

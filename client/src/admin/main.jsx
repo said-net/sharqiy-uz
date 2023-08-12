@@ -1,9 +1,10 @@
 import { MenuItem } from "@material-tailwind/react";
-import { FaGift, FaMoneyBill, FaShoppingCart, FaTelegram, FaUsers } from "react-icons/fa";
+import { FaGift, FaMoneyBill, FaShoppingCart, FaTelegram, FaUsers, FaBoxes } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { ImStatsDots } from 'react-icons/im'
 import { FaGear, FaMoneyBill1, FaMoneyBillTransfer } from "react-icons/fa6";
+import {BiMailSend} from "react-icons/bi";
 import { useState } from "react";
 import AdminTelegram from "./addtelegram";
 function AdminMain() {
@@ -31,8 +32,12 @@ function AdminMain() {
                     Statistika
                 </MenuItem>
                 <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/product-stats')}>
-                    <ImStatsDots className="mr-[10px] text-[20px] text-blue-gray-500" />
+                    <FaBoxes className="mr-[10px] text-[20px] text-blue-gray-500" />
                     Mahsulotlar bo'yicha statistika
+                </MenuItem>
+                <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => nv('/dashboard/requests')}>
+                    <BiMailSend className="mr-[10px] text-[20px] text-blue-gray-500" />
+                    So'rovlar
                 </MenuItem>
                 <MenuItem className="border flex items-center justify-start h-[50px] mb-[10px]" onClick={() => window.open('https://t.me/Sharqiybot?start=pay')}>
                     <FaMoneyBill1 className="mr-[10px] text-[20px] text-blue-gray-500" />
