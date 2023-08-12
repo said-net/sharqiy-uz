@@ -102,13 +102,15 @@ module.exports = {
                 const $modlist = [];
                 for (let u of $users) {
                     const $shops = await shopModel.find({ competition: $c._id, flow: u?.id, status: 'delivered' });
-                    $modlist.push({
-                        name: u.name,
-                        id: u.id,
-                        phone: u.phone,
-                        flows: $shops.length,
-                        telegram: u.telegram,
-                    });
+                    if ($shops[0]) {
+                        $modlist.push({
+                            name: u.name,
+                            id: u.id,
+                            phone: u.phone,
+                            flows: $shops.length,
+                            telegram: u.telegram,
+                        });
+                    }
                 }
                 res.send({
                     ok: true,
@@ -119,7 +121,7 @@ module.exports = {
                         start: moment.unix($c.start).format('DD.MM.YYYY'),
                         end: moment.unix($c.end).format('DD.MM.YYYY'),
                     },
-                    data: $modlist.sort((a, b) => b - a).slice(0, 50)
+                    data: $modlist.sort((a, b) => b.flows - a.flows).slice(0, 50)
                 });
             }
         } catch (error) {

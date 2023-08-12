@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setRefreshAuth } from "../managers/authManager";
 import Regions from '../components/regions.json';
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 function Auth({ open, setOpen }) {
     const auth_info = JSON.parse(localStorage.getItem('auth_info'));
     const [state, setState] = useState({ phone: auth_info?.phone ? auth_info?.phone : '+998', code: '', ref_id: localStorage.getItem('ref_id'), name: '', location: '' });
@@ -15,7 +16,7 @@ function Auth({ open, setOpen }) {
     const [enableForm, setEnableForm] = useState(false);
     const [type, setType] = useState('sms');
     const dp = useDispatch();
-
+    const [show, setShow] = useState(false);
     function RequestSMS() {
         setWait(true);
         axios.post(`${API_LINK}/user/request-sms`, state).then(res => {
@@ -123,7 +124,7 @@ function Auth({ open, setOpen }) {
                                 <Input type="tel" label="Raqamingiz" required onChange={e => setWithPass({ ...withPass, phone: e.target.value })} value={withPass.phone} />
                             </div>
                             <div className="flex items-center justify-center w-full mb-[10px] relative">
-                                <Input type="password" label="Parolingiz" required onChange={e => setWithPass({ ...withPass, password: e.target.value })} value={withPass.password} />
+                                <Input type={!show ? "password" : "text"} label="Parolingiz" required onChange={e => setWithPass({ ...withPass, password: e.target.value })} value={withPass.password} icon={!show ? <FaEye onClick={() => setShow(true)} /> : <FaEyeSlash onClick={() => setShow(false)} />} />
                             </div>
                             <div className="flex items-center justify-center w-full">
                                 <p className="underline" onClick={() => setType('sms')}>SMS orqali kirish</p>

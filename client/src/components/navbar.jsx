@@ -43,7 +43,7 @@ function Navbar() {
                     <div className="flex items-center justify-center w-[70%] relative">
                         <input value={search} type="text" className="border border-red-500 p-[0_30px_0_10px] h-[35px] rounded-full w-full" placeholder="Qidiruv..." onChange={e => setSearch(e.target.value)} onKeyPress={e => e.key === 'Enter' && nv(`/search/${search}`)} />
                         <button className="w-[30px] h-[30px]  absolute right-[5px] rounded-full text-[16px] text-black flex items-center justify-center" onClick={() => nv('/search/' + search)}>
-                            <FaSearch  />
+                            <FaSearch />
                         </button>
                     </div>
                     <Menu>
@@ -96,8 +96,7 @@ function Navbar() {
                     </div>
                     {/*  */}
                     <div className="flex items-center justify-center flex-col">
-                        {pathname !== '/messanger' && <BiCommentDetail className="text-[30px] cursor-pointer" onClick={() => nv('/messanger')} />}
-                        {pathname === '/messanger' && <BiSolidCommentDetail className="text-[30px] cursor-pointer" onClick={() => nv('/messanger')} />}
+                        <BiCommentDetail className="text-[30px] cursor-pointer" onClick={() => window.open('http://t.me/Sharqiyuz_Yordam_Bot')} />
                         <p className="text-[12px]">Aloqa</p>
                     </div>
                     {/*  */}

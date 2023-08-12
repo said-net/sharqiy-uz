@@ -2,7 +2,7 @@ const moment = require("moment");
 const productModel = require("../models/product.model");
 const shopModel = require("../models/shop.model");
 const userModel = require("../models/user.model");
-const bot = require("../bot/app");
+// const bot = require("../bot/app");
 const competitionModel = require("../models/competition.model");
 
 module.exports = {
@@ -49,14 +49,14 @@ module.exports = {
                             ok: true,
                             msg: "Qabul qilindi! Tez orada operatorlar aloqaga chiqishadi!"
                         })
-                        if (flow) {
-                            const $flower = await userModel.findOne({ id: flow });
-                            if ($flower && $flower?.telegram) {
-                                bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🆕Yangi buyurtma\n🆔Buyurtma uchun id: #${$orders?.length + 1}`).catch(err => {
-                                    console.log(err);
-                                })
-                            }
-                        }
+                        // if (flow) {
+                        //     const $flower = await userModel.findOne({ id: flow });
+                        //     if ($flower && $flower?.telegram) {
+                        //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🆕Yangi buyurtma\n🆔Buyurtma uchun id: #${$orders?.length + 1}`).catch(err => {
+                        //             console.log(err);
+                        //         })
+                        //     }
+                        // }
 
                     });
                 }

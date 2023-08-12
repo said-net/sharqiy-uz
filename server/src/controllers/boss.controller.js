@@ -252,14 +252,14 @@ module.exports = {
                     ok: true,
                     msg: "Buyurtma bekor qilindi!"
                 });
-                if (o?.flow) {
-                    const $flower = await userModel.findOne({ id: o?.flow });
-                    if ($flower && $flower?.telegram) {
-                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
-                            console.log(err);
-                        });
-                    }
-                }
+                // if (o?.flow) {
+                //     const $flower = await userModel.findOne({ id: o?.flow });
+                //     if ($flower && $flower?.telegram) {
+                //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
+                //             console.log(err);
+                //         });
+                //     }
+                // }
             });
         } else if (status === 'sended') {
             o.set({ status: 'sended' }).save().then(() => {
@@ -285,14 +285,14 @@ module.exports = {
                         msg: "Buyurtma yuborildi!",
                         data: SERVER_LINK + '/public/cheques/' + o?.id + '.pdf'
                     });
-                    if (o?.flow) {
-                        const $flower = await userModel.findOne({ id: o?.flow });
-                        if ($flower && $flower?.telegram) {
-                            bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yuborildi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
-                                console.log(err);
-                            });
-                        }
-                    }
+                    // if (o?.flow) {
+                    //     const $flower = await userModel.findOne({ id: o?.flow });
+                    //     if ($flower && $flower?.telegram) {
+                    //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yuborildi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
+                    //             console.log(err);
+                    //         });
+                    //     }
+                    // }
                 }).catch((err) => {
                     console.log(err);
                     res.send({

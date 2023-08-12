@@ -249,14 +249,17 @@ module.exports = {
     getMyLikes: async (req, res) => {
         const $likes = await likeModel.find({ from: req.user.id }).populate('product')
         const $modlist = [];
+        const $settings = await settingModel.find();
         for (let like of $likes) {
             const p = await productModel.findOne({ _id: like?.product?._id, hidden: false });
             if (p) {
                 $modlist.push({
                     ...p._doc,
                     id: p._id,
+                    pid: p.id,
                     image: SERVER_LINK + p.images[0],
                     original_price: 0,
+                    price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p.value - p.solded,
                     bonus: p.bonus && p.bonus_duration > moment.now() / 1000,
                     bonus_duration: p.bonus ? moment.unix(p.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,

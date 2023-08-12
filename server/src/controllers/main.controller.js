@@ -15,6 +15,7 @@ module.exports = {
             $p.push({
                 id: p?._id,
                 title: p?.title,
+                pid: p?.id,
             });
         });
         $ads.forEach((a) => {
@@ -85,6 +86,7 @@ module.exports = {
             products.push({
                 ...p._doc,
                 id: p._id,
+                pid: p.id,
                 image: SERVER_LINK + p.images[0],
                 original_price: 0,
                 price: p?.price + p?.for_admins + $settings[0].for_operators,
@@ -100,6 +102,7 @@ module.exports = {
             });
             videos.push({
                 id: p._id,
+                pid: p.id,
                 product: p.title,
                 video: p.video
             });

@@ -97,10 +97,10 @@ function Home() {
                                 {likes?.includes(p?.id) && <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />}
 
                                 {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
-                                <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                <div onClick={() => nv('/product/' + p?.pid)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
                                     <img src={p.image} alt="c" />
                                 </div>
-                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p?.pid)}>
                                     <p className="w-full p-[0_2%] my-[10px]">
                                         {p?.title?.slice(0, 15) + '...'}
                                     </p>
@@ -122,10 +122,10 @@ function Home() {
                                 {likes?.includes(p?.id) && <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />}
 
                                 {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
-                                <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                <div onClick={() => nv('/product/' + p?.pid)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
                                     <img src={p.image} alt="c" />
                                 </div>
-                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p?.pid)}>
                                     <p className="w-full p-[0_2%] my-[10px]">
                                         {p?.title?.slice(0, 15) + '...'}
 
@@ -146,7 +146,7 @@ function Home() {
                 <div className="flex items-center justify-start w-full overflow-x-scroll h-[200px]  p-[0_10px] mb-[20px] shadow-md">
                     {state?.videos?.map((v, i) => {
                         return (
-                            <div className="flex relative" onClick={() => { setOpenVideo(v.video); setVideoDetail({ id: v.id, title: v.product }) }}>
+                            <div className="flex relative" onClick={() => { setOpenVideo(v.video); setVideoDetail({ id: v.pid, title: v.product }) }}>
                                 <YouTube className="mr-[10px]" key={i} loading="lazy" videoId={v?.video?.split('/')?.reverse()[0]} opts={{ width: '120px', height: '200px', playerVars: { autoplay: 0, listType: 'user_uploads', controls: 0, enablejsapi: 0, disablekb: 1 } }} />
                                 <div className="absolute w-[120px] h-[50px] bottom-0 left-0 bg-black flex items-center justify-center">
                                     <p className="text-white p-[5px] border">Katta ekran</p>
@@ -168,10 +168,10 @@ function Home() {
                                 {likes?.includes(p?.id) && <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />}
 
                                 {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
-                                <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                <div onClick={() => nv('/product/' + p?.pid)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
                                     <img src={p.image} alt="c" />
                                 </div>
-                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p?.pid)}>
                                     <p className="w-full p-[0_2%] my-[10px]">
                                         {p?.title?.slice(0, 15) + '...'}
                                     </p>
@@ -193,10 +193,10 @@ function Home() {
                                 {likes?.includes(p?.id) && <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />}
 
                                 {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
-                                <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                <div onClick={() => nv('/product/' + p?.pid)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
                                     <img src={p.image} alt="c" />
                                 </div>
-                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p?.pid)}>
                                     <p className="w-full p-[0_2%] my-[10px]">
                                         {p?.title?.slice(0, 15) + '...'}
 

@@ -1,5 +1,5 @@
 const { Telegraf, Markup } = require('telegraf');
-const { BOT_TOKEN } = require('../configs/env');
+// const { BOT_TOKEN } = require('../configs/env');
 const userModel = require('../models/user.model');
 const btn = require('./btn');
 const shopModel = require('../models/shop.model');
@@ -7,8 +7,9 @@ const payModel = require('../models/pay.model');
 const { inlineKeyboard } = require('telegraf').Markup;
 const moment = require('moment/moment');
 const tguserModel = require('../models/tguser.model');
-const channel = "-1001964224730";
-const bot = new Telegraf('5801148232:AAEWScQZ45I0XacFYDmjJaJvLD3Wtxq8ihA')
+const channel = "-1001938875129";
+// const bot = new Telegraf('5801148232:AAEWScQZ45I0XacFYDmjJaJvLD3Wtxq8ihA')
+const bot = new Telegraf('6471399420:AAFhKd82Zcr9YbYcBZhvMoykawR9_OtwLIk')
 bot.start(async msg => {
     const { id } = msg.from;
     const $user = await userModel.findOne({ telegram: id });
@@ -167,7 +168,7 @@ bot.on('callback_query', async msg => {
             let $total = 0;
 
             $deliver?.forEach(d => {
-                $total += d?.price;
+                $total += d?.for_admin;
             })
 
             msg.replyWithHTML(`<b>📈Bugunlik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
@@ -187,7 +188,7 @@ bot.on('callback_query', async msg => {
             let $total = 0;
 
             $deliver?.forEach(d => {
-                $total += d?.price;
+                $total += d?.for_admin;
             })
 
             msg.replyWithHTML(`<b>📈Kechagi hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
@@ -206,7 +207,7 @@ bot.on('callback_query', async msg => {
             let $total = 0;
 
             $deliver?.forEach(d => {
-                $total += d?.price;
+                $total += d?.for_admin;
             })
 
             msg.replyWithHTML(`<b>📈Oylik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });

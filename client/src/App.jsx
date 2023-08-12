@@ -7,7 +7,7 @@ import GetProductsByCategory from "./pages/getbycategory";
 import Product from "./pages/product";
 import Profile from "./user/profile";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { API_LINK } from "./config";
 import { setInformations } from "./managers/authManager";
@@ -26,6 +26,7 @@ import AdminStats from "./admin/stats";
 import AdminRefs from "./admin/refs";
 import Competition from "./admin/competition";
 import AdminProductStats from "./admin/getproductstats";
+import Loading from "./components/loading";
 
 function App() {
   const { refresh, id } = useSelector(e => e.auth);
@@ -44,6 +45,10 @@ function App() {
       }
     })
   }, [refresh]);
+  const [load, setLoad] = useState(false);
+  setTimeout(() => {
+    setLoad(true);
+  }, 3000)
   return (
     <>
       {!pathname.includes('/dashboard') &&
@@ -83,6 +88,7 @@ function App() {
           }
         </>
       }
+      {!load && <Loading />}
     </>
   );
 }

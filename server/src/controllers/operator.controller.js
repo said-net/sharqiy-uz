@@ -270,14 +270,14 @@ module.exports = {
                     ok: true,
                     msg: "Bekor qilindi!"
                 });
-                if ($order?.flow) {
-                    const $flower = await userModel.findOne({ id: $order?.flow });
-                    if ($flower && $flower?.telegram) {
-                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
-                            console.log(err);
-                        });
-                    }
-                }
+                // if ($order?.flow) {
+                //     const $flower = await userModel.findOne({ id: $order?.flow });
+                //     if ($flower && $flower?.telegram) {
+                //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                //             console.log(err);
+                //         });
+                //     }
+                // }
             });
         } else if (status === 'wait' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
@@ -288,14 +288,14 @@ module.exports = {
                     ok: true,
                     msg: "Keyinroqqa qoldirildi!"
                 });
-                if ($order?.flow) {
-                    const $flower = await userModel.findOne({ id: $order?.flow });
-                    if ($flower && $flower?.telegram) {
-                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🔃Buyurtma uchun qayta aloqa!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
-                            console.log(err);
-                        });
-                    }
-                }
+                // if ($order?.flow) {
+                //     const $flower = await userModel.findOne({ id: $order?.flow });
+                //     if ($flower && $flower?.telegram) {
+                //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🔃Buyurtma uchun qayta aloqa!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                //             console.log(err);
+                //         });
+                //     }
+                // }
             });
         } else if (status === 'success' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({

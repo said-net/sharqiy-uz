@@ -28,7 +28,7 @@ function VideoPlayers() {
                             <YouTube loading="lazy" videoId={v?.video?.split('/')?.reverse()[0]} opts={{ width: '375px', height: '500px', playerVars: { autoplay: 0, listType: 'user_uploads', controls: 0, enablejsapi: 0, disablekb: 1 } }} />
                             <div className="flex items-start justify-start flex-col w-[376px] h-[110px] backdrop-blur-sm bg-[#000000a3] absolute bottom-0 p-[5px]">
                                 <button className="text-white rounded bg-[#e0e0e0a6] w-full h-[40px]" onClick={() => nv('/product/' + v._id)}>MAHSULOTGA O'TISH</button>
-                                <h1 className="text-white text-start">{v?.title}</h1>
+                                <h1 className="text-white text-start mt-[15px]">{v?.title}</h1>
                             </div>
                         </div>
                     )

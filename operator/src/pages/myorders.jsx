@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { Chip, IconButton, Spinner } from "@material-tailwind/react";
+import { Button, Chip, IconButton, Option, Select, Spinner } from "@material-tailwind/react";
 import { setRefreshOrders } from "../managers/order.manager";
 import ViewOrder from "./vieworder";
 import { BiRefresh } from "react-icons/bi";
@@ -13,6 +13,7 @@ function MyOrders() {
     const [orders, setOrders] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const [open, setOpen] = useState('');
+    const [type, setType] = useState('pending')
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/operator/get-my-orders`, {
@@ -33,12 +34,22 @@ function MyOrders() {
     }, [refresh]);
     return (
         <div className="flex items-center justify-start flex-col w-full">
-            <div className="flex items-center justify-between w-full h-[50px] bg-white shadow-md rounded p-[0_10px] my-[20px]">
-                <h1 className="text-[12px] sm:text-[14px]">YANGI BUYURTMALAR</h1>
+            <div className="flex items-center justify-between w-full h-[50px] bg-white shadow-md rounded p-[0_10px] my-[10px]">
+                {/* <h1 className="text-[12px] sm:text-[14px]">BUYURTMALAR</h1> */}
+                <div className="flex items-center justify-center">
+                    <Select onChange={e => setType(e)} value={type} label="Saralash">
+                        <Option value="pending">Kutulmoqda</Option>
+                        <Option value="reject">Rad etilgan</Option>
+                        <Option value="success">Tekshiruvda</Option>
+                        <Option value="sended">Yuborilgan</Option>
+                        <Option value="delivered">Yetkazilgan</Option>
+                    </Select>
+                </div>
                 <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrders())}>
                     <BiRefresh />
                 </IconButton>
             </div>
+
             {!isLoad && <Spinner />}
             {isLoad && !orders[0] &&
                 <div className="flex items-center justify-start flex-col w-full">
@@ -49,7 +60,7 @@ function MyOrders() {
                 <div className="flex items-center justify-normal flex-col w-full bg-white p-[10px] rounded-[10px] shadow-sm">
                     {orders.map((e, i) => {
                         return (
-                            <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                            e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
                                 <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
                                     <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
                                         <img src={e?.image} alt="rasm" />

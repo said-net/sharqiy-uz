@@ -182,10 +182,10 @@ function Profile() {
                                                     <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />
 
                                                     {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
-                                                    <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                                    <div onClick={() => nv('/product/' + p.pid)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
                                                         <img src={p.image} alt="c" />
                                                     </div>
-                                                    <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                                    <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.pid)}>
                                                         <p className="w-full p-[0_2%] my-[10px]">
                                                             {p?.title?.slice(0, 15) + '...'}
 
@@ -206,10 +206,10 @@ function Profile() {
                                                     <FaHeart onClick={() => setLike(p?.id)} className={`absolute top-[5px] right-[5px] text-red-500`} />
 
                                                     {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
-                                                    <div onClick={() => nv('/product/' + p.id)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
+                                                    <div onClick={() => nv('/product/' + p?.pid)} className="flex items-start justify-center w-full overflow-hidden h-[250px]">
                                                         <img src={p.image} alt="c" />
                                                     </div>
-                                                    <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p.id)}>
+                                                    <div className="flex items-start justify-start flex-col w-full" onClick={() => nv('/product/' + p?.pid)}>
                                                         <p className="w-full p-[0_2%] my-[10px]">
                                                             {p?.title?.slice(0, 15) + '...'}
 

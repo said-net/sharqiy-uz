@@ -1,4 +1,4 @@
-require('dotenv').config();
+// require('dotenv').config();
 const { APP_PORT, MONGO_URI } = require('./configs/env');
 const express = require('express');
 const file = require('express-fileupload');

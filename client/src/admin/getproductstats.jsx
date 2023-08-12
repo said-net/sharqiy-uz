@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { FaBoxes, FaEye, FaNewspaper, FaTaxi } from "react-icons/fa";
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input } from "@material-tailwind/react";
-import { FaCircleCheck } from "react-icons/fa6";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import { FaCircleCheck, FaX } from "react-icons/fa6";
 
 function AdminProductStats() {
     const [state, setState] = useState([]);
@@ -86,7 +86,7 @@ function AdminProductStats() {
                                     <div className="w-full h-[1px] bg-blue-gray-100"></div>
                                     <p className="text-[12px]">To'lov: <span className="text-[15px]">{Number(p?.for_admins).toLocaleString()} s'om</span></p>
                                     {/*  */}
-                                    <span className="w-full h-[30px] border-[2px] rounded border-green-500 flex items-center justify-center uppercase tracking-[2px] mb-[10px]" onClick={() => setOpenFlow({ id: p?.id, title: p?.title })}>
+                                    <span className="w-full h-[30px] border-[2px] rounded border-green-500 flex items-center justify-center uppercase tracking-[2px] mb-[10px]" onClick={() => setOpenFlow({ id: p?.pid, title: p?.title })}>
                                         Oqim
                                     </span>
                                     {/*  */}
@@ -100,14 +100,17 @@ function AdminProductStats() {
                 </div>
             }
             <Dialog open={openFlow?.id !== ''} className="p-[5px]">
-                <DialogHeader>
+                <DialogHeader className="w-full flex items-center justify-between">
                     <h1 className="text-[14px]">{openFlow?.title}</h1>
+                    <IconButton onClick={() => setOpenFlow({ id: '', title: '' })} className="rounded-full text-[20px]" color="blue-gray">
+                        <FaX />
+                    </IconButton>
                 </DialogHeader>
                 <DialogBody className="border-y">
-                    <Input label="Siz uchun oqim" disabled value={`https://sharqiy.uz/flow/${uId}/${openFlow.id}`} />
+                    <Input label="Siz uchun oqim" value={`https://sharqiy.uz/oqim/${uId}/${openFlow.id}`} disabled />
                 </DialogBody>
                 <DialogFooter>
-                    <Button color="orange" className="rounded" onClick={() => setOpenFlow({ id: '', title: '' })}>Yopish</Button>
+                    <Button color="green" className="rounded" onClick={() => { navigator.clipboard.writeText(`https://sharqiy.uz/oqim/${uId}/${openFlow.id}`); toast.success("Nusxa olindi!", { autoClose: 1000 }) }}>Nusxa olish</Button>
                 </DialogFooter>
             </Dialog>
         </div>
