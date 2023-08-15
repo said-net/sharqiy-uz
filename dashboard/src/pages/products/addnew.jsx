@@ -1,8 +1,9 @@
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input, List, Option, Select, Spinner, Textarea } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaBox, FaBoxes, FaImages, FaMoneyBill, FaMoneyCheck, FaPercent, FaRegFrown, FaYoutube } from 'react-icons/fa'
+import { FaBox, FaBoxes, FaImages, FaMoneyBill, FaMoneyCheck, FaRegFrown, FaYoutube } from 'react-icons/fa'
 import { API_LINK } from "../../config";
+import { AiFillDollarCircle } from 'react-icons/ai'
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { setRefreshProduct } from "../../managers/product.manager";
@@ -128,7 +129,7 @@ function AddProduct({ open, setOpen }) {
                                 </div>
                                 {/* SOLD PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Adminlar uchun" required onChange={e => setState({ ...state, for_admins: e.target.value })} type="number" value={state.for_admins} icon={<FaPercent />} />
+                                    <Input label="Adminlar uchun" required onChange={e => setState({ ...state, for_admins: e.target.value })} type="number" value={state.for_admins} icon={<AiFillDollarCircle />} />
                                 </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
@@ -149,5 +150,4 @@ function AddProduct({ open, setOpen }) {
         </Dialog>
     );
 }
-
 export default AddProduct;

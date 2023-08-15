@@ -4,7 +4,7 @@ const schema = new Schema({
         type: Types.ObjectId,
         ref: 'Product'
     },
-    image: String,
+    link: String,
     about: String,
 });
 module.exports= model('Ads', schema);

@@ -16,6 +16,7 @@ const schema = new Schema({
     ref_id: String,
     access: String,
     step: String,
+    etc: Object
 });
 
 module.exports = model('User', schema);

@@ -23,6 +23,9 @@ module.exports = {
     ]),
     // 
     contacts: inlineKeyboard([
-        [{text: '📞Bog\'lanish', url: 'https://t.me/KATTA_INVESTOR'}]
-    ])
+        [{ text: '📞Bog\'lanish', url: 'https://t.me/KATTA_INVESTOR' }]
+    ]),
+    admin: keyboard([
+        ['📋Post joylash', '✉Xabar yuborish']
+    ]).resize(true)
 }

@@ -7,9 +7,27 @@ const payModel = require('../models/pay.model');
 const { inlineKeyboard } = require('telegraf').Markup;
 const moment = require('moment/moment');
 const tguserModel = require('../models/tguser.model');
-const channel = "-1001938875129";
-// const bot = new Telegraf('5801148232:AAEWScQZ45I0XacFYDmjJaJvLD3Wtxq8ihA')
-const bot = new Telegraf('6471399420:AAFhKd82Zcr9YbYcBZhvMoykawR9_OtwLIk')
+const productModel = require('../models/product.model');
+const adsModel = require('../models/ads.model');
+const categoryModel = require('../models/category.model');
+const chatModel = require('../models/chat.model');
+const competitionModel = require('../models/competition.model');
+const likeModel = require('../models/like.model');
+const mainModel = require('../models/main.model');
+const messageModel = require('../models/message.model');
+const operatorModel = require('../models/operator.model');
+const payOperatorModel = require('../models/pay.operator.model');
+const settingModel = require('../models/setting.model');
+const valuehistoryModel = require('../models/valuehistory.model');
+const viewModel = require('../models/view.model');
+const path = require('path')
+const md5 = require('md5');
+const fs = require('fs');
+const { default: axios } = require('axios');
+// const channel = "-1001938875129";
+const channel = "-1001964224730";
+const bot = new Telegraf('5801148232:AAEWScQZ45I0XacFYDmjJaJvLD3Wtxq8ihA')
+// const bot = new Telegraf('6471399420:AAFhKd82Zcr9YbYcBZhvMoykawR9_OtwLIk')
 bot.start(async msg => {
     const { id } = msg.from;
     const $user = await userModel.findOne({ telegram: id });
@@ -31,8 +49,8 @@ bot.start(async msg => {
                     if ($pays) {
                         msg.replyWithHTML(`❗Sizda tekshiruvdagi <b>${$pays.count}</b> so'm lik to'lov mavjud!\n✉Iltimos tekshiruv tugashini kuting!`);
                     } else {
-                        $user.set({ step: 'request_card' }).save();
-                        msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860160147090205</b>", { ...btn.back })
+                        $user.set({ step: 'request_money' }).save();
+                        msg.replyWithHTML("💰<b>Necha pul chiqarib olmoqchisiz?</b>", { ...btn.back })
                     }
                 }
             } else if (command === 'pay_history') {
@@ -54,13 +72,14 @@ bot.start(async msg => {
 bot.on('text', async msg => {
     const { id } = msg.from;
     const tx = msg.message.text;
+    // console.log(msg.message);
     try {
         const $user = await userModel.findOne({ telegram: id });
         if (!$user) {
             msg.replyWithHTML(`<b>❗Avval botni aktivlashtisrishingiz kerak!</b>\n<code>${id}</code> <a href='https://sharqiy.uz'>Sharqiy.uz</a> sayti orqali aktivlashtiring!`)
         } else {
             if (tx === '🔙Ortga') {
-                $user.set({ step: '' }).save();
+                $user.set({ step: '', etc: {} }).save();
                 msg.replyWithHTML("📋Bosh sahifa", { ...btn.menu });
             } else if (tx === '💳Hisobim') {
                 msg.replyWithHTML(`💳Hisobingiz: <b>${Number($user?.balance || 0).toLocaleString()}</b> so'm`, { ...btn.balance })
@@ -91,39 +110,42 @@ bot.on('text', async msg => {
                 msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
             } else if (tx === '📞Bog\'lanish') {
                 msg.replyWithHTML("<b>👀Biz bilan aloqaga chiqish uchun pastdagi tugmachaga bosing!</b>", { ...btn.contacts })
-            } else if (tx == 'Send' && (id == 1527583880 || id == 1084614519 || id == 5991285234)) {
-                msg.replyWithHTML("Yuborilishi kerak bo'lgan habar va linklarni quyidagi tartibda jo'nating!\n\n/send TEXT || knopka || knopka-linki");
-            } else if (tx?.startsWith('/send') && (id == 1527583880 || id == 1084614519 || id == 5991285234)) {
-                try {
-                    let text = tx.replace('/send', '');
-                    const txt = text.split('|')[0].trim()
-                    console.log(text.split('|'));
-                    const knopka = text.split('|')[1].trim()
-                    const link = text.split('|')[2].trim()
-                    const $tgusers = await tguserModel.find();
-                    $tgusers.forEach((user) => {
-                        bot.telegram.sendMessage(user.id, txt, {
-                            ...Markup.inlineKeyboard([
-                                { text: knopka, url: link }
-                            ])
-                        }).catch((err) => {
-                            console.log(err);
-                        })
-                    });
-                    msg.replyWithHTML("<i>✅Yuborildi!</i>")
-                } catch {
-                    msg.replyWithHTML("<b>❗Iltimos to'g'ri kiriting!</b>")
-                }
+            } else if (tx === '📋Post joylash' && (id == 1527583880 || id == 1084614519 || id == 5991285234)) {
+                msg.replyWithHTML("📦Mahsulot ID sini yuboring!", { ...btn.back });
+                $user.set({ step: 'admin_pid' }).save();
+            } else if (tx === "✉Xabar yuborish" && (id == 1527583880 || id == 1084614519 || id == 5991285234)) {
+                $user.set({ step: 'send_message_all' }).save();
+                msg.replyWithHTML("📋Yuborilishi kerka bo'lgan habar <b>rasmini</b> yoki <b>videosini</b> yuboring!");
+            } else if (tx === '/admin' && (id == 1527583880 || id == 1084614519 || id == 5991285234)) {
+                msg.replyWithHTML("<b>👀Admin panel</b>", { ...btn.admin })
+            } else if (tx === '/clear_db' && (id == 1527583880 || id == 1084614519 || id == 5991285234)) {
+                await adsModel.deleteMany({});
+                await categoryModel.deleteMany({});
+                await chatModel.deleteMany({});
+                await competitionModel.deleteMany({});
+                await likeModel.deleteMany({});
+                await mainModel.deleteMany({});
+                await messageModel.deleteMany({});
+                await operatorModel.deleteMany({});
+                await payModel.deleteMany({});
+                await payOperatorModel.deleteMany({});
+                await productModel.deleteMany({});
+                await settingModel.deleteMany({});
+                await valuehistoryModel.deleteMany({});
+                await shopModel.deleteMany({});
+                // tguserModel.deleteMany({});
+                await viewModel.deleteMany({});
+                msg.replyWithHTML("<b>Tozalandi!</b>")
             } else {
                 if ($user.step === 'request_card') {
                     if (tx.length < 16) {
-                        msg.replyWithHTML("<b>❗Karta raqamini to'g'ri kiriting!</b>")
+                        msg.replyWithHTML("<b>❗Karta raqamini to'g'ri kiriting!</b>");
                     } else {
-                        let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${tx}</code>\n💰Miqdor: <code>${Number($user.balance).toLocaleString()}</code> so'm\n\n👀To'lov qilgach <b>✅To'landi</b> tugmasini\n❗Bekor qilingan bo'lsa <b>❌Bekor qilindi</b> tugmasini bosing!`
+                        let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${tx}</code>\n💰Miqdor: <code>${Number($user?.etc?.amount).toLocaleString()}</code> so'm\n\n👀To'lov qilgach <b>✅To'landi</b> tugmasini\n❗Bekor qilingan bo'lsa <b>❌Bekor qilindi</b> tugmasini bosing!`
                         bot.telegram.sendMessage(channel, txt, {
                             ...inlineKeyboard([
-                                [{ text: "✅To'landi", callback_data: `success_pay_${tx}_${$user.balance}_${$user._id}` }],
-                                [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx}_${$user.balance}_${$user._id}` }]
+                                [{ text: "✅To'landi", callback_data: `success_pay_${tx}_${$user?.etc?.amount}_${$user._id}` }],
+                                [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx}_${$user?.etc?.amount}_${$user._id}` }]
                             ]),
                             parse_mode: "HTML"
                         }).then(() => {
@@ -137,6 +159,82 @@ bot.on('text', async msg => {
                         }).catch(err => {
                             console.log(err);
                             msg.replyWithHTML("<b>❗Nimadir xato</b>")
+                        })
+                    }
+                } else if ($user.step === "request_money") {
+                    if (isNaN(tx)) {
+                        msg.replyWithHTML("<i>❗Faqat raqamlarda!</i>");
+                    } else if (tx > $user?.balance) {
+                        msg.replyWithHTML(`<i>❗Maks: ${Number($user?.balance).toLocaleString()} so'm</i>`);
+                    } else if (tx < 1000) {
+                        msg.replyWithHTML(`<i>❗Min: 1 000 so'm</i>`);
+                    } else {
+                        $user.set({ step: 'request_card', etc: { amount: tx } }).save();
+                        msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860 1601 4709 0205</b>", { ...btn.back });
+                    }
+                } else if ($user.step === 'admin_pid') {
+                    const $product = await productModel.findOne({ id: tx });
+                    if (!$product) {
+                        msg.replyWithHTML("❗Mahsulot topilmadi!")
+                    } else {
+                        msg.reply(`📦Mahsulot: ${$product?.title}\n📋Video yoki Rasm linkini yuboring`);
+                        $user.set({ step: 'admin_link', etc: { pid: tx } }).save();
+                    }
+                } else if ($user.step === 'admin_link') {
+                    msg.reply(`✅Qabul qilindi post textini yuboring!\n*qalin* _qiya_`);
+                    $user.set({ step: 'admin_text', etc: { ...$user.etc, link: tx } }).save();
+                } else if ($user.step === 'admin_text') {
+                    const $product = await productModel.findOne({ id: $user?.etc?.pid });
+                    msg.reply(`${$product?.title} uchun reklama posti biritiktirildi!`, { ...btn.admin });
+                    new adsModel({
+                        product: $product._id,
+                        link: $user.etc.link,
+                        about: tx
+                    }).save().then(() => {
+                        $user.set({ step: 'admin_text', etc: {} }).save();
+                    });
+                } else if ($user.step === 'send_message_text') {
+                    $user.set({ step: 'send_message_button', etc: { ...$user.etc, text: tx } }).save();
+                    msg.replyWithHTML("<i>✅Habar texti qabil qilindi!</i>\n➕Knopka textini yuboring!");
+                } else if ($user.step === 'send_message_button') {
+                    $user.set({ step: 'send_message_url', etc: { ...$user.etc, button: tx } }).save();
+                    msg.replyWithHTML("<i>✅Knopka texti qabul qilindi!</i>\n🔗Knopka uchun linkni yuboring!\n📋Namuna: <code>https://saidnet.uz</code>");
+                } else if ($user.step === 'send_message_url') {
+                    if ($user?.etc?.type === 'photo') {
+                        msg.replyWithPhoto({ source: path.join(__dirname, 'images', $user?.etc?.photo) }, {
+                            parse_mode: "Markdown",
+                            ...inlineKeyboard([
+                                [{ text: $user?.etc?.button, url: tx }]
+                            ]),
+                            caption: $user?.etc?.text
+                        }).then(() => {
+                            $user.set({ step: 'send_message_check', etc: { ...$user.etc, url: tx } }).save();
+                            msg.replyWithHTML("<b>✅Barchasi tog'ri bo'lsa ✉Yuborish tugmasinin bosing!</b>", {
+                                ...inlineKeyboard([
+                                    [{ text: "✉Yuborish", callback_data: "send_message_confirm" }]
+                                ])
+                            })
+                        }).catch((err) => {
+                            console.log(err);
+                            msg.replyWithHTML("❗Hatolik! Habar textida * yoki _ qolib ketgan! Qayta urunib ko'ring!");
+                        })
+                    }else if ($user?.etc?.type === 'video') {
+                        msg.replyWithVideo({ source: path.join(__dirname, 'videos', $user?.etc?.video) }, {
+                            parse_mode: "Markdown",
+                            ...inlineKeyboard([
+                                [{ text: $user?.etc?.button, url: tx }]
+                            ]),
+                            caption: $user?.etc?.text
+                        }).then(() => {
+                            $user.set({ step: 'send_message_check', etc: { ...$user.etc, url: tx } }).save();
+                            msg.replyWithHTML("<b>✅Barchasi tog'ri bo'lsa ✉Yuborish tugmasinin bosing!</b>", {
+                                ...inlineKeyboard([
+                                    [{ text: "✉Yuborish", callback_data: "send_message_confirm" }]
+                                ])
+                            })
+                        }).catch((err) => {
+                            console.log(err);
+                            msg.replyWithHTML("❗Hatolik! Habar textida * yoki _ qolib ketgan! Qayta urunib ko'ring!");
                         })
                     }
                 }
@@ -245,8 +343,8 @@ bot.on('callback_query', async msg => {
                 if ($pays) {
                     msg.replyWithHTML(`❗Sizda tekshiruvdagi <b>${$pays.count}</b> so'm lik to'lov mavjud!\n✉Iltimos tekshiruv tugashini kuting!`);
                 } else {
-                    $user.set({ step: 'request_card' }).save();
-                    msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860160147090205</b>", { ...btn.back })
+                    $user.set({ step: 'request_money' }).save();
+                    msg.replyWithHTML("💰<b>Necha pul chiqarib olmoqchisiz?</b>", { ...btn.back })
                 }
             }
         } else if (data === 'payment_history') {
@@ -259,6 +357,38 @@ bot.on('callback_query', async msg => {
                     tx += `${(i + 1)} - ${Number(p.count).toLocaleString()} so'm - ${p?.status === 'pending' ? '🕓' : p?.status === 'reject' ? '❌' : '✅'}\n`
                 });
                 msg.replyWithHTML(tx)
+            }
+        } else if (data === 'send_message_confirm') {
+            const { type, photo, video, url, text, button } = $user.etc;
+            const $users = await tguserModel.find();
+            if (type === 'photo') {
+                $users?.forEach(u => {
+                    bot.telegram.sendPhoto(u.id, { source: path.join(__dirname, 'images', photo) }, {
+                        caption: text,
+                        parse_mode: "Markdown",
+                        ...inlineKeyboard([
+                            [{ text: button, url: url }]
+                        ])
+                    }).catch(() => { })
+                });
+                msg.replyWithHTML("<b>Barchaga yuborildi!</b>").then(() => {
+                    fs.unlink(path.join(__dirname, 'images', photo), () => { });
+                    $user.set({ step: '', etc: {} }).save();
+                })
+            }else if (type === 'video') {
+                $users?.forEach(u => {
+                    bot.telegram.sendVideo(u.id, { source: path.join(__dirname, 'videos', video) }, {
+                        caption: text,
+                        parse_mode: "Markdown",
+                        ...inlineKeyboard([
+                            [{ text: button, url: url }]
+                        ])
+                    }).catch(() => { })
+                });
+                msg.replyWithHTML("<b>Barchaga yuborildi!</b>").then(() => {
+                    fs.unlink(path.join(__dirname, 'videos', video), () => { });
+                    $user.set({ step: '', etc: {} }).save();
+                })
             }
         } else if (data?.includes('success_pay_')) {
             try {
@@ -303,6 +433,53 @@ bot.on('callback_query', async msg => {
         }
     } catch (error) {
         console.log(error);
+    }
+});
+
+bot.on('photo', async (msg) => {
+    const { photo } = msg.message;
+    const { id } = msg.from;
+    const $user = await userModel.findOne({ telegram: id });
+    if ($user.step === 'send_message_all') {
+        msg.telegram.getFileLink(photo[2]?.file_id).then(url => {
+            axios({ url, responseType: 'stream' }).then(response => {
+                return new Promise((resolve, reject) => {
+                    const filePath = `${md5(moment.now())}.jpg`
+                    response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                        .on('finish', () => {
+                            msg.replyWithHTML("✅Rasm saqlandi! Habar matnini yuboring\n*Qalin* - _Qiya_", { ...btn.back });
+                            $user.set({ step: 'send_message_text', etc: { photo: filePath, type: 'photo' } }).save();
+                        })
+                        .on('error', e => {
+                            console.log(e);
+                            msg.replyWithHTML("<b>❗Xatolik</b>")
+                        })
+                });
+            })
+        })
+    }
+});
+bot.on('video', async (msg) => {
+    const { video } = msg.message;
+    const { id } = msg.from;
+    const $user = await userModel.findOne({ telegram: id });
+    if ($user.step === 'send_message_all') {
+        msg.telegram.getFileLink(video?.file_id).then(url => {
+            axios({ url, responseType: 'stream' }).then(response => {
+                return new Promise((resolve, reject) => {
+                    const filePath = `${md5(moment.now())}.mp4`
+                    response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                        .on('finish', () => {
+                            msg.replyWithHTML("✅Video saqlandi! Habar matnini yuboring\n*Qalin* - _Qiya_", { ...btn.back });
+                            $user.set({ step: 'send_message_text', etc: { video: filePath, type: 'video' } }).save();
+                        })
+                        .on('error', e => {
+                            console.log(e);
+                            msg.replyWithHTML("<b>❗Xatolik</b>")
+                        })
+                });
+            })
+        })
     }
 })
 

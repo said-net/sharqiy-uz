@@ -8,8 +8,9 @@ const adsModel = require("../models/ads.model");
 const fs = require('fs');
 const shopModel = require("../models/shop.model");
 const bot = require("../bot/app");
-const path = require('path');
+// const path = require('path');
 const viewModel = require("../models/view.model");
+// const { Input } = require("telegraf");
 module.exports = {
     create: async (req, res) => {
         const { title, about, price, original_price, video, category, value, for_admins } = req.body;
@@ -499,32 +500,45 @@ module.exports = {
     // 
     getAdsPost: async (req, res) => {
         const { id } = req.params;
-        const $ads = await adsModel.findOne({ product: id }).populate('product')
-        if (!$ads) {
+        const $ads = await adsModel.find({ product: id }).populate('product')
+        if (!$ads[0]) {
             res.send({
                 ok: false,
                 msg: "Ushbu maxsulot uchun reklama posti mavjud emas!"
             });
         } else {
-            bot.telegram.sendPhoto(req.user.telegram, { source: path.join(`public`, 'ads', $ads.image?.split('/')[3]) }, {
-                caption: `${$ads.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${$ads?.product?.id}`, reply_markup: {
-                    inline_keyboard: [
-                        [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${$ads?.product?.id}` }],
-                        [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${$ads?.product?.id}` }]
-                    ]
-                }
-            }).then(() => {
-                res.send({
-                    ok: true,
-                    msg: "Telegramga yuborildi!"
-                })
-            }).catch(err => {
-                console.log(err);
-                res.send({
-                    ok: false,
-                    msg: "Siz telegram botni profilingizga bog'lamagansiz!"
+            $ads?.forEach(a => {
+                bot.telegram.sendVideo(req.user.telegram, a.link, {
+                    caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
+                        inline_keyboard: [
+                            [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
+                            [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }]
+                        ]
+                    }
+                }).catch(() => {
+                    bot.telegram.sendPhoto(req.user.telegram, a.link, {
+                        caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
+                            inline_keyboard: [
+                                [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
+                                [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }]
+                            ]
+                        }
+                    }).catch(() => { })
                 })
             })
+            res.send({
+                ok: true,
+                msg: "Telegramga yuborildi!"
+            })
+            // .then(() => {
+            //     
+            // }).catch(err => {
+            //     console.log(err);
+            //     res.send({
+            //         ok: false,
+            //         msg: "Siz telegram botni profilingizga bog'lamagansiz!"
+            //     })
+            // })
         }
     },
     getProductStatToAdmins: async (req, res) => {
