@@ -88,9 +88,9 @@ function Products() {
                                                     </div>
                                                 </MenuHandler>
                                                 <MenuList>
-                                                    <MenuItem className="flex items-center" onClick={() => setAdsOpen(e?._id)}>
+                                                    {/* <MenuItem className="flex items-center" onClick={() => setAdsOpen(e?._id)}>
                                                         <FaAd className="mr-[10px]" /> Reklama posti
-                                                    </MenuItem>
+                                                    </MenuItem> */}
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
                                                         <FaPlus className="mr-[10px]" /> Qo'shish
                                                     </MenuItem>
@@ -154,9 +154,9 @@ function Products() {
                                                     </div>
                                                 </MenuHandler>
                                                 <MenuList>
-                                                    <MenuItem className="flex items-center" onClick={() => setAdsOpen(e?._id)}>
+                                                    {/* <MenuItem className="flex items-center" onClick={() => setAdsOpen(e?._id)}>
                                                         <FaAd className="mr-[10px]" /> Reklama posti
-                                                    </MenuItem>
+                                                    </MenuItem> */}
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
                                                         <FaPlus className="mr-[10px]" /> Qo'shish
                                                     </MenuItem>

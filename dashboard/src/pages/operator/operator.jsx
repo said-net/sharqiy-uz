@@ -5,17 +5,19 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { API_LINK } from "../../config";
 import AddNew from "./addnew";
-import { BiRefresh } from "react-icons/bi";
+import { BiRefresh, BiStats } from "react-icons/bi";
 import BanOperator from "./banoperator";
+import OperatorStats from "./stats";
 
 function Operator() {
     const [search, setSearch] = useState('');
     const [isLoad, setIsLoad] = useState(false);
     const [operator, setOperator] = useState([]);
     const [open, setOpen] = useState(false);
-    const [select, setSelect] = useState({ banned: false, edit: false, name: '', ban: false })
+    const [select, setSelect] = useState({ banned: false, edit: false, name: '', ban: false });
+    const [openStat, setOpenStat] = useState('');
 
-    console.log(operator);
+    // console.log(operator);
 
     const { refresh } = useSelector(e => e.operator)
 
@@ -71,9 +73,13 @@ function Operator() {
                                         </IconButton>
                                     </MenuHandler>
                                     <MenuList>
-                                        <MenuItem className="flex items-center justify-start" >
+                                        {/* <MenuItem className="flex items-center justify-start" >
                                             <FaPenAlt />
                                             <h1 className="pl-[10px]">O'zgartirish</h1>
+                                        </MenuItem> */}
+                                        <MenuItem onClick={() => setOpenStat(_id)} className="flex items-center justify-start" >
+                                            <BiStats />
+                                            <h1 className="pl-[10px]">Statistika</h1>
                                         </MenuItem>
                                         {!banned ?
                                             <MenuItem className="flex items-center justify-start" onClick={e => setSelect({
@@ -111,9 +117,13 @@ function Operator() {
                                             </IconButton>
                                         </MenuHandler>
                                         <MenuList>
-                                            <MenuItem className="flex items-center justify-start" >
-                                                <FaPenAlt />
-                                                <h1 className="pl-[10px]">O'zgartirish</h1>
+                                            {/* <MenuItem className="flex items-center justify-start" >
+                                            <FaPenAlt />
+                                            <h1 className="pl-[10px]">O'zgartirish</h1>
+                                        </MenuItem> */}
+                                            <MenuItem onClick={() => setOpenStat(_id)} className="flex items-center justify-start" >
+                                                <BiStats />
+                                                <h1 className="pl-[10px]">Statistika</h1>
                                             </MenuItem>
                                             {!banned ?
                                                 <MenuItem className="flex items-center justify-start" onClick={e => setSelect({
@@ -137,6 +147,7 @@ function Operator() {
 
             }
             <BanOperator select={select} setSelect={setSelect} />
+            <OperatorStats open={openStat} setOpen={setOpenStat} />
         </>
     );
 }

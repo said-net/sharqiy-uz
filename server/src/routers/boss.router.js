@@ -18,3 +18,4 @@ module.exports = require('express').Router()
     // 
     .get('/get-operator-pays', authMiddleware.boss, bossController.getOperatorPays)
     .post('/set-operator-pay-status', authMiddleware.boss, bossController.setStatusOperatorPay)
+    .get('/get-operator-stats/:id/:date', authMiddleware.boss, bossController.getOperatorStats)

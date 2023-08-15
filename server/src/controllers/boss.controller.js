@@ -9,7 +9,7 @@ const userModel = require("../models/user.model");
 const operatorModel = require("../models/operator.model");
 const settingModel = require("../models/setting.model");
 const chequeMaker = require("../middlewares/cheque.maker");
-const path = require('path');
+// const path = require('path');
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
 module.exports = {
@@ -96,9 +96,20 @@ module.exports = {
                 adminsBalance += e?.balance ? e?.balance : 0;
             })
             let operatorsBalance = 0;
-            operators?.forEach(o => {
-                operatorsBalance += o?.balance
-            })
+            for (let o of operators) {
+                const $shops = await shopModel.find({ operator: o._id });
+                const $pays = await payOperatorModel.find({ from: o?._id });
+                $shops?.forEach($sh => {
+                    operatorsBalance += $sh?.for_operator;
+                });
+                $pays?.forEach($p => {
+                    operatorsBalance -= $p?.count;
+                });
+            }
+
+            // operators?.forEach(o => {
+            //     operatorsBalance += o?.balance
+            // })
             res.send({
                 ok: true,
                 data: {
@@ -425,16 +436,16 @@ module.exports = {
         const month = +date.split('-')[1] - 1;
         const year = +date.split('-')[0];
         const $orders = await shopModel.find({ month, year, status: 'sended' }).populate('product operator');
+        const s = await settingModel.find();
         for (let o of $orders) {
             const $operator = await operatorModel.findById(o?.operator?._id);
             const p = await productModel.findById(o?.product?._id);
-            const s = await settingModel.find();
             if (o?.flow) {
                 const $admin = await userModel.findOne({ id: o?.flow });
                 if ($admin?.ref_id) {
                     const $ref = await userModel?.findOne({ id: $admin.ref_id });
                     // 
-                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                    $operator?.set({ balance: Number($operator?.balance + s[0]?.for_operators) }).save();
                     // 
                     $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
                     // 
@@ -447,7 +458,7 @@ module.exports = {
                     // 
                     p.set({ solded: o?.product?.solded + o?.count }).save();
                 } else {
-                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                    $operator?.set({ balance: Number($operator?.balance + s[0]?.for_operators) }).save();
                     $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
                     o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins }).save();
 
@@ -457,9 +468,8 @@ module.exports = {
                     console.log(err);
                 });
             } else {
-                $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
+                $operator?.set({ balance: Number($operator?.balance + s[0]?.for_operators) }).save();
                 o?.set({ status: 'delivered', for_operator: s[0]?.for_operators }).save();
-
                 p.set({ solded: p?.solded + o?.count }).save();
             }
         }
@@ -538,6 +548,64 @@ module.exports = {
                     msg: "Xatolik!"
                 })
             }
+        }
+    },
+    getOperatorStats: async (req, res) => {
+        const { date } = req.params;
+        const d = new Date();
+        try {
+            const $operator = await operatorModel.findById(req.params.id);
+            const $shops = await (
+                date === 'all' ?
+                    shopModel.find({ operator: $operator._id })
+                    : date === 'month' ?
+                        shopModel.find({ operator: $operator._id, year: d.getFullYear(), month: d.getMonth() })
+                        : date === 'last_mont' ?
+                            shopModel.find({ operator: $operator._id, year: d.getFullYear(), month: d.getMonth() - 1 })
+                            : date === 'today' ?
+                                shopModel.find({ operator: $operator._id, year: d.getFullYear(), month: d.getMonth(), day: d.getDate() })
+                                : date === 'yesterday' ?
+                                    shopModel.find({ operator: $operator._id, year: d.getFullYear(), month: d.getMonth(), day: d.getDate() - 1 }) : null
+
+            );
+            const mod = {
+                id: $operator?.id,
+                name: $operator.name,
+                phone: $operator.phone,
+                success: 0,
+                reject: 0,
+                wait: 0,
+                sended: 0,
+                delivered: 0,
+                // 
+                profit: 0,
+                company_profit: 0
+            };
+            $shops?.forEach(s => {
+                if (s.status === 'reject') {
+                    mod.reject += 1;
+                } else if (s.status === 'wait') {
+                    mod.wait += 1;
+                } else if (s.status === 'success') {
+                    mod.success += 1;
+                } else if (s.status === 'sended') {
+                    mod.sended += 1;
+                } else if (s.status === 'delivered') {
+                    mod.delivered += 1;
+                    mod.profit += s?.for_operator ? s?.for_operator : 0;
+                    mod.company_profit += s?.price;
+                }
+            });
+            res.send({
+                ok: true,
+                data: mod
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
+            })
         }
     }
 }

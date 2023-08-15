@@ -2,7 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { API_LINK } from "../../config";
 import { toast } from "react-toastify";
-import { Dialog, DialogBody, DialogHeader, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import { FaPhone, FaSearch, FaThList } from "react-icons/fa";
 import { FaBars, FaCheck, FaXmark } from "react-icons/fa6";
@@ -148,6 +148,9 @@ function HistoryOrders() {
                         <p className="text-black">Ismi: {openOperator?.name}</p>
                         <p className="text-black">Raqami: {openOperator?.phone}</p>
                     </DialogBody>
+                    <DialogFooter className="w-full">
+                        <Button onClick={() => setOpenOperator({ phone: '', name: '', id: '' })} className="rounded" color="orange">Yopish</Button>
+                    </DialogFooter>
                 </div>
             </Dialog>
         </div>

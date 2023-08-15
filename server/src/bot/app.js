@@ -218,7 +218,7 @@ bot.on('text', async msg => {
                             console.log(err);
                             msg.replyWithHTML("❗Hatolik! Habar textida * yoki _ qolib ketgan! Qayta urunib ko'ring!");
                         })
-                    }else if ($user?.etc?.type === 'video') {
+                    } else if ($user?.etc?.type === 'video') {
                         msg.replyWithVideo({ source: path.join(__dirname, 'videos', $user?.etc?.video) }, {
                             parse_mode: "Markdown",
                             ...inlineKeyboard([
@@ -375,7 +375,7 @@ bot.on('callback_query', async msg => {
                     fs.unlink(path.join(__dirname, 'images', photo), () => { });
                     $user.set({ step: '', etc: {} }).save();
                 })
-            }else if (type === 'video') {
+            } else if (type === 'video') {
                 $users?.forEach(u => {
                     bot.telegram.sendVideo(u.id, { source: path.join(__dirname, 'videos', video) }, {
                         caption: text,
