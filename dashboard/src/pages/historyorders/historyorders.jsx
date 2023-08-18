@@ -72,6 +72,8 @@ function HistoryOrders() {
                                 {/*  */}
                                 {o?.status === 'reject' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-red-500"><s>Narx: {Number(o?.price).toLocaleString()} so'm</s></p>}
                                 {/*  */}
+                                {o?.status === 'archive' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-orange-500"><s>Narx: {Number(o?.price).toLocaleString()} so'm</s></p>}
+                                {/*  */}
                                 {o?.status === 'sended' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-blue-500">Narx: ~{Number(o?.price).toLocaleString()} so'm</p>}
                                 {/*  */}
                                 {o?.status === 'delivered' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-green-500">Narx: +{Number(o?.price).toLocaleString()} so'm</p>}
@@ -113,6 +115,8 @@ function HistoryOrders() {
                                 <p className="w-[20%] hidden md:inline">Bonus: +{o?.bonus} ta</p>
                                 {/*  */}
                                 {o?.status === 'reject' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-red-500"><s>Narx: {Number(o?.price).toLocaleString()} so'm</s></p>}
+                                {/*  */}
+                                {o?.status === 'archive' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-orange-500"><s>Narx: {Number(o?.price).toLocaleString()} so'm</s></p>}
                                 {/*  */}
                                 {o?.status === 'sended' && <p className="w-[40%] md:w-[20%] text-[12px] md:text-[15px] text-end text-blue-500">Narx: ~{Number(o?.price).toLocaleString()} so'm</p>}
                                 {/*  */}

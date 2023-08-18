@@ -28,15 +28,6 @@ module.exports = {
             const $user = await userModel.findOne({ phone: ph(phone, { country: 'uz' }).phoneNumber });
             const code = generatorCode();
             smsSender(code, ph(phone, { country: 'uz' }).phoneNumber.slice(4)).then((response) => {
-                const { ok } = response.data;
-                console.log(response.data);
-                if (!ok) {
-                    res.send({
-                        ok: false,
-                        msg: "Aloqani tekshirib qayta urunib ko'ring!"
-                    })
-                } else {
-                    console.log(ref_id);
                     if (!$user) {
                         new userModel({
                             id: $users.length + 1,
@@ -67,7 +58,7 @@ module.exports = {
                             });
                         });
                     }
-                }
+                
             }).catch((err) => {
                 console.log(err);
                 res.send({

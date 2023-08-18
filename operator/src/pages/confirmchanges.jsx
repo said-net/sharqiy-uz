@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { setRefreshOrders } from "../managers/order.manager";
 
 function ConfirmChanges({ select, setSelect, setOpen }) {
-    const dp = useDispatch();   
+    const dp = useDispatch();
     function Reject() {
         axios.post(`${API_LINK}/operator/set-status/${select?._id}`, { ...select, status: 'reject' }, {
             headers: {
@@ -79,7 +79,7 @@ function ConfirmChanges({ select, setSelect, setOpen }) {
                 <DialogHeader className="w-full">
                     {select?.del && <h1 className="text-[15px]">Diqqat {select?.id} ID raqamli buyurtma bekor qilinsinmi? </h1>}
                     {select?.wait && <h1 className="text-[15px]">Diqqat {select?.id} ID raqamli buyurtma keyinroqqa o'tkizilsinmi? </h1>}
-                    {select?.success && <h1 className="text-[15px]">Diqqat {select?.id} ID raqamli buyurtma tasdiqlansinmi? </h1>}
+                    {select?.success && <h1 className="text-[15px]">Diqqat {select?.id} ID raqamli buyurtma {select?.status !== 'success' ? "tasdiqlansinmi?" : "taxrirlansinmi?"} </h1>}
                 </DialogHeader>
                 <DialogFooter className="w-full flex items-center justify-between">
                     <Button className="rounded" onClick={() => setSelect({ open: false, del: false, wait: false, success: false })}>Ortga</Button>

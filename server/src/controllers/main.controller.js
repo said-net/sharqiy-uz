@@ -76,7 +76,7 @@ module.exports = {
         });
     },
     getMainForClient: async (req, res) => {
-        const $main = await mainModel.find();
+        const $main = await mainModel.find().populate('product')
         const main = []
         const $products = await productModel.find({ hidden: false });
         const $settings = await settingModel.find();
@@ -109,14 +109,14 @@ module.exports = {
         });
         $main.forEach(m => {
             main.push({
-                id: m.product,
+                id: m.product.id,
                 image: SERVER_LINK + m?.image
             })
         })
         res.send({
             ok: true,
             data: {
-                products,
+                products: products?.reverse(),
                 main,
                 videos
             }

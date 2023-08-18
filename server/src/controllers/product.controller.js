@@ -470,6 +470,7 @@ module.exports = {
                     $modlist.push({
                         ...p?._doc,
                         id: p?._id,
+                        pid: p?.id,
                         image: SERVER_LINK + p?.images[0],
                         original_price: 0,
                         price: p?.price + p?.for_admins + $settings[0].for_operators,

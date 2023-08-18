@@ -48,7 +48,7 @@ function App() {
   }, [refresh]);
   return (
     <>
-      {!pathname.includes('/dashboard') &&
+      {!pathname.includes('/dashboard') && !pathname.includes('/target') &&
         <>
           <Navbar />
           <Routes>
@@ -67,7 +67,7 @@ function App() {
           </Routes>
           <ToastContainer position="top-center" autoClose={2000} closeButton={false} style={{ zIndex: '9999999999' }} />
         </>}
-      {pathname.includes('/dashboard') &&
+      {pathname.includes('/dashboard') && !pathname.includes('/target') &&
         <>
           {!id ? <NotAuth /> :
             <>
@@ -86,6 +86,9 @@ function App() {
           }
         </>
       }
+      {/* {pathname.includes('/target') && 
+        <GetTarget/>
+      } */}
     </>
   );
 }

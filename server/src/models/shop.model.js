@@ -59,6 +59,6 @@ const schema = new Schema({
     status: {
         type: String,
         default: 'pending'
-    }// reject, wait, pending,success, sended, delivered,
+    }//archive, reject, wait, pending,success, sended, delivered,
 })
 module.exports = model('ShopHistory', schema)

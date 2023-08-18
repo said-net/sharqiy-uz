@@ -164,6 +164,9 @@ function Profile() {
                                                         <p>{e?.count ? e?.count : 0} ta</p>
                                                         {e?.status === 'reject' && <Chip className="font-light text-[11px] rounded" color="red" value={'Rad etildi'} />}
 
+                                                        <p>{e?.count ? e?.count : 0} ta</p>
+                                                        {e?.status === 'archive' && <Chip className="font-light text-[11px] rounded" color="deep-orange" value={'Arxivlandi'} />}
+
                                                         {(e?.status === 'pending') && <Chip className="font-light text-[11px] rounded" color="blue" value={'Kutulmoqda'} />}
 
                                                         {e?.status === 'wait' && <Chip className="font-light text-[11px] rounded" color="orange" value={'Qayta aloqa'} />}

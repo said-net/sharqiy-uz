@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { FaBoxes } from "react-icons/fa";
+import { FaBoxes, FaCopy } from "react-icons/fa";
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
 import { FaX } from "react-icons/fa6";
 
@@ -15,6 +15,7 @@ function AdminMarket() {
     const [category, setCategory] = useState('all')
     const { uId } = useSelector(e => e.auth);
     const [openFlow, setOpenFlow] = useState({ id: '', title: '' });
+    const [targetApi, setTargetApi] = useState('');
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/category/getall`).then(res => {
@@ -36,6 +37,7 @@ function AdminMarket() {
         }).then(res => {
             const { data, ok } = res.data;
             setIsLoad(true);
+            console.log(data);
             if (ok) {
                 setState(data);
             }
@@ -89,7 +91,7 @@ function AdminMarket() {
                 <div className="grid grid-cols-2 gap-[10px] my-[10px]">
                     {state?.map((p, i) => {
                         return (
-                            <div key={i} className="flex items-center justify-start flex-col w-[172px] h-[370px] p-[3px] bg-white shadow-md rounded relative">
+                            <div key={i} className="flex items-center justify-start flex-col w-[172px] h-[400px] p-[3px] bg-white shadow-md rounded relative">
                                 {p?.bonus && <span className="absolute top-[5px] left-[5px] bg-red-500 px-[5px] rounded text-[12px] text-white">{p?.bonus_about}</span>}
                                 <div className="flex items-center justify-center w-full overflow-hidden h-[190px]">
                                     <img src={p?.image} alt="r" />
@@ -115,6 +117,9 @@ function AdminMarket() {
                                     <span className="w-full h-[30px] rounded bg-green-500 flex items-center justify-center uppercase tracking-[1px] mb-[10px] text-white shadow-md" onClick={() => getAds(p?.id)}>
                                         Reklama posti
                                     </span>
+                                    <span className="w-full flex items-center justify-center h-[30px] uppercase tracking-[1px] mb-[10px] text-red-500 text-[12px] shadow-md" onClick={() => setTargetApi(p?.pid)}>
+                                        TARGET API
+                                    </span>
                                 </div>
                             </div>
                         )
@@ -134,6 +139,32 @@ function AdminMarket() {
                 <DialogFooter>
                     <Button color="green" className="rounded" onClick={() => { navigator.clipboard.writeText(`https://sharqiy.uz/oqim/${uId}/${openFlow.id}`); toast.success("Nusxa olindi!", { autoClose: 1000 }) }}>Nusxa olish</Button>
                 </DialogFooter>
+            </Dialog>
+
+            <Dialog open={targetApi !== ''} className="p-[5px]">
+                <DialogHeader className="w-full flex items-center justify-between">
+                    <h1 className="text-[14px]">Target uchun API</h1>
+                    <IconButton onClick={() => setTargetApi('')} className="rounded-full text-[20px]" color="blue-gray">
+                        <FaX />
+                    </IconButton>
+                </DialogHeader>
+                <DialogBody className="border-y">
+                    <div className="flex items-center justify-center w-full mb-[10px]">
+                        <Input value={`API-LINK: https://k-ch.na4u.ru/target`} disabled />
+                        <IconButton onClick={() => { navigator.clipboard.writeText(`https://k-ch.na4u.ru/target`); toast.success("Linkdan Nusxa olindi!", { autoClose: 1000 }) }}>
+                            <FaCopy />
+                        </IconButton>
+                    </div>
+                    <div className="flex items-center justify-center w-full mb-[10px]">
+                        <Input value={`KALIT(Stream): https://sharqiy.uz/oqim/${uId}/${targetApi}`} disabled />
+                        <IconButton onClick={() => { navigator.clipboard.writeText(`https://sharqiy.uz/oqim/${uId}/${targetApi}`); toast.success("Strimdan nusxa olindi!", { autoClose: 1000 }) }}>
+                            <FaCopy />
+                        </IconButton>
+                    </div>
+                </DialogBody>
+                {/* <DialogFooter>
+                    <Button color="green" className="rounded" onClick={() => { navigator.clipboard.writeText(`https://k-ch.na4u.ru/target/${uId}/${targetApi}`); toast.success("Nusxa olindi!", { autoClose: 1000 }) }}>Nusxa olish</Button>
+                </DialogFooter> */}
             </Dialog>
         </div>
     );

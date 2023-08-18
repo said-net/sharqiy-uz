@@ -11,8 +11,8 @@ function RequestShop({ openShop, setOpenShop }) {
     const [disabled, setDisablet] = useState(false);
     // 
     useEffect(() => {
-        const { name, phone, region } = openShop;
-        if (!name || phone.length < 13 || !phone.startsWith('+998') || region < 1) {
+        const { name, phone } = openShop;
+        if (!name || phone.length < 13 || !phone.startsWith('+998')) {
             setDisablet(true);
         } else {
             setDisablet(false);
@@ -22,14 +22,14 @@ function RequestShop({ openShop, setOpenShop }) {
     function Submit() {
         setDisablet(true);
         const { name, phone, region, flow } = openShop;
-        axios.post(`${API_LINK}/shop/create`, { id: openShop.id, name, phone, region, flow: flow ? flow : '' }).then(res => {
+        axios.post(`${API_LINK}/shop/create`, { id: openShop.id, name, phone, flow: flow ? flow : '' }).then(res => {
             const { ok, msg } = res.data;
             setDisablet(false);
             if (!ok) {
                 toast.error(msg);
             } else {
                 toast.success(msg);
-                setOpenShop({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', region: '', city: '', flow: '' });
+                setOpenShop({ id: '', title: '', count: 1, price: 0, bonus: false, bonus_given: 0, bonus_count: 0, name: '', phone: '+998', city: '', flow: '' });
             }
         }).catch(() => {
             toast.warning("Aloqani tekshirib qayta urunib ko'ring!");
@@ -57,7 +57,7 @@ function RequestShop({ openShop, setOpenShop }) {
                     <div className="flex items-center justify-center w-full mb-[10px]">
                         <Input value={openShop.phone} label="Raqamingiz" onChange={e => setOpenShop({ ...openShop, phone: e.target.value.trim() })} required icon={<FaPhone />} />
                     </div>
-                    <div className="flex items-center justify-center w-full mb-[10px]">
+                    {/* <div className="flex items-center justify-center w-full mb-[10px]">
                         <Select label="Viloyat" onChange={e => setOpenShop({ ...openShop, region: e })} value={String(openShop.region)}>
                             {
                                 Regions.map((e, key) => {
@@ -67,7 +67,7 @@ function RequestShop({ openShop, setOpenShop }) {
                                 })
                             }
                         </Select>
-                    </div>
+                    </div> */}
                     {/* {
                         openShop.region ?
                             <div className="flex items-center justify-center w-full mb-[10px]">

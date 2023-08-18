@@ -103,7 +103,7 @@ function Product() {
                         <h1 className="font-bold text-[22px]">{p?.title}</h1>
                         <p className="text-[14px] font-bold mt-[10px]">Narx:</p>
                         {/*  */}
-                        <p className="text-[25px] font-bold">{Number(p?.price).toLocaleString()} so'm {p?.old_price>0 &&
+                        <p className="text-[25px] font-bold">{Number(p?.price).toLocaleString()} so'm {p?.old_price > 0 &&
                             <span className="ml-[10px] text-[12px] font-normal"><s>{Number(p?.old_price).toLocaleString()} so'm</s> <span className="text-[red]">-{String((p?.old_price - p?.price) / (p?.old_price) * 100).slice(0, 5)}%</span></span>
                         }</p>
                         {/*  */}
@@ -111,12 +111,8 @@ function Product() {
                             <BsQuestionCircleFill className="inline mr-[10px] text-blue-gray-500" />
                             Mahsulot tavsifi
                         </p>
-                        <p className="leading-7">{!showMore &&
-                            p?.about?.slice(0, 150)
-                        }</p>
-                        <p className="leading-7">{showMore &&
-                            p?.about
-                        }</p>
+                        {!showMore ? <p className="leading-7" dangerouslySetInnerHTML={{ __html: p?.about?.slice(0, 150)?.replaceAll('\n', '</br>') + '...' }}></p> : <p className="leading-7" dangerouslySetInnerHTML={{ __html: p?.about?.replaceAll('\n', '</br>') }}></p>}
+                        
                         {!showMore && <p onClick={() => setShowMore(true)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Batfsil ...</p>}
 
                         {showMore && <p onClick={() => setShowMore(false)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Qisqartma</p>}

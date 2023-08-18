@@ -9,7 +9,7 @@ import ConfirmChanges from "./confirmchanges";
 function ViewOrder({ open, setOpen }) {
     const [order, setOrder] = useState({});
     const [select, setSelect] = useState({ open: false, del: false, wait: false, success: false });
-    const disableAll = (order?.status !== 'wait' && order?.status !== 'pending');
+    const disableAll = (order?.status !== 'wait' && order?.status !== 'pending' && order?.status !== 'success');
     const [disabed, setDisabled] = useState(false);
     const [isLoad, setIsLoad] = useState(false);
     useEffect(() => {
@@ -66,7 +66,7 @@ function ViewOrder({ open, setOpen }) {
                             </div>
                             {/*  */}
                             <div className="flex items-center justify-center w-full mb-[10px]">
-                                <Input disabled={disableAll} label="Qancha mahsulot olinadi/dona" required variant="standard" onChange={e => setOrder({ ...order, count: +e?.target?.value, price: +e.target.value * (order?.product?.price + order?.product?.for_admins + order?.for_operators), bonus_gived: order?.bonus ? Math.floor(+e.target.value / order?.bonus_count * order?.bonus_given) : 0 })} value={order?.count===0?'':order?.count} icon={<FaBoxesStacked />} type="number" />
+                                <Input disabled={disableAll} label="Qancha mahsulot olinadi/dona" required variant="standard" onChange={e => setOrder({ ...order, count: +e?.target?.value, price: +e.target.value * (order?.product?.price + order?.product?.for_admins + order?.for_operators), bonus_gived: order?.bonus ? Math.floor(+e.target.value / order?.bonus_count * order?.bonus_given) : 0 })} value={order?.count === 0 ? '' : order?.count} icon={<FaBoxesStacked />} type="number" />
                             </div>
                             {/*  */}
                             <div className="flex items-start justify-start w-full mb-[10px] flex-col">
@@ -105,7 +105,7 @@ function ViewOrder({ open, setOpen }) {
                         <DialogFooter className="w-full flex items-center justify-between">
                             <Button disabled={disableAll} onClick={() => setSelect({ ...select, open: true, ...order, del: true })} color="red" className="rounded w-[100px] text-[12px]">Bekor</Button>
                             <Button disabled={disableAll} onClick={() => setSelect({ ...select, open: true, ...order, wait: true })} color="orange" className="rounded w-[100px] text-[12px]">Eslatma</Button>
-                            <Button disabled={disabed || disableAll} onClick={() => setSelect({ ...select, open: true, ...order, success: true })} color="green" className="rounded w-[100px] text-[12px]">Olindi</Button>
+                            {order?.status !== 'success' ? <Button disabled={disabed || disableAll} onClick={() => setSelect({ ...select, open: true, ...order, success: true })} color="green" className="rounded w-[100px] text-[12px]">Olindi</Button> : <Button disabled={disabed || disableAll} onClick={() => setSelect({ ...select, open: true, ...order, success: true })} color="green" className="rounded w-[100px] text-[12px]">Saqlash</Button>}
                         </DialogFooter>
                     </>
                 }

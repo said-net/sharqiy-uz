@@ -9,7 +9,7 @@ const userModel = require("../models/user.model");
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
 module.exports = {
-    create:async (req, res) => {
+    create: async (req, res) => {
         const { name, phone, password } = req.body;
         console.log(req.body);
         if (!name || !phone || !password) {
@@ -30,7 +30,7 @@ module.exports = {
         } else {
             const $opers = await operatorModel.find().countDocuments();
             new operatorModel({
-                id: $opers+1,
+                id: $opers + 1,
                 name, phone: pv(phone, { country: 'uz' }).phoneNumber, password: md5(password),
             }).save().then(() => {
                 res.send({
@@ -262,12 +262,12 @@ module.exports = {
         const $order = await shopModel.findById(id);
         if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait')) {
             $order.set({
-                status: 'reject',
+                status: 'archive',
                 about, city, region, bonus, count: 0, phone, name, price: 0
             }).save().then(async () => {
                 res.send({
                     ok: true,
-                    msg: "Bekor qilindi!"
+                    msg: "Arxivlandi qilindi!"
                 });
                 // if ($order?.flow) {
                 //     const $flower = await userModel.findOne({ id: $order?.flow });
@@ -296,23 +296,31 @@ module.exports = {
                 //     }
                 // }
             });
-        } else if (status === 'success' && ($order?.status === 'pending' || $order?.status === 'wait')) {
+        } else if (status === 'success' && ($order?.status === 'pending' || $order?.status === 'wait' || $order?.status === 'success')) {
             $order.set({
                 status: 'success',
                 about, city, region, bonus, count, phone, name, price
             }).save().then(async () => {
-                res.send({
-                    ok: true,
-                    msg: "Yetkazish bo'limiga yuborildi!"
-                });
-                if ($order?.flow) {
-                    const $flower = await userModel.findOne({ id: $order?.flow });
-                    if ($flower && $flower?.telegram) {
-                        bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n📦Buyurtma dostavkaga tayyor!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
-                            console.log(err);
-                        });
+                if ($order.status === 'success') {
+                    res.send({
+                        ok: true,
+                        msg: "Taxrirlandi"
+                    });
+                } else {
+                    res.send({
+                        ok: true,
+                        msg: "Yetkazish bo'limiga yuborildi!"
+                    });
+                    if ($order?.flow) {
+                        const $flower = await userModel.findOne({ id: $order?.flow });
+                        if ($flower && $flower?.telegram) {
+                            bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n📦Buyurtma dostavkaga tayyor!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                                console.log(err);
+                            });
+                        }
                     }
                 }
+
             });
         }
     },

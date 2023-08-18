@@ -115,12 +115,7 @@ function Flow() {
                             <BsQuestionCircleFill className="inline mr-[10px] text-blue-gray-500" />
                             Mahsulot tavsifi
                         </p>
-                        <p className="leading-7">{!showMore &&
-                            p?.about?.slice(0, 150)
-                        }</p>
-                        <p className="leading-7">{showMore &&
-                            p?.about
-                        }</p>
+                        {!showMore ? <p className="leading-7" dangerouslySetInnerHTML={{ __html: p?.about?.slice(0, 150)?.replaceAll('\n', '</br>') + '...' }}></p> : <p className="leading-7" dangerouslySetInnerHTML={{ __html: p?.about?.replaceAll('\n', '</br>') }}></p>}
                         {!showMore && <p onClick={() => setShowMore(true)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Batfsil ...</p>}
 
                         {showMore && <p onClick={() => setShowMore(false)} className="text-[17px] uppercase text-red-500 font-bold mt-[10px]">Qisqartma</p>}

@@ -40,6 +40,7 @@ function MyOrders() {
                     <Select onChange={e => setType(e)} value={type} label="Saralash">
                         <Option value="pending">Kutulmoqda</Option>
                         <Option value="reject">Rad etilgan</Option>
+                        <Option value="archive">Arxivlangan</Option>
                         <Option value="success">Tekshiruvda</Option>
                         <Option value="sended">Yuborilgan</Option>
                         <Option value="delivered">Yetkazilgan</Option>
@@ -70,6 +71,8 @@ function MyOrders() {
                                 <div className="flex items-center justify-center">
                                     {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
                                     }
+                                    {e?.status === 'archive' && <Chip className="rounded tracking-widest" color="deep-orange" value="Arxivlangan" />
+                                    }
                                     {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
                                     }
                                     {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
@@ -81,6 +84,8 @@ function MyOrders() {
                                 </div>
                                 <div className="flex items-center justify-end w-[20%]">
                                     {e?.status === 'reject' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
+                                    }
+                                    {e?.status === 'archive' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
                                     }
                                     {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
                                     }

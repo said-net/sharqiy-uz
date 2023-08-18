@@ -1,9 +1,9 @@
 import { Drawer, IconButton, ListItem, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { FaBars, FaSearch } from 'react-icons/fa'
-import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 // import Logo from '../assets/logo.png';
 import { GoHome, GoHomeFill } from 'react-icons/go'
-import { BiCategory, BiSolidCategory, BiCommentDetail, BiSolidCommentDetail, BiUser, BiSolidUser } from 'react-icons/bi'
+import { BiCategory, BiSolidCategory, BiCommentDetail, BiUser, BiSolidUser } from 'react-icons/bi'
 import { BsFillGearFill } from 'react-icons/bs'
 import { MdClose, MdOutlineVideoLibrary, MdVideoLibrary } from 'react-icons/md'
 import { useEffect, useState } from "react";
@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import Auth from "../user/auth";
+import Logo from '../assets/logo.png';
 function Navbar() {
     const { id } = useSelector(a => a.auth);
     const nv = useNavigate();
@@ -110,7 +111,9 @@ function Navbar() {
             {/*  */}
             <Drawer onClose={() => setOpenMenu(false)} open={openMenu} className="bg-white z-[99999]">
                 <div className="flex items-center justify-between w-full h-[70px] p-[10px] border-b">
-                    <h1 className="text-[30px] text-blue-gray-500">SHARQIY</h1>
+                    <div className="flex items-center justify-center h-[50px] overflow-y-hidden w-[50%]">
+                        <img src={Logo} alt="" />
+                    </div>
                     <IconButton className="text-[20px] rounded-full " onClick={() => setOpenMenu(false)} color="blue-gray">
                         <MdClose />
                     </IconButton>

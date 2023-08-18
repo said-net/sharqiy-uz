@@ -4,6 +4,7 @@ const express = require('express');
 const file = require('express-fileupload');
 const cors = require('cors');
 const router = require('./router');
+const shopController = require('./controllers/shop.controller');
 const app = express();
 require('mongoose').connect(MONGO_URI);
 require('./controllers/boss.controller').default();
@@ -13,15 +14,16 @@ app.use(cors());
 app.use(express.json());
 app.use(file());
 app.use('/public', express.static('public'));
+app.post('/target', shopController.getTargetApi)
 try {
     app.use('/api', router);
 } catch (error) {
     console.log(error);
 }
 app.listen(APP_PORT, () => {
-    try {
-        require('./bot/app').launch()
-    } catch (error) {
-        console.log(error);
-    }
+    // try {
+    //     require('./bot/app').launch()
+    // } catch (error) {
+    //     console.log(error);
+    // }
 });
