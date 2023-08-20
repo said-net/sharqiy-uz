@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Menu, MenuHandler, MenuItem, MenuList, Spinner } from "@material-tailwind/react";
 import { useSelector } from "react-redux";
 import { FaPhone, FaSearch, FaThList } from "react-icons/fa";
-import { FaBars, FaCheck, FaXmark } from "react-icons/fa6";
+import { FaBars } from "react-icons/fa6";
 
 function HistoryOrders() {
     const [orders, setOrders] = useState([]);

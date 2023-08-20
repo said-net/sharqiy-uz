@@ -73,12 +73,11 @@ function AdminRequests() {
                                 {/*  */}
                                 {e?.status === 'reject' && <p className="text-[12px] text-red-500  w-[24%] text-center">Rad etilgan</p>}
                                 {/*  */}
-                                {/*  */}
                                 {e?.status === 'wait' && <p className="text-[12px] text-lime-500  w-[24%] text-center">Keyin oladi</p>}
                                 {/*  */}
                                 {e?.status === 'success' && <p className="text-[12px] text-blue-500  w-[24%] text-center">Tekshiruvda</p>}
                                 {/*  */}
-                                {e?.status === 'sended' && <p className="text-[12px] text-cyan-500  w-[24%] text-center">Tayyor</p>}
+                                {e?.status === 'archive' && <p className="text-[12px] text-orange-500 w-[24%] text-center">Arxivlandi</p>}
                                 {/*  */}
                                 {e?.status === 'sended' && <p className="text-[12px] text-purple-500  w-[24%] text-center">Yetkazilmoqda</p>}
                                 {/*  */}

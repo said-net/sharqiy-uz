@@ -28,37 +28,37 @@ module.exports = {
             const $user = await userModel.findOne({ phone: ph(phone, { country: 'uz' }).phoneNumber });
             const code = generatorCode();
             smsSender(code, ph(phone, { country: 'uz' }).phoneNumber.slice(4)).then((response) => {
-                    if (!$user) {
-                        new userModel({
-                            id: $users.length + 1,
-                            name: "Foydalanuvchi" + phone.slice(-4),
-                            phone: ph(phone, { country: 'uz' }).phoneNumber,
-                            verify_code: code,
-                            created: moment.now() / 1000,
-                            ref_id: !ref_id || ref_id === 'null' ? '' : ref_id
-                        }).save().then(() => {
-                            res.send({
-                                ok: true,
-                                msg: "SMS Habar yuborildi!",
-                                data: {
-                                    duration: moment.now() / 1000 + 120,
-                                    new: true
-                                }
-                            })
+                if (!$user) {
+                    new userModel({
+                        id: $users.length + 1,
+                        name: "Foydalanuvchi" + phone.slice(-4),
+                        phone: ph(phone, { country: 'uz' }).phoneNumber,
+                        verify_code: code,
+                        created: moment.now() / 1000,
+                        ref_id: !ref_id || ref_id === 'null' ? '' : ref_id
+                    }).save().then(() => {
+                        res.send({
+                            ok: true,
+                            msg: "SMS Habar yuborildi!",
+                            data: {
+                                duration: moment.now() / 1000 + 120,
+                                new: true
+                            }
                         })
-                    } else {
-                        $user.set({ verify_code: code }).save().then(() => {
-                            res.send({
-                                ok: true,
-                                msg: "SMS Habar yuborildi!",
-                                data: {
-                                    duration: moment.now() / 1000 + 120,
-                                    new: !$user.location || !$user?.name ? true : false
-                                }
-                            });
+                    })
+                } else {
+                    $user.set({ verify_code: code }).save().then(() => {
+                        res.send({
+                            ok: true,
+                            msg: "SMS Habar yuborildi!",
+                            data: {
+                                duration: moment.now() / 1000 + 120,
+                                new: !$user.location || !$user?.name ? true : false
+                            }
                         });
-                    }
-                
+                    });
+                }
+
             }).catch((err) => {
                 console.log(err);
                 res.send({
@@ -494,7 +494,7 @@ module.exports = {
                 title: e?.product?.title,
                 phone: e?.phone?.slice(0, 9) + '****',
                 status: e?.status,
-                about: e?.about ? e?.about : "Yangi",
+                about: e?.about ? e?.about : "Bekor qilindi!",
                 date: moment.unix(e?.created).format('DD.MM.YYYY | HH:mm')
             });
         });

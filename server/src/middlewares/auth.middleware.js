@@ -6,6 +6,7 @@ const moment = require('moment/moment');
 const operatorModel = require('../models/operator.model');
 const payOperatorModel = require('../models/pay.operator.model');
 const shopModel = require('../models/shop.model');
+const payModel = require('../models/pay.model');
 module.exports = {
     boss: (req, res, next) => {
         const token = req.headers['x-auth-token'];
@@ -69,14 +70,37 @@ module.exports = {
                             ok: false,
                             msg: "Foydalanuvchi topilmadi!"
                         });
-                    } else if ($user.access !== signature) {
-                        res.send({
-                            ok: false,
-                            msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
+                    }
+                    //  else if ($user.access !== signature) {
+                    //     res.send({
+                    //         ok: false,
+                    //         msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
+                    //     });
+                    // }
+                    else {
+                        const { id: uId, name, phone, created, location, telegram } = $user;
+                        //
+                        let p_his = 0;
+                        let sh_his = 0;
+                        let r_his = 0;
+                        const $histpory = await payModel.find({ from: id });
+                        const $shoph = await shopModel.find({ flow: $user.id });
+
+                        const $refs = await userModel.find({ ref_id: $user.id });
+                        for (let ref of $refs) {
+                            const $rflows = await shopModel.find({ flow: ref.id });
+                            $rflows.forEach(rf => {
+                                r_his += rf.for_ref
+                            });
+                        }
+                        $histpory.forEach(h => {
+                            p_his += h.count;
                         });
-                    } else {
-                        const { id: uId, name, phone, created, balance, location, telegram } = $user;
-                        req.user = { uId, id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), balance: balance ? balance : 0, location, telegram };
+                        $shoph.forEach(s => {
+                            sh_his += s.for_admin;
+                        });
+                        //
+                        req.user = { uId, id, name, phone, created: moment.unix(created).format('DD.MM.YYYY HH:MM'), balance: (sh_his + r_his) - p_his, location, telegram };
                         next();
                     }
                 }

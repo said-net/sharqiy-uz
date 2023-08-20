@@ -42,6 +42,10 @@ const schema = new Schema({
         type: Number,
         default: 0
     },
+    ref_id: {
+        type: Number,
+        default: 0
+    },
     for_ref: {
         type: Number,
         default: 0

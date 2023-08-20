@@ -1,5 +1,4 @@
 const { Telegraf } = require('telegraf');
-// const { BOT_TOKEN } = require('../configs/env');
 const userModel = require('../models/user.model');
 const btn = require('./btn');
 const shopModel = require('../models/shop.model');
@@ -24,10 +23,10 @@ const path = require('path')
 const md5 = require('md5');
 const fs = require('fs');
 const { default: axios } = require('axios');
+const { BOT_TOKEN } = require('../configs/env');
 const channel = "-1001938875129";
 // const channel = "-1001964224730";
-// const bot = new Telegraf('5801148232:AAEWScQZ45I0XacFYDmjJaJvLD3Wtxq8ihA')
-const bot = new Telegraf('6471399420:AAFhKd82Zcr9YbYcBZhvMoykawR9_OtwLIk')
+const bot = new Telegraf(BOT_TOKEN)
 bot.start(async msg => {
     const { id } = msg.from;
     const $user = await userModel.findOne({ telegram: id });
@@ -42,7 +41,25 @@ bot.start(async msg => {
             msg.replyWithHTML(`<b>📋Bosh sahifa</b>`, { ...btn.menu });
         } else {
             if (command === 'pay') {
-                if (!$user?.balance || $user?.balance < 1000) {
+                let p_his = 0;
+                let sh_his = 0;
+                let r_his = 0;
+                const $histpory = await payModel.find({ from: $user._id });
+                const $shoph = await shopModel.find({ flow: $user.id });
+                const $refs = await userModel.find({ ref_id: $user.id });
+                for (let ref of $refs) {
+                    const $rflows = await shopModel.find({ flow: ref.id });
+                    $rflows.forEach(rf => {
+                        r_his += rf.for_ref
+                    });
+                }
+                $histpory.forEach(h => {
+                    p_his += h.count;
+                });
+                $shoph.forEach(s => {
+                    sh_his += s.for_admin;
+                });
+                if ((sh_his + r_his) - p_his < 1000) {
                     msg.replyWithHTML(`❗Pulni chiqarib olish <b>1 000</b> so'mdan boshlanadi!`)
                 } else {
                     const $pays = await payModel.findOne({ from: $user._id, status: 'pending' });
@@ -82,7 +99,25 @@ bot.on('text', async msg => {
                 $user.set({ step: '', etc: {} }).save();
                 msg.replyWithHTML("📋Bosh sahifa", { ...btn.menu });
             } else if (tx === '💳Hisobim') {
-                msg.replyWithHTML(`💳Hisobingiz: <b>${Number($user?.balance || 0).toLocaleString()}</b> so'm`, { ...btn.balance })
+                let p_his = 0;
+                let sh_his = 0;
+                let r_his = 0;
+                const $histpory = await payModel.find({ from: $user._id });
+                const $shoph = await shopModel.find({ flow: $user.id });
+                const $refs = await userModel.find({ ref_id: $user.id });
+                for (let ref of $refs) {
+                    const $rflows = await shopModel.find({ flow: ref.id });
+                    $rflows.forEach(rf => {
+                        r_his += rf.for_ref
+                    });
+                }
+                $histpory.forEach(h => {
+                    p_his += h.count;
+                });
+                $shoph.forEach(s => {
+                    sh_his += s.for_admin;
+                });
+                msg.replyWithHTML(`💳Hisobingiz: <b>${Number((sh_his + r_his) - p_his).toLocaleString()}</b> so'm`, { ...btn.balance })
             } else if (tx === '📈Statistika') {
                 const $news = await shopModel.find({ flow: $user?.id, status: 'pending' }).countDocuments();
                 const $success = await shopModel.find({ flow: $user?.id, status: 'success' }).countDocuments();
@@ -90,14 +125,13 @@ bot.on('text', async msg => {
                 const $wait = await shopModel.find({ flow: $user?.id, status: 'wait' }).countDocuments();
                 const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
                 const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
-                const $refs = await userModel.find({ ref_id: $user.id });
-
                 const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
                 let $total = 0;
-
                 $deliver?.forEach(d => {
                     $total += d?.for_admin;
                 });
+
+                const $refs = await userModel.find({ ref_id: $user.id });
                 let $tref = 0;
                 for (let ref of $refs) {
                     const $rflows = await shopModel.find({ flow: ref.id });
@@ -336,7 +370,22 @@ bot.on('callback_query', async msg => {
         }
         // 
         else if (data === 'request_pay') {
-            if (!$user?.balance || $user?.balance < 1000) {
+            let p_his = 0;
+            let sh_his = 0;
+            let r_his = 0;
+            const $histpory = await payModel.find({ from: $user._id });
+            const $shoph = await shopModel.find({ flow: $user.id });
+            const $refs = await shopModel.find({ ref_id: $user.id });
+            $histpory.forEach(h => {
+                p_his += h.count;
+            });
+            $shoph.forEach(s => {
+                sh_his += s.for_admin;
+            });
+            $refs.forEach(r => {
+                r_his += r.for_ref
+            });
+            if ((sh_his + r_his) - p_his < 1000) {
                 msg.replyWithHTML(`❗Pulni chiqarib olish <b>1 000</b> so'mdan boshlanadi!`)
             } else {
                 const $pays = await payModel.findOne({ from: $user._id, status: 'pending' });

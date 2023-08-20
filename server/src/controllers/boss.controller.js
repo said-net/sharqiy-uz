@@ -18,8 +18,8 @@ module.exports = {
         if (!$admin[0]) {
             new adminModel({
                 name: "Otabek",
-                phone: "+998938003803",
-                password: md5('Otabek571_')
+                phone: "+998931042255",
+                password: md5('555555')
             }).save();
         }
     },
@@ -313,40 +313,33 @@ module.exports = {
                 });
             });
         } else if (status === 'delivered') {
-            const $operator = await operatorModel.findById(o?.operator?._id);
             const p = await productModel.findById(o?.product?._id);
             const s = await settingModel.find();
             if (o?.flow) {
                 const $admin = await userModel.findOne({ id: o?.flow });
-                if ($admin?.ref_id) {
+                if ($admin?.ref_id && $admin.ref_id !== $admin.id) {
                     const $ref = await userModel?.findOne({ id: $admin.ref_id });
-                    // 
-                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
-                    // 
-                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
-                    // 
-                    $ref.set({ balance: $ref?.balance + s[0]?.for_ref }).save();
                     // 
                     bot.telegram.sendMessage($ref?.telegram, `sharqiy.uz\n👥Hisobga +${Number(s[0]?.for_ref).toLocaleString()} so'm referaldan qo'shildi`).catch(err => {
                         console.log(err);
                     });
-                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
-                    // 
-                    p.set({ solded: o?.product?.solded + o?.count }).save();
-                    res.send({
-                        ok: true,
-                        msg: "Tasdiqlandi!"
-                    });
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref, ref_id: $admin.ref_id }).save().then(() => {
+                        p.set({ solded: o?.product?.solded + o?.count }).save().then(() => {
+                            res.send({
+                                ok: true,
+                                msg: "Tasdiqlandi!"
+                            });
+                        })
+                    })
                 } else {
-                    $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
-                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
-                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins }).save();
-
-                    p.set({ solded: o?.product?.solded + o?.count }).save();
-                    res.send({
-                        ok: true,
-                        msg: "Tasdiqlandi!"
-                    });
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins }).save().then(() => {
+                        p.set({ solded: o?.product?.solded + o?.count }).save().then(() => {
+                            res.send({
+                                ok: true,
+                                msg: "Tasdiqlandi!"
+                            });
+                        })
+                    })
                 }
                 if ($admin && $admin?.telegram) {
                     bot.telegram.sendMessage($admin?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yetkazildi!\n🆔Buyurtma uchun id: #${o?.id}\n💳Hisobga +${Number(o?.for_admin).toLocaleString()} so'm qo'shildi`).catch(err => {
@@ -354,9 +347,7 @@ module.exports = {
                     });
                 }
             } else {
-                $operator?.set({ balance: $operator?.balance + s[0]?.for_operators }).save();
                 o?.set({ status: 'delivered', for_operator: s[0]?.for_operators }).save();
-
                 p.set({ solded: p?.solded + o?.count }).save();
                 res.send({
                     ok: true,
@@ -445,16 +436,12 @@ module.exports = {
                 if ($admin?.ref_id) {
                     const $ref = await userModel?.findOne({ id: $admin.ref_id });
                     // 
-                    $operator?.set({ balance: Number($operator?.balance + s[0]?.for_operators) }).save();
                     // 
-                    $admin.set({ balance: $admin?.balance + o?.product?.for_admins }).save();
-                    // 
-                    $ref.set({ balance: $ref?.balance + s[0]?.for_ref }).save();
                     bot.telegram.sendMessage($ref?.telegram, `sharqiy.uz\n👥Hisobga +${Number(s[0]?.for_ref).toLocaleString()} so'm referaldan qo'shildi`).catch(err => {
                         console.log(err);
                     });
                     // 
-                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref }).save();
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref, ref_id:  $admin.ref_id }).save();
                     // 
                     p.set({ solded: o?.product?.solded + o?.count }).save();
                 } else {
