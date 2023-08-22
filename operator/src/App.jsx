@@ -12,6 +12,7 @@ import NewOrders from "./pages/neworders";
 import MyOrders from "./pages/myorders";
 import WaitOrders from "./pages/wiatorders";
 import Settings from "./pages/settings";
+import SearchOrder from "./pages/search";
 function App() {
   const { id, refresh, name } = useSelector(e => e.auth);
   const dp = useDispatch();
@@ -44,6 +45,7 @@ function App() {
           <Route path="/my-orders" element={<MyOrders />} />
           <Route path="/wait-orders" element={<WaitOrders />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/search" element={<SearchOrder />} />
           <Route path="*" element={<NewOrders />} />
         </Routes>
         <ToastContainer autoClose={2000} closeButton={false} position="top-center" style={{ zIndex: '9999999' }} />

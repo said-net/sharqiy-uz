@@ -1,5 +1,5 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
-import { FaBars, FaBox, FaCaretLeft, FaComment, FaGift, FaHistory, FaList, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
+import { FaBars, FaBox, FaCaretLeft, FaComment, FaGift, FaHistory, FaList, FaSearch, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
 import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
@@ -56,16 +56,20 @@ function Navbar() {
                                     <FaList className="mr-[10px]" />
                                     Tarix
                                 </MenuItem>
+                                <MenuItem className="flex items-center" onClick={() => nv('/search-order')}>
+                                    <FaSearch className="mr-[10px]" />
+                                    Qidiruv
+                                </MenuItem>
                             </MenuList>
                         </Menu>
                         {/* <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" /> */}
                     </div>
-                    <div className="flex items-center justify-center relative">
+                    {/* <div className="flex items-center justify-center relative">
                         <IconButton onClick={() => nv('/chats')} color="light-blue" className="rounded-full text-[20px]">
                             <FaComment />
                         </IconButton>
-                        {/* <span className="absolute top-[-5px] bg-red-500 right-[-5px] w-[10px] h-[10px] rounded-full" /> */}
-                    </div>
+                        
+                    </div> */}
                     <Menu>
                         <MenuHandler>
                             <IconButton className="rounded-full text-[20px]" color="teal">

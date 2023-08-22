@@ -7,6 +7,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { setRefreshOrders } from "../managers/order.manager";
+import { BiSearch } from "react-icons/bi";
 
 function Navbar() {
     const { name, balance } = useSelector(e => e.auth);
@@ -41,7 +42,7 @@ function Navbar() {
                         <h1 className="uppercase text-[23px]">{name}</h1>
                         <Chip className="rounded tracking-widest" value={`Hisob: ${Number(balance).toLocaleString()} so'm`} />
                     </div>
-                    <div className="flex items-center justify-between sm:w-[260px]">
+                    <div className="flex items-center justify-between sm:w-[300px]">
                         <div className="sm:flex items-center justify-center flex-col hidden">
                             <IconButton onClick={() => nv('/new-orders')} color="green" className="rounded-full text-[20px]">
                                 <FaList />
@@ -59,6 +60,12 @@ function Navbar() {
                                 <FaClock />
                             </IconButton>
                             <p className="text-[12px]">Eslatma</p>
+                        </div>
+                        <div className="sm:flex items-center justify-center flex-col hidden">
+                            <IconButton onClick={() => nv('/search')} color="blue-gray" className="rounded-full text-[20px]">
+                                <BiSearch />
+                            </IconButton>
+                            <p className="text-[12px]">Qidiruv</p>
                         </div>
                         {/* <div className="flex items-center justify-center flex-col">
                             <IconButton onClick={() => nv('/settings')} color="indigo" className="rounded-full text-[20px]">
@@ -87,6 +94,10 @@ function Navbar() {
                 <div className={`flex items-center justify-center flex-col ${pathname === '/wait-orders' ? 'text-black' : 'text-gray-500'}`} onClick={() => nv('/wait-orders')}>
                     <FaClock className="text-[25px]" />
                     <p className="text-[12px]">Eslatma</p>
+                </div>
+                <div className={`flex items-center justify-center flex-col ${pathname === '/search' ? 'text-black' : 'text-gray-500'}`} onClick={() => nv('/search')}>
+                    <BiSearch className="text-[25px]" />
+                    <p className="text-[12px]">Qidiruv</p>
                 </div>
             </div>
 

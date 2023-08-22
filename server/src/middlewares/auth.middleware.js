@@ -130,12 +130,14 @@ module.exports = {
                             ok: false,
                             msg: "Operator topilmadi!"
                         });
-                    } else if ($operator.access !== signature) {
-                        res.send({
-                            ok: false,
-                            msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
-                        });
-                    } else {
+                    }
+                    //  else if ($operator.access !== signature) {
+                    //     res.send({
+                    //         ok: false,
+                    //         msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
+                    //     });
+                    // }
+                     else {
                         let p_his = 0;
                         let sh_his = 0;
                         const $histpory = await payOperatorModel.find({ from: id });
@@ -146,7 +148,6 @@ module.exports = {
                         $shoph.forEach(s => {
                             sh_his += s.for_operator
                         });
-                        $operator.set({ balance: sh_his - p_his }).save();
                         const { name, phone, telegram } = $operator;
                         req.operator = { id, name, phone, balance: sh_his - p_his, telegram };
                         next();

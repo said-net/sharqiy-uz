@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { Button, Chip, IconButton, Option, Select, Spinner } from "@material-tailwind/react";
+import { Button, Chip, IconButton, Input, Option, Select, Spinner } from "@material-tailwind/react";
 import { setRefreshOrders } from "../managers/order.manager";
 import ViewOrder from "./vieworder";
-import { BiRefresh } from "react-icons/bi";
+import { BiRefresh, BiSearch } from "react-icons/bi";
 function MyOrders() {
     const { refresh } = useSelector(e => e.order);
     const dp = useDispatch();
@@ -14,6 +14,7 @@ function MyOrders() {
     const [isLoad, setIsLoad] = useState(false);
     const [open, setOpen] = useState('');
     const [type, setType] = useState('pending')
+    const [search, setSearch] = useState('')
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/operator/get-my-orders`, {
@@ -23,6 +24,7 @@ function MyOrders() {
         }).then(res => {
             const { ok, data, msg } = res.data;
             setIsLoad(true);
+            // console.log(data[0]);
             if (!ok) {
                 toast.error(msg)
             } else {
@@ -34,9 +36,10 @@ function MyOrders() {
     }, [refresh]);
     return (
         <div className="flex items-center justify-start flex-col w-full">
-            <div className="flex items-center justify-between w-full h-[50px] bg-white shadow-md rounded p-[0_10px] my-[10px]">
+            <div className="flex items-center justify-between w-full p-[5px] bg-white shadow-md rounded my-[10px] flex-col">
                 {/* <h1 className="text-[12px] sm:text-[14px]">BUYURTMALAR</h1> */}
-                <div className="flex items-center justify-center">
+
+                <div className="flex items-center justify-center w-full mb-[10px]">
                     <Select onChange={e => setType(e)} value={type} label="Saralash">
                         <Option value="pending">Kutulmoqda</Option>
                         <Option value="reject">Rad etilgan</Option>
@@ -45,10 +48,14 @@ function MyOrders() {
                         <Option value="sended">Yuborilgan</Option>
                         <Option value="delivered">Yetkazilgan</Option>
                     </Select>
+                    <Button className="w-full text-[11px] flex items-center justify-center" onClick={() => dp(setRefreshOrders())}>
+                        Yangilash
+                        <BiRefresh />
+                    </Button>
                 </div>
-                <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrders())}>
-                    <BiRefresh />
-                </IconButton>
+                <div className="flex items-center justify-center w-full">
+                    <Input onChange={e => setSearch(e.target.value)} value={search} icon={<BiSearch />} label="Qidiruv: ID, Raqam" />
+                </div>
             </div>
 
             {!isLoad && <Spinner />}
@@ -61,42 +68,81 @@ function MyOrders() {
                 <div className="flex items-center justify-normal flex-col w-full bg-white p-[10px] rounded-[10px] shadow-sm">
                     {orders.map((e, i) => {
                         return (
-                            e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
-                                <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
-                                    <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
-                                        <img src={e?.image} alt="rasm" />
+                            !search ?
+                                e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                                    <p>ID: {e?.id}</p>
+                                    <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
+                                        <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
+                                            <img src={e?.image} alt="rasm" />
+                                        </div>
+                                        <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
                                     </div>
-                                    <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
+                                    <div className="flex items-center justify-center">
+                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
+                                        }
+                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest" color="deep-orange" value="Arxivlangan" />
+                                        }
+                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
+                                        }
+                                        {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
+                                        }
+                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest" color="indigo" value="Yuborildi" />
+                                        }
+                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest" color="green" value="Yetkazilgan" />
+                                        }
+                                    </div>
+                                    {/* <div className="flex items-center justify-end w-[20%]">
+                                        {e?.status === 'reject' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
+                                        }
+                                        {e?.status === 'archive' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
+                                        }
+                                        {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                        {e?.status === 'success' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                        {e?.status === 'sended' && <p className="text-indigo-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                        {e?.status === 'delivered' && <p className="text-green-500">+{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                    </div> */}
+                                </div> :
+                                search && (Number(search) === e?.id || e?.phone?.includes(search)) && e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                                    <p>ID: {e?.id}</p>
+                                    <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
+                                        <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
+                                            <img src={e?.image} alt="rasm" />
+                                        </div>
+                                        <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
+                                    </div>
+                                    <div className="flex items-center justify-center">
+                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
+                                        }
+                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest" color="deep-orange" value="Arxivlangan" />
+                                        }
+                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
+                                        }
+                                        {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
+                                        }
+                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest" color="indigo" value="Yuborildi" />
+                                        }
+                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest" color="green" value="Yetkazilgan" />
+                                        }
+                                    </div>
+                                    {/* <div className="flex items-center justify-end w-[20%]">
+                                        {e?.status === 'reject' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
+                                        }
+                                        {e?.status === 'archive' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
+                                        }
+                                        {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                        {e?.status === 'success' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                        {e?.status === 'sended' && <p className="text-indigo-500">~{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                        {e?.status === 'delivered' && <p className="text-green-500">+{Number(e?.comming_pay).toLocaleString()}</p>
+                                        }
+                                    </div> */}
                                 </div>
-                                <div className="flex items-center justify-center">
-                                    {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
-                                    }
-                                    {e?.status === 'archive' && <Chip className="rounded tracking-widest" color="deep-orange" value="Arxivlangan" />
-                                    }
-                                    {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
-                                    }
-                                    {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
-                                    }
-                                    {e?.status === 'sended' && <Chip className="rounded tracking-widest" color="indigo" value="Yuborildi" />
-                                    }
-                                    {e?.status === 'delivered' && <Chip className="rounded tracking-widest" color="green" value="Yetkazilgan" />
-                                    }
-                                </div>
-                                <div className="flex items-center justify-end w-[20%]">
-                                    {e?.status === 'reject' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
-                                    }
-                                    {e?.status === 'archive' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
-                                    }
-                                    {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                    }
-                                    {e?.status === 'success' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                    }
-                                    {e?.status === 'sended' && <p className="text-indigo-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                    }
-                                    {e?.status === 'delivered' && <p className="text-green-500">+{Number(e?.comming_pay).toLocaleString()}</p>
-                                    }
-                                </div>
-                            </div>
                         )
                     })}
                 </div>

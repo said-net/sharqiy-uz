@@ -173,6 +173,7 @@ module.exports = {
                 $modded.push({
                     ...order._doc,
                     id: order._id,
+                    oid: order.id,
                     image: SERVER_LINK + order.product.images[0],
                     comming_pay: $settings[0]?.for_operators
                 });
@@ -324,6 +325,25 @@ module.exports = {
             });
         }
     },
+    editOrder: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const { about, city, region, count, phone, name, price } = req.body;
+            const $order = await shopModel.findById(id);
+            $order.set({ about, city, region, bonus, count, phone, name, price }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Taxrirlandi!"
+                });
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
+            })
+        }
+    },
     getWaitOrders: async (req, res) => {
         const $orders = await shopModel.find({ operator: req.operator.id }).populate('product')
         const myOrders = [];
@@ -392,6 +412,26 @@ module.exports = {
         res.send({
             ok: true,
             data: $pays.reverse()
+        })
+    },
+    searchBase: async (req, res) => {
+        const { search } = req.params;
+        const $orders = await shopModel.find().populate('product');
+        const orders = [];
+        const $settings = await settingModel.find();
+        $orders.filter(o => o?.id === Number(search) || o?.phone?.includes(search)).forEach(e => {
+            if (e?.status !== 'delivered') {
+                orders.push({
+                    _id: e?._id,
+                    ...e?._doc,
+                    image: SERVER_LINK + e?.product?.images[0],
+                    comming_pay: $settings[0]?.for_operators
+                });
+            }
+        });
+        res.send({
+            ok: true,
+            data: orders.reverse()
         })
     }
 }

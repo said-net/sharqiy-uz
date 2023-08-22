@@ -15,10 +15,6 @@ const schema = new Schema({
         type: Types.ObjectId,
         ref: 'Competition'
     },
-    bonus: {
-        type: Number,
-        defaul: 0
-    },
     price: {
         type: Number,
         default: 0

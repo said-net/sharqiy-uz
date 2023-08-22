@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { BiRefresh } from 'react-icons/bi'
-import { Button, IconButton, Spinner } from "@material-tailwind/react";
+import { BiRefresh, BiSearch } from 'react-icons/bi'
+import { Button, IconButton, Input, Spinner } from "@material-tailwind/react";
 import Regions from '../components/regions.json';
 import { setRefreshOrders } from "../managers/order.manager";
 function NewOrders() {
@@ -13,6 +13,7 @@ function NewOrders() {
     const [orders, setOrders] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
     const [isLoadBtn, setIsLoadBtn] = useState(false);
+    const [search, setSearch] = useState('');
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/operator/get-new-orders`, {
@@ -61,7 +62,9 @@ function NewOrders() {
         <div className="flex items-center justify-start flex-col w-full">
             <div className="flex items-center justify-between w-full h-[50px] bg-white shadow-md rounded p-[0_10px] my-[20px]">
                 <h1 className="text-[12px] sm:text-[14px]">YANGI BUYURTMALAR</h1>
-
+                <div className="flex items-center justify-center w-[100px]">
+                    <Input label="ID, Raqam" onChange={e => setSearch(e.target.value)} value={search} icon={<BiSearch />} />
+                </div>
                 <IconButton className="mr-[10px] rounded-[20px] text-[20px]" onClick={() => dp(setRefreshOrders())}>
                     <BiRefresh />
                 </IconButton>
@@ -76,26 +79,50 @@ function NewOrders() {
                 <div className="flex items-center justify-normal flex-col w-full bg-white p-[10px] rounded-[10px] shadow-sm">
                     {orders.map((e, i) => {
                         return (
-                            <div key={i} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] `}>
-                                <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
-                                    <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
-                                        <img src={e?.image} alt="rasm" />
+                            !search ?
+                                <div key={i} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] `}>
+                                    <div className="flex items-center justify-center w-[10%]">
+                                        <p>ID:{e?.oid}</p>
                                     </div>
-                                    <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
-                                </div>
-                                <div className="hidden sm:flex items-center justify-start w-[25%]">
-                                    <p>{Regions.find(r => r.id === e?.region)?.name}</p>
-                                </div>
-                                {/* <div className="flex items-center justify-start w-[25%]">
+                                    <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
+                                        <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
+                                            <img src={e?.image} alt="rasm" />
+                                        </div>
+                                        <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
+                                    </div>
+                                    <div className="hidden sm:flex items-center justify-start w-[25%]">
+                                        <p>{Regions.find(r => r.id === e?.region)?.name}</p>
+                                    </div>
+                                    {/* <div className="flex items-center justify-start w-[25%]">
                                     <p>{e?.name}</p>
                                 </div> */}
-                                <div className="flex items-center justify-center w-[10%]">
-                                    <p>~{Number(e?.comming_pay).toLocaleString()}</p>
+
+                                    <div className="flex items-center justify-center">
+                                        <Button className="rounded" color="red" disabled={isLoadBtn} onClick={() => Take(e.id)}>Olish</Button>
+                                    </div>
                                 </div>
-                                <div className="flex items-center justify-center">
-                                    <Button className="rounded" color="red" disabled={isLoadBtn} onClick={() => Take(e.id)}>Olish</Button>
+                                :
+                                search && (Number(search) === e?.oid || e?.phone?.includes(search)) && <div key={i} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] `}>
+                                    <div className="flex items-center justify-center w-[10%]">
+                                        <p>ID:{e?.oid}</p>
+                                    </div>
+                                    <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
+                                        <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
+                                            <img src={e?.image} alt="rasm" />
+                                        </div>
+                                        <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
+                                    </div>
+                                    <div className="hidden sm:flex items-center justify-start w-[25%]">
+                                        <p>{Regions.find(r => r.id === e?.region)?.name}</p>
+                                    </div>
+                                    {/* <div className="flex items-center justify-start w-[25%]">
+                                <p>{e?.name}</p>
+                            </div> */}
+
+                                    <div className="flex items-center justify-center">
+                                        <Button className="rounded" color="red" disabled={isLoadBtn} onClick={() => Take(e.id)}>Olish</Button>
+                                    </div>
                                 </div>
-                            </div>
                         )
                     })}
                 </div>

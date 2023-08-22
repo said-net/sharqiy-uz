@@ -277,6 +277,7 @@ module.exports = {
             let wait = 0;
             let sended = 0;
             let delivered = 0;
+            let archive = 0;
             let profit = 0;
             let pending = 0;
             let refProfit = 0;
@@ -301,6 +302,8 @@ module.exports = {
                     profit += o.for_admin
                 } else if (o.status === 'pending') {
                     pending++;
+                } else if (o?.status === 'archive') {
+                    archive++;
                 }
             });
             res.send({
@@ -314,6 +317,7 @@ module.exports = {
                     profit,
                     refProfit,
                     pending,
+                    archive,
                     all: $shops.length,
                     refferals: $refs.length
                 }
@@ -331,6 +335,7 @@ module.exports = {
             let delivered = 0;
             let profit = 0;
             let pending = 0;
+            let archive = 0
             $shops.forEach(o => {
                 if (o.status === 'reject') {
                     reject++;
@@ -345,6 +350,8 @@ module.exports = {
                     profit += o.for_admin
                 } else if (o.status === 'pending') {
                     pending++;
+                } else if (o?.status === 'archive') {
+                    archive++;
                 }
             });
             res.send({
@@ -356,6 +363,7 @@ module.exports = {
                     sended,
                     delivered,
                     profit,
+                    archive,
                     pending,
                     all: $shops.length,
                 }
@@ -373,6 +381,7 @@ module.exports = {
             let delivered = 0;
             let profit = 0;
             let pending = 0;
+            let archive = 0;
             $shops.forEach(o => {
                 if (o.status === 'reject') {
                     reject++;
@@ -387,6 +396,8 @@ module.exports = {
                     profit += o.for_admin
                 } else if (o.status === 'pending') {
                     pending++;
+                } else if (o?.status === 'archive') {
+                    archive++;
                 }
             });
             res.send({
@@ -398,6 +409,7 @@ module.exports = {
                     sended,
                     delivered,
                     profit,
+                    archive,
                     pending,
                     all: $shops.length,
                 }
@@ -414,6 +426,7 @@ module.exports = {
             let delivered = 0;
             let profit = 0;
             let pending = 0;
+            let archive = 0;
             $shops.forEach(o => {
                 if (o.status === 'reject') {
                     reject++;
@@ -428,6 +441,8 @@ module.exports = {
                     profit += o.for_admin
                 } else if (o.status === 'pending') {
                     pending++;
+                } else if (o?.status === 'archive') {
+                    archive++;
                 }
             });
             res.send({
@@ -439,6 +454,7 @@ module.exports = {
                     sended,
                     delivered,
                     profit,
+                    archive,
                     pending,
                     all: $shops.length,
                 }
@@ -515,6 +531,24 @@ module.exports = {
                 res.send({
                     ok: false,
                     msg: "Saqlashda xatolik!"
+                });
+            });
+        } catch (error) {
+            console.log(error);
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
+            })
+        }
+    },
+    setStatusMySale: async (req, res) => {
+        try {
+            const { id } = req.params;
+            const $shop = await shopModel.findOne({ id });
+            $shop.set({ status: 'pending', operator: null }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Bajarildi!"
                 });
             });
         } catch (error) {

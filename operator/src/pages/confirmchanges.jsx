@@ -28,7 +28,6 @@ function ConfirmChanges({ select, setSelect, setOpen }) {
             toast.error("Aloqani tekshirib qayta urunib ko'ring!");
         });
     }
-
     function Wait() {
         axios.post(`${API_LINK}/operator/set-status/${select?._id}`, { ...select, status: 'wait' }, {
             headers: {

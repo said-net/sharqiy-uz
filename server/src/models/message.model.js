@@ -1,4 +1,4 @@
-const { model, Schema, Types, models } = require('mongoose');
+const { model, Schema, Types } = require('mongoose');
 const schema = new Schema({
     chat: {
         type: Types.ObjectId,

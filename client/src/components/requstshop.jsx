@@ -1,6 +1,5 @@
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input, Option, Select } from "@material-tailwind/react";
-import { FaBoxes, FaPhone, FaUser } from "react-icons/fa";
-import Regions from './regions.json';
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
+import { FaPhone, FaUser } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -56,6 +55,9 @@ function RequestShop({ openShop, setOpenShop }) {
                     </div>
                     <div className="flex items-center justify-center w-full mb-[10px]">
                         <Input value={openShop.phone} label="Raqamingiz" onChange={e => setOpenShop({ ...openShop, phone: e.target.value.trim() })} required icon={<FaPhone />} />
+                    </div>
+                    <div className="flex items-center justify-start w-full">
+                        <p className="text-[14px]">Yetkazib berish hududga qarab 25 000 so'mgacha</p>
                     </div>
                     {/* <div className="flex items-center justify-center w-full mb-[10px]">
                         <Select label="Viloyat" onChange={e => setOpenShop({ ...openShop, region: e })} value={String(openShop.region)}>

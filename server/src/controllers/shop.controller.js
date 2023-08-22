@@ -62,7 +62,7 @@ module.exports = {
     },
     getTargetApi: async (req, res) => {
         try {
-            const { name, phone, stream } = req.query;
+            const { name, phone, stream } = req.body;
             const link = stream?.slice(24)?.split('/');
             const flow = link[0];
             const id = link[1];

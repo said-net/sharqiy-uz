@@ -9,9 +9,9 @@ const userModel = require("../models/user.model");
 const operatorModel = require("../models/operator.model");
 const settingModel = require("../models/setting.model");
 const chequeMaker = require("../middlewares/cheque.maker");
-// const path = require('path');
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
+const payModel = require("../models/pay.model");
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -92,10 +92,28 @@ module.exports = {
             });
 
             let adminsBalance = 0;
-            users?.forEach(e => {
-                adminsBalance += e?.balance ? e?.balance : 0;
-            })
+            for (let $user of users) {
+                let p_his = 0;
+                let sh_his = 0;
+                let r_his = 0;
+                const $histpory = await payModel.find({ from: $user.id });
+                const $shoph = await shopModel.find({ flow: $user.id });
+                const $refs = await userModel.find({ ref_id: $user.id });
+                for (let ref of $refs) {
+                    const $rflows = await shopModel.find({ flow: ref.id });
+                    $rflows.forEach(rf => {
+                        r_his += rf.for_ref
+                    });
+                };
+                $histpory.forEach(h => {
+                    p_his += h.count;
+                });
+                $shoph.forEach(s => {
+                    sh_his += s.for_admin;
+                });
+            }
             let operatorsBalance = 0;
+
             for (let o of operators) {
                 const $shops = await shopModel.find({ operator: o._id });
                 const $pays = await payOperatorModel.find({ from: o?._id });
@@ -107,9 +125,6 @@ module.exports = {
                 });
             }
 
-            // operators?.forEach(o => {
-            //     operatorsBalance += o?.balance
-            // })
             res.send({
                 ok: true,
                 data: {
@@ -441,7 +456,7 @@ module.exports = {
                         console.log(err);
                     });
                     // 
-                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref, ref_id:  $admin.ref_id }).save();
+                    o?.set({ status: 'delivered', for_operator: s[0]?.for_operators, for_admin: o?.product?.for_admins, for_ref: s[0]?.for_ref, ref_id: $admin.ref_id }).save();
                     // 
                     p.set({ solded: o?.product?.solded + o?.count }).save();
                 } else {
@@ -594,5 +609,89 @@ module.exports = {
                 msg: "Xatolik!"
             })
         }
-    }
+    },
+    searchBase: async (req, res) => {
+        const { search } = req.params;
+        const $orders = await shopModel.find().populate('product');
+        const orders = [];
+        const $settings = await settingModel.find();
+        $orders.filter(o => o?.id === Number(search) || o?.phone?.includes(search)).forEach(e => {
+            orders.push({
+                _id: e?._id,
+                ...e?._doc,
+                image: SERVER_LINK + e?.product?.images[0],
+                comming_pay: $settings[0]?.for_operators
+            });
+        });
+        res.send({
+            ok: true,
+            data: orders.reverse()
+        })
+    },
+    getInfoOrder: async (req, res) => {
+        const { id } = req.params;
+        console.log(id);
+        try {
+            const $order = await shopModel.findById(id).populate('product operator');
+            const $settings = await settingModel.find();
+            if ($order?.flow > 0) {
+                const $admin = await userModel.findOne({ id: $order.flow });
+                const order = {
+                    ...$order._doc,
+                    admin: {
+                        ...$admin._doc
+                    },
+                    image: SERVER_LINK + $order?.product?.images[0],
+                    for_operators: $settings[0].for_operators,
+                    bonus: $order?.product?.bonus && $order?.product?.bonus_duration > moment.now() / 1000,
+                    bonus_duration: $order?.product?.bonus ? moment.unix($order?.product?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    bonus_count: $order?.product?.bonus ? $order?.product?.bonus_count : 0,
+                    bonus_given: $order?.product?.bonus ? $order?.product?.bonus_given : 0,
+                }
+                res.send({
+                    ok: true,
+                    data: order
+                });
+            } else {
+                const order = {
+                    ...$order._doc,
+                    image: SERVER_LINK + $order?.product?.images[0],
+                    for_operators: $settings[0].for_operators,
+                    bonus: $order?.product?.bonus && $order?.product?.bonus_duration > moment.now() / 1000,
+                    bonus_duration: $order?.product?.bonus ? moment.unix($order?.product?.bonus_duration).format('DD.MM.YYYY HH:mm') : 0,
+                    bonus_count: $order?.product?.bonus ? $order?.product?.bonus_count : 0,
+                    bonus_given: $order?.product?.bonus ? $order?.product?.bonus_given : 0,
+                }
+                res.send({
+                    ok: true,
+                    data: order
+                });
+            }
+        } catch {
+            res.send({
+                ok: false,
+                msg: "Nimadir xato 2 daqiqdan so'ng urunib ko'ring!"
+            })
+        }
+    },
+    setInfoOrder: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const { name, count, price, bonus_gived, phone, region, city, about } = req.body;
+            const $order = await shopModel.findById(id);
+            $order.set({
+                name, count, price, bonus: bonus_gived, phone, region, city, about
+            }).save().then(() => {
+                res.send({
+                    ok: true,
+                    msg: "Saqlandi!"
+                })
+            })
+        } catch {
+            res.send({
+                ok: false,
+                msg: "Saqlashda xatolik!"
+            })
+        }
+    },
 }

@@ -23,6 +23,7 @@ import MenuSettings from "./pages/main/mainmenu";
 import Competition from "./pages/competition/competition";
 import CompetitionGetOne from "./pages/competition/getone";
 import OperatorPays from "./pages/operatorpays/operatorpays";
+import SearchOrders from "./pages/searchorders/searchorders";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -57,6 +58,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/new-orders" element={<NewOrders />} />
           <Route path="/sended-orders" element={<SendedOrders />} />
+          <Route path="/search-order" element={<SearchOrders />} />
           <Route path="/history-orders" element={<HistoryOrders />} />
           <Route path="/wait-orders" element={<WaitOrders />} />
           <Route path="/chats" element={<Chats />} />
