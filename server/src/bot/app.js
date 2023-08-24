@@ -125,7 +125,8 @@ bot.on('text', async msg => {
                 const $wait = await shopModel.find({ flow: $user?.id, status: 'wait' }).countDocuments();
                 const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
                 const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
-                const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
+                const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' });
+                const $archive = await shopModel.find({ flow: $user?.id, status: 'archive' }).countDocuments();
                 let $total = 0;
                 $deliver?.forEach(d => {
                     $total += d?.for_admin;
@@ -139,7 +140,7 @@ bot.on('text', async msg => {
                         $tref += rf.for_ref
                     });
                 }
-                msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
+                msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n🗃️Arxivlangan: <b>${$archive}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
             } else if (tx === '⚙Sozlamalar') {
                 msg.replyWithHTML(`🆔TelegramID: <b>${id}</b>`)
             } else if (tx === '📞Bog\'lanish') {
@@ -295,15 +296,16 @@ bot.on('callback_query', async msg => {
             const $wait = await shopModel.find({ flow: $user?.id, status: 'wait', month, day, year }).countDocuments();
             const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered', month, day, year }).countDocuments();
             const $reject = await shopModel.find({ flow: $user?.id, status: 'reject', month, day, year }).countDocuments();
+            const $archive = await shopModel.find({ flow: $user?.id, status: 'archive', month, day, year }).countDocuments();
 
-            const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered', month, day, year })
+            const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered', month, day, year });
             let $total = 0;
 
             $deliver?.forEach(d => {
                 $total += d?.for_admin;
             })
 
-            msg.replyWithHTML(`<b>📈Bugunlik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
+            msg.replyWithHTML(`<b>📈Bugunlik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n🗃️Arxivlangan: <b>${$archive}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (data === 'stat_yesterday') {
             const day = new Date().getDate() - 1;
             const month = new Date().getMonth();
@@ -315,6 +317,7 @@ bot.on('callback_query', async msg => {
             const $wait = await shopModel.find({ flow: $user?.id, status: 'wait', month, day, year }).countDocuments();
             const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered', month, day, year }).countDocuments();
             const $reject = await shopModel.find({ flow: $user?.id, status: 'reject', month, day, year }).countDocuments();
+            const $archive = await shopModel.find({ flow: $user?.id, status: 'archive', month, day, year }).countDocuments();
 
             const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered', month, day, year })
             let $total = 0;
@@ -323,7 +326,7 @@ bot.on('callback_query', async msg => {
                 $total += d?.for_admin;
             })
 
-            msg.replyWithHTML(`<b>📈Kechagi hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
+            msg.replyWithHTML(`<b>📈Kechagi hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n🗃️Arxivlangan: <b>${$archive}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (data === 'stat_month') {
             const month = new Date().getMonth();
             const year = new Date().getFullYear()
@@ -334,7 +337,7 @@ bot.on('callback_query', async msg => {
             const $wait = await shopModel.find({ flow: $user?.id, status: 'wait', month, year }).countDocuments();
             const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered', month, year }).countDocuments();
             const $reject = await shopModel.find({ flow: $user?.id, status: 'reject', month, year }).countDocuments();
-
+            const $archive = await shopModel.find({ flow: $user?.id, status: 'archive', month, year }).countDocuments();
             const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered', month, year })
             let $total = 0;
 
@@ -342,7 +345,7 @@ bot.on('callback_query', async msg => {
                 $total += d?.for_admin;
             })
 
-            msg.replyWithHTML(`<b>📈Oylik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
+            msg.replyWithHTML(`<b>📈Oylik hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n🗃️Arxivlangan: <b>${$archive}</b> ta\n\n💳Umumiy foyda: <b>${$total.toLocaleString()}</b> so'm`, { ...btn.statistics });
         } else if (data === 'stat_all') {
             const $news = await shopModel.find({ flow: $user?.id, status: 'pending' }).countDocuments();
             const $success = await shopModel.find({ flow: $user?.id, status: 'success' }).countDocuments();
@@ -351,6 +354,7 @@ bot.on('callback_query', async msg => {
             const $delivered = await shopModel.find({ flow: $user?.id, status: 'delivered' }).countDocuments();
             const $reject = await shopModel.find({ flow: $user?.id, status: 'reject' }).countDocuments();
             const $refs = await userModel.find({ ref_id: $user.id });
+            const $archive = await shopModel.find({ flow: $user?.id, status: 'archive' }).countDocuments();
 
             const $deliver = await shopModel.find({ flow: $user?.id, status: 'delivered' })
             let $total = 0;
@@ -366,7 +370,7 @@ bot.on('callback_query', async msg => {
                 })
             }
 
-            msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
+            msg.replyWithHTML(`<b>📈Umumiy hisobot</b>\n\n🛒Yangi: <b>${$news}</b> ta\n📦Dostavkaga tayyor: <b>${$success}</b> ta\n🔎Yetkazilmoqda: <b>${$sended}</b> ta\n🔃Qayta aloqa: <b>${$wait}</b> ta\n✅Yetkazilgan: <b>${$delivered}</b> ta\n❌Bekor qilingan: <b>${$reject}</b> ta\n🗃️Arxivlangan: <b>${$archive}</b> ta\n👥Referallar:<b> ${$refs?.length}</b> ta\n💰Referallardan: <b>${Number($tref).toLocaleString()}</b> so'm\n\n💳Umumiy foyda: <b>${($total + $tref).toLocaleString()}</b> so'm`, { ...btn.statistics });
         }
         // 
         else if (data === 'request_pay') {

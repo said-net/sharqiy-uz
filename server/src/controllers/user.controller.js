@@ -545,7 +545,7 @@ module.exports = {
         try {
             const { id } = req.params;
             const $shop = await shopModel.findOne({ id });
-            $shop.set({ status: 'pending', operator: null }).save().then(() => {
+            $shop.set({ status: 'pending' }).save().then(() => {
                 res.send({
                     ok: true,
                     msg: "Bajarildi!"

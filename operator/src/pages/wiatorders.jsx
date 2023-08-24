@@ -51,6 +51,10 @@ function Wait() {
                     {orders.map((e, i) => {
                         return (
                             <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                                <div className="flex items-start justify-start flex-col">
+                                    <p className="text-[12px]">ID: {e?.id}</p>
+                                    <p className="text-[12px]">{e?.phone}</p>
+                                </div>
                                 <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
                                     <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
                                         <img src={e?.image} alt="rasm" />
@@ -59,16 +63,16 @@ function Wait() {
                                 </div>
                                 <div className="flex items-center justify-center">
                                     
-                                    {e?.status === 'wait' && <Chip className="rounded tracking-widest" color="light-blue" value="Eslatma" />
+                                    {e?.status === 'wait' && <Chip className="rounded tracking-widest text-[10px]" color="light-blue" value="Eslatma" />
                                     }
                                     
                                 </div>
-                                <div className="flex items-center justify-end w-[20%]">
+                                {/* <div className="flex items-center justify-end w-[20%]">
 
                                     {e?.status === 'wait' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
                                     }
 
-                                </div>
+                                </div> */}
                             </div>
                         )
                     })}

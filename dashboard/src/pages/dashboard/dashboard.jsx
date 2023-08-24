@@ -21,6 +21,7 @@ function Dashboard() {
             }
         }).then((res) => {
             const { ok, data } = res.data;
+            console.log(res.data);
             setIsLoad(true);
             if (ok) {
                 setData(data);

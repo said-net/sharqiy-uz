@@ -8,7 +8,7 @@ import { API_LINK } from "../config";
 import { toast } from "react-toastify";
 import { setRefreshOrders } from "../managers/order.manager";
 import { BiSearch } from "react-icons/bi";
-
+import { FaUsers } from 'react-icons/fa'
 function Navbar() {
     const { name, balance } = useSelector(e => e.auth);
     const nv = useNavigate();
@@ -42,7 +42,7 @@ function Navbar() {
                         <h1 className="uppercase text-[23px]">{name}</h1>
                         <Chip className="rounded tracking-widest" value={`Hisob: ${Number(balance).toLocaleString()} so'm`} />
                     </div>
-                    <div className="flex items-center justify-between sm:w-[300px]">
+                    <div className="flex items-center justify-between sm:w-[350px]">
                         <div className="sm:flex items-center justify-center flex-col hidden">
                             <IconButton onClick={() => nv('/new-orders')} color="green" className="rounded-full text-[20px]">
                                 <FaList />
@@ -67,12 +67,12 @@ function Navbar() {
                             </IconButton>
                             <p className="text-[12px]">Qidiruv</p>
                         </div>
-                        {/* <div className="flex items-center justify-center flex-col">
-                            <IconButton onClick={() => nv('/settings')} color="indigo" className="rounded-full text-[20px]">
-                                <FaGear />
+                        <div className="sm:flex items-center justify-center flex-col hidden">
+                            <IconButton onClick={() => nv('/targetologs')} color="orange" className="rounded-full text-[20px]">
+                                <FaUsers />
                             </IconButton>
-                            <p className="text-[12px]">Sozlamalar</p>
-                        </div> */}
+                            <p className="text-[12px]">Target</p>
+                        </div>
                         <div className="flex items-center justify-center flex-col">
                             <IconButton onClick={() => setOpenPay(true)} color="indigo" className="rounded-full text-[20px]">
                                 <FaCreditCard />
@@ -99,8 +99,11 @@ function Navbar() {
                     <BiSearch className="text-[25px]" />
                     <p className="text-[12px]">Qidiruv</p>
                 </div>
+                <div className={`flex items-center justify-center flex-col ${pathname === '/targetologs' ? 'text-black' : 'text-gray-500'}`} onClick={() => nv('/targetologs')}>
+                    <FaUsers className="text-[25px]" />
+                    <p className="text-[12px]">Target</p>
+                </div>
             </div>
-
             <Dialog open={openPay} size="xxl" className="flex items-center justify-center bg-[#0000005b] backdrop-blur-sm">
                 <div className="flex items-center justify-center sm:w-[500px] w-[97%] bg-white shadow-sm  rounded flex-col p-[5px]">
                     <DialogHeader className="w-full">

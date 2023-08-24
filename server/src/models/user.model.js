@@ -16,7 +16,11 @@ const schema = new Schema({
     ref_id: String,
     access: String,
     step: String,
-    etc: Object
+    etc: Object,
+    targetolog: {
+        type: Boolean, 
+        default: false
+    }
 });
 
 module.exports = model('User', schema);

@@ -90,13 +90,12 @@ module.exports = {
             products?.forEach(e => {
                 deposit += e.value * e?.original_price
             });
-
+            let p_his = 0;
+            let sh_his = 0;
+            let r_his = 0;
             let adminsBalance = 0;
             for (let $user of users) {
-                let p_his = 0;
-                let sh_his = 0;
-                let r_his = 0;
-                const $histpory = await payModel.find({ from: $user.id });
+                const $histpory = await payModel.find({ from: $user._id });
                 const $shoph = await shopModel.find({ flow: $user.id });
                 const $refs = await userModel.find({ ref_id: $user.id });
                 for (let ref of $refs) {
@@ -112,10 +111,10 @@ module.exports = {
                     sh_his += s.for_admin;
                 });
             }
+            adminsBalance += (sh_his + r_his) - p_his
             let operatorsBalance = 0;
-
             for (let o of operators) {
-                const $shops = await shopModel.find({ operator: o._id });
+                const $shops = await shopModel.find({ operator: o?.id });
                 const $pays = await payOperatorModel.find({ from: o?._id });
                 $shops?.forEach($sh => {
                     operatorsBalance += $sh?.for_operator;
@@ -189,6 +188,7 @@ module.exports = {
                 title: o?.product?.title,
                 count: o?.count,
                 price: o?.price,
+                region: o?.region,
                 bonus: o?.bonus,
                 image: SERVER_LINK + o?.product?.images[0]
             });
@@ -694,4 +694,29 @@ module.exports = {
             })
         }
     },
+    getAllUsers: async (req, res) => {
+        const $users = await userModel.find();
+        res.send({
+            ok: true,
+            data: $users
+        });
+    },
+    setTargetlolog: async (req, res) => {
+        const $user = await userModel.findById(req.params.id);
+        $user.set({ targetolog: true }).save().then(() => {
+            res.send({
+                ok: true,
+                msg: "Targetolog deb belgilandi!"
+            });
+        });
+    },
+    removeTargetolog: async (req, res) => {
+        const $user = await userModel.findById(req.params.id);
+        $user.set({ targetolog: false }).save().then(() => {
+            res.send({
+                ok: true,
+                msg: "Targetolog safidan olindi!"
+            });
+        });
+    }
 }

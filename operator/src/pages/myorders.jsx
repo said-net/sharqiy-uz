@@ -70,7 +70,10 @@ function MyOrders() {
                         return (
                             !search ?
                                 e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
-                                    <p>ID: {e?.id}</p>
+                                    <div className="flex items-start justify-start flex-col">
+                                        <p className="text-[12px]">ID: {e?.id}</p>
+                                        <p className="text-[12px]">{e?.phone}</p>
+                                    </div>
                                     <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
                                         <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
                                             <img src={e?.image} alt="rasm" />
@@ -78,17 +81,17 @@ function MyOrders() {
                                         <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
                                     </div>
                                     <div className="flex items-center justify-center">
-                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
+                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest text-[9px]" color="red" value="Rad etilgan" />
                                         }
-                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest" color="deep-orange" value="Arxivlangan" />
+                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest text-[9px]" color="deep-orange" value="Arxivlangan" />
                                         }
-                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
+                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest text-[9px]" color="orange" value="Kutulmoqda" />
                                         }
-                                        {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
+                                        {e?.status === 'success' && <Chip className="rounded tracking-widest text-[9px]" color="blue" value="Tekshiruvda" />
                                         }
-                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest" color="indigo" value="Yuborildi" />
+                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest text-[9px]" color="indigo" value="Yuborildi" />
                                         }
-                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest" color="green" value="Yetkazilgan" />
+                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest text-[9px]" color="green" value="Yetkazilgan" />
                                         }
                                     </div>
                                     {/* <div className="flex items-center justify-end w-[20%]">
@@ -107,7 +110,10 @@ function MyOrders() {
                                     </div> */}
                                 </div> :
                                 search && (Number(search) === e?.id || e?.phone?.includes(search)) && e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
-                                    <p>ID: {e?.id}</p>
+                                    <div className="flex items-start justify-start flex-col">
+                                        <p className="text-[12px]">ID: {e?.id}</p>
+                                        <p className="text-[12px]">{e?.phone}</p>
+                                    </div>v
                                     <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
                                         <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
                                             <img src={e?.image} alt="rasm" />
@@ -115,17 +121,17 @@ function MyOrders() {
                                         <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
                                     </div>
                                     <div className="flex items-center justify-center">
-                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest" color="red" value="Rad etilgan" />
+                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest text-[9px]" color="red" value="Rad etilgan" />
                                         }
-                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest" color="deep-orange" value="Arxivlangan" />
+                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest text-[9px]" color="deep-orange" value="Arxivlangan" />
                                         }
-                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest" color="orange" value="Kutulmoqda" />
+                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest text-[9px]" color="orange" value="Kutulmoqda" />
                                         }
-                                        {e?.status === 'success' && <Chip className="rounded tracking-widest" color="blue" value="Tekshiruvda" />
+                                        {e?.status === 'success' && <Chip className="rounded tracking-widest text-[9px]" color="blue" value="Tekshiruvda" />
                                         }
-                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest" color="indigo" value="Yuborildi" />
+                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest text-[9px]" color="indigo" value="Yuborildi" />
                                         }
-                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest" color="green" value="Yetkazilgan" />
+                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest text-[9px]" color="green" value="Yetkazilgan" />
                                         }
                                     </div>
                                     {/* <div className="flex items-center justify-end w-[20%]">

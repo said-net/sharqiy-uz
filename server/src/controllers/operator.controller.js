@@ -8,6 +8,7 @@ const moment = require("moment");
 const userModel = require("../models/user.model");
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
+const { default: parsePhoneNumberFromString } = require("libphonenumber-js");
 module.exports = {
     create: async (req, res) => {
         const { name, phone, password } = req.body;
@@ -173,6 +174,7 @@ module.exports = {
                 $modded.push({
                     ...order._doc,
                     id: order._id,
+                    created: moment.unix(order?.created).format("DD.MM.YYYY | HH:mm"),
                     oid: order.id,
                     image: SERVER_LINK + order.product.images[0],
                     comming_pay: $settings[0]?.for_operators
@@ -220,6 +222,7 @@ module.exports = {
                 myOrders.push({
                     _id: e?._id,
                     ...e?._doc,
+                    created: moment.unix(e?.created).format("DD.MM.YYYY | HH:mm"),
                     image: SERVER_LINK + e?.product?.images[0],
                     comming_pay: $settings[0]?.for_operators
                 });
@@ -353,6 +356,7 @@ module.exports = {
                 myOrders.push({
                     _id: e?._id,
                     ...e?._doc,
+                    created: moment.unix(e?.created).format("DD.MM.YYYY | HH:mm"),
                     image: SERVER_LINK + e?.product?.images[0],
                     comming_pay: $settings[0]?.for_operators
                 });
@@ -433,5 +437,56 @@ module.exports = {
             ok: true,
             data: orders.reverse()
         })
+    },
+    getTargetologOrders: async (req, res) => {
+        const { id } = req.params;
+        if (isNaN(id) || id < 1) {
+            res.send({
+                ok: false,
+                msg: "ID ni to'g'ri kiriting!"
+            });
+        } else {
+            const $admin = await userModel.findOne({ id: +id, targetolog: true });
+            if (!$admin) {
+                res.send({
+                    ok: false,
+                    msg: "Ushbu ID egasi targetolog emas!"
+                });
+            } else {
+                try {
+                    const $orders = await shopModel.find({ flow: id, status: 'pending' }).populate('product');
+
+                    const $modded = [];
+                    const $settings = await settingModel.find();
+                    $orders.forEach((order) => {
+                        if (order.status === 'pending' && !order.operator) {
+                            $modded.push({
+                                ...order._doc,
+                                id: order._id,
+                                created: moment.unix(order?.created).format("DD.MM.YYYY | HH:mm"),
+                                oid: order.id,
+                                image: SERVER_LINK + order.product.images[0],
+                                comming_pay: $settings[0]?.for_operators
+                            });
+                        }
+                    });
+                    res.send({
+                        ok: true,
+                        data: $modded,
+                        owner: {
+                            id: $admin.id,
+                            name: $admin.name,
+                            phone: $admin.phone
+                        }
+                    });
+                } catch (error) {
+                    res.send({
+                        ok: false,
+                        msg: "Xatolik",
+                        data: error
+                    })
+                }
+            }
+        }
     }
 }
