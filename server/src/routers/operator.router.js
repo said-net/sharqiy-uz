@@ -22,7 +22,7 @@ module.exports = require('express').Router()
     .get('/get-wait-orders', authMiddleware.operator, operatorController.getWaitOrders)
     // 
     .post('/create-pay', authMiddleware.operator, operatorController.createPay)
-    // .post('/get-pays', authMiddleware.operator, operatorController.getHistoryPay)
+    .post('/get-pays', authMiddleware.operator, operatorController.getHistoryPay)
     .put('/edit-order/:id', authMiddleware.operator, operatorController.editOrder)
     .get('/search-base/:search', authMiddleware.operator, operatorController.searchBase)
     .get('/get-targetolog-orders/:id', authMiddleware.operator, operatorController.getTargetologOrders)

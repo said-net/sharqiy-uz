@@ -14,6 +14,7 @@ import WaitOrders from "./pages/wiatorders";
 import Settings from "./pages/settings";
 import SearchOrder from "./pages/search";
 import Targetologs from "./pages/targetologs";
+import HistoryPay from "./pages/historypay";
 function App() {
   const { id, refresh, name } = useSelector(e => e.auth);
   const dp = useDispatch();
@@ -48,6 +49,7 @@ function App() {
           <Route path="/settings" element={<Settings />} />
           <Route path="/search" element={<SearchOrder />} />
           <Route path="/targetologs" element={<Targetologs />} />
+          <Route path="/history-pay" element={<HistoryPay />} />
           <Route path="*" element={<NewOrders />} />
         </Routes>
         <ToastContainer autoClose={2000} closeButton={false} position="top-center" style={{ zIndex: '9999999' }} />

@@ -402,11 +402,35 @@ module.exports = {
         }
     },
     getHistoryPay: async (req, res) => {
-        const $pays = await payOperatorModel.find({ from: req.operator.id });
-        res.send({
-            ok: true,
-            data: $pays.reverse()
-        })
+        try {
+            const $pays = await payOperatorModel.find({ from: req.operator.id });
+            const $shops = await shopModel?.find({ operator: req.operator.id, status: 'delivered' });
+            const $mod = [];
+            $pays?.forEach(p => {
+                $mod?.push({
+                    card: p?.card,
+                    comment: p?.comment,
+                    sort: p?.created,
+                    count: p?.count > 0 ? '-' + p?.count : String(p?.count).slice(1),
+                    created: moment?.unix(p?.created).format('DD.MM.yyyy | HH:mm'),
+                });
+            });
+            $shops?.forEach(p => {
+                $mod?.push({
+                    count: p?.for_operator,
+                    comment: "Sotuvdan",
+                    sort: p?.created,
+                    card: 'Hisobga',
+                    created: moment?.unix(p?.created).format('DD.MM.yyyy | HH:mm'),
+                });
+            });
+            res.send({
+                ok: true,
+                data: $mod?.sort((a, b) => a?.sort - b?.sort)?.reverse()
+            })
+        } catch (err) {
+            bot.telegram?.sendMessage(5991285234, err);
+        }
     },
     searchBase: async (req, res) => {
         const { search } = req.params;

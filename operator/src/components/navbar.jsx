@@ -1,7 +1,7 @@
 import { Button, Chip, Dialog, DialogBody, DialogFooter, DialogHeader, IconButton, Input } from "@material-tailwind/react";
 import axios from "axios";
 import { useState } from "react";
-import { FaClock, FaCreditCard, FaList, FaListCheck } from "react-icons/fa6";
+import { FaClock, FaCreditCard, FaList, FaListCheck, FaMoneyBillTransfer } from "react-icons/fa6";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { API_LINK } from "../config";
@@ -42,7 +42,7 @@ function Navbar() {
                         <h1 className="uppercase text-[23px]">{name}</h1>
                         <Chip className="rounded tracking-widest" value={`Hisob: ${Number(balance).toLocaleString()} so'm`} />
                     </div>
-                    <div className="flex items-center justify-between sm:w-[350px]">
+                    <div className="flex items-center justify-between sm:w-[380px]">
                         <div className="sm:flex items-center justify-center flex-col hidden">
                             <IconButton onClick={() => nv('/new-orders')} color="green" className="rounded-full text-[20px]">
                                 <FaList />
@@ -72,6 +72,12 @@ function Navbar() {
                                 <FaUsers />
                             </IconButton>
                             <p className="text-[12px]">Target</p>
+                        </div>
+                        <div className="flex items-center justify-center flex-col mr-[20px] sm:mr-0">
+                            <IconButton onClick={() => nv('/history-pay')} color="indigo" className="rounded-full text-[20px]">
+                                <FaMoneyBillTransfer />
+                            </IconButton>
+                            <p className="text-[12px]">Tarix</p>
                         </div>
                         <div className="flex items-center justify-center flex-col">
                             <IconButton onClick={() => setOpenPay(true)} color="indigo" className="rounded-full text-[20px]">

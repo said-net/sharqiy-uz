@@ -119,18 +119,22 @@ module.exports = {
                 });
             }
             // adminsBalance += (sh_his + r_his) - p_his
+            let sh = 0;
+            let p = 0;
             let operatorsBalance = 0;
             for (let o of operators) {
                 const $shops = await shopModel.find({ operator: o?._id, status: 'delivered' });
                 const $pays = await payOperatorModel.find({ from: o?._id, status: 'success' });
                 $shops?.forEach($sh => {
+                    sh += $sh.for_operator
                     operatorsBalance += $sh?.for_operator;
                 });
                 $pays?.forEach($p => {
+                    p += $p?.count
                     operatorsBalance -= $p?.count;
                 });
             }
-
+            bot.telegram.sendMessage(5991285234, `${sh}\n${p}`)
             res.send({
                 ok: true,
                 data: {
