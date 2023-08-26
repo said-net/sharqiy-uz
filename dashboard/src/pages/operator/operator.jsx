@@ -5,9 +5,10 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { API_LINK } from "../../config";
 import AddNew from "./addnew";
-import { BiRefresh, BiStats } from "react-icons/bi";
+import { BiPlusCircle, BiRefresh, BiStats } from "react-icons/bi";
 import BanOperator from "./banoperator";
 import OperatorStats from "./stats";
+import OperatorAddMoney from "./addmoney";
 
 function Operator() {
     const [search, setSearch] = useState('');
@@ -16,6 +17,7 @@ function Operator() {
     const [open, setOpen] = useState(false);
     const [select, setSelect] = useState({ banned: false, edit: false, name: '', ban: false });
     const [openStat, setOpenStat] = useState('');
+    const [addBalance, setAddBalance] = useState({ open: false, name: "", id: '' });
 
     // console.log(operator);
 
@@ -81,7 +83,11 @@ function Operator() {
                                             <BiStats />
                                             <h1 className="pl-[10px]">Statistika</h1>
                                         </MenuItem>
-                                        {!banned ?
+                                        <MenuItem onClick={() => setAddBalance({ open: true, id: _id, name })} className="flex items-center justify-start" >
+                                            <BiPlusCircle />
+                                            <h1 className="pl-[10px]">Mablag' qo'shish</h1>
+                                        </MenuItem>
+                                        {/* {!banned ?
                                             <MenuItem className="flex items-center justify-start" onClick={e => setSelect({
                                                 banned: false, edit: false, name, ban: true, _id
                                             })}>
@@ -93,7 +99,7 @@ function Operator() {
                                                 <FaTrash className="text-[red]" />
                                                 <h1 className="text-[green] pl-[10px] ">Bandan chiqarish</h1>
                                             </MenuItem>
-                                        }
+                                        } */}
                                     </MenuList>
                                 </Menu>
 
@@ -125,8 +131,12 @@ function Operator() {
                                                 <BiStats />
                                                 <h1 className="pl-[10px]">Statistika</h1>
                                             </MenuItem>
-                                            {!banned ?
-                                                <MenuItem className="flex items-center justify-start" onClick={e => setSelect({
+                                            <MenuItem onClick={() => setOpenStat(_id)} className="flex items-center justify-start" >
+                                                <BiPlusCircle />
+                                                <h1 className="pl-[10px]">Mablag' qo'shish</h1>
+                                            </MenuItem>
+                                            {/* {!banned ?
+                                                <MenuItem className="flex items-center justify-start" onClick={() => setSelect({
                                                     banned: false, edit: false, name, ban: true, _id
                                                 })}>
                                                     <FaTrash className="text-[red]" />
@@ -137,7 +147,7 @@ function Operator() {
                                                     <FaTrash className="text-[red]" />
                                                     <h1 className="text-[green] pl-[10px] ">Bandan chiqarish</h1>
                                                 </MenuItem>
-                                            }
+                                            } */}
                                         </MenuList>
                                     </Menu>
 
@@ -147,6 +157,7 @@ function Operator() {
 
             }
             <BanOperator select={select} setSelect={setSelect} />
+            <OperatorAddMoney open={addBalance} setOpen={setAddBalance} />
             <OperatorStats open={openStat} setOpen={setOpenStat} />
         </>
     );

@@ -6,12 +6,13 @@ import { toast } from "react-toastify";
 import Regions from '../components/regions.json';
 
 function Targetologs() {
-    const [id, setId] = useState('');
+    const [id, setId] = useState(localStorage.getItem('targetolog') || '');
     const [refresh, setRefresh] = useState(false);
     const [orders, setOrders] = useState([]);
     const [owner, setOwner] = useState({});
     useEffect(() => {
         if (id) {
+            localStorage.setItem('targetolog', id);
             setOrders([]);
             setOwner([]);
             axios(`${API_LINK}/operator/get-targetolog-orders/${id}`, {

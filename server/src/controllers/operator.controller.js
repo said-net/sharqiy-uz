@@ -195,22 +195,12 @@ module.exports = {
                 msg: "Ushbu buyurtma boshqa operator tomonidan qabul qilingan!"
             });
         } else {
-            const $myOrder = await shopModel.findOne({
-                operator: req.operator.id, status: 'pending'
-            });
-            if ($myOrder) {
+            $order.set({ operator: req.operator.id }).save().then(() => {
                 res.send({
-                    ok: false,
-                    msg: "Sizda hali aloqaga chiqilmagan buyurtma mavjud!"
+                    ok: true,
+                    msg: "Buyurtma egallanganlar bo'limiga o'tkazildi!"
                 });
-            } else {
-                $order.set({ operator: req.operator.id }).save().then(() => {
-                    res.send({
-                        ok: true,
-                        msg: "Buyurtma egallanganlar bo'limiga o'tkazildi!"
-                    });
-                });
-            }
+            });
         }
     },
     getMyOrders: async (req, res) => {
@@ -264,7 +254,7 @@ module.exports = {
         const { bonus_gived: bonus, about, city, region, status, count, phone, name, price } = req.body;
         console.log(status);
         const $order = await shopModel.findById(id);
-        if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait')) {
+        if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait' || $order?.status === 'success')) {
             $order.set({
                 status: 'archive',
                 about, city, region, bonus, count: 0, phone, name, price: 0
@@ -428,6 +418,7 @@ module.exports = {
                 orders.push({
                     _id: e?._id,
                     ...e?._doc,
+                    created: moment.unix(order?.created).format("DD.MM.YYYY | HH:mm"),
                     image: SERVER_LINK + e?.product?.images[0],
                     comming_pay: $settings[0]?.for_operators
                 });

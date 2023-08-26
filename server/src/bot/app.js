@@ -44,7 +44,7 @@ bot.start(async msg => {
                 let p_his = 0;
                 let sh_his = 0;
                 let r_his = 0;
-                const $histpory = await payModel.find({ from: $user._id });
+                const $histpory = await payModel.find({ from: $user._id, status: 'success' });
                 const $shoph = await shopModel.find({ flow: $user.id });
                 const $refs = await userModel.find({ ref_id: $user.id });
                 for (let ref of $refs) {
@@ -102,7 +102,7 @@ bot.on('text', async msg => {
                 let p_his = 0;
                 let sh_his = 0;
                 let r_his = 0;
-                const $histpory = await payModel.find({ from: $user._id });
+                const $histpory = await payModel.find({ from: $user._id, status: 'success' });
                 const $shoph = await shopModel.find({ flow: $user.id });
                 const $refs = await userModel.find({ ref_id: $user.id });
                 for (let ref of $refs) {
@@ -183,10 +183,28 @@ bot.on('text', async msg => {
                                 [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx}_${$user?.etc?.amount}_${$user._id}` }]
                             ]),
                             parse_mode: "HTML"
-                        }).then(() => {
+                        }).then(async () => {
+                            let p_his = 0;
+                            let sh_his = 0;
+                            let r_his = 0;
+                            const $histpory = await payModel.find({ from: $user._id, status: 'success' });
+                            const $shoph = await shopModel.find({ flow: $user.id });
+                            const $refs = await userModel.find({ ref_id: $user.id });
+                            for (let ref of $refs) {
+                                const $rflows = await shopModel.find({ flow: ref.id });
+                                $rflows.forEach(rf => {
+                                    r_his += rf.for_ref
+                                });
+                            }
+                            $histpory.forEach(h => {
+                                p_his += h.count;
+                            });
+                            $shoph.forEach(s => {
+                                sh_his += s.for_admin;
+                            })
                             new payModel({
                                 from: $user._id,
-                                count: $user.balance,
+                                count: $user?.etc?.amount,
                                 created: moment.now() / 1000
                             }).save().then(() => {
                                 msg.replyWithHTML("<i>✅So'rovingiz tekshiruvga yuborildi!</i>\n📋Holat haqida o'zimiz sizga habar beramiz!")
@@ -199,13 +217,33 @@ bot.on('text', async msg => {
                 } else if ($user.step === "request_money") {
                     if (isNaN(tx)) {
                         msg.replyWithHTML("<i>❗Faqat raqamlarda!</i>");
-                    } else if (tx > $user?.balance) {
-                        msg.replyWithHTML(`<i>❗Maks: ${Number($user?.balance).toLocaleString()} so'm</i>`);
-                    } else if (tx < 1000) {
-                        msg.replyWithHTML(`<i>❗Min: 1 000 so'm</i>`);
                     } else {
-                        $user.set({ step: 'request_card', etc: { amount: tx } }).save();
-                        msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860 1601 4709 0205</b>", { ...btn.back });
+                        let p_his = 0;
+                        let sh_his = 0;
+                        let r_his = 0;
+                        const $histpory = await payModel.find({ from: $user._id, status: 'success' });
+                        const $shoph = await shopModel.find({ flow: $user.id });
+                        const $refs = await userModel.find({ ref_id: $user.id });
+                        for (let ref of $refs) {
+                            const $rflows = await shopModel.find({ flow: ref.id });
+                            $rflows.forEach(rf => {
+                                r_his += rf.for_ref
+                            });
+                        }
+                        $histpory.forEach(h => {
+                            p_his += h.count;
+                        });
+                        $shoph.forEach(s => {
+                            sh_his += s.for_admin;
+                        });
+                        if (tx > Number((sh_his + r_his) - p_his)) {
+                            msg.replyWithHTML(`<i>❗Max: ${Number((sh_his + r_his) - p_his).toLocaleString()} so'm</i>`);
+                        } else if (tx < 1000) {
+                            msg.replyWithHTML(`<i>❗Min: 1 000 so'm</i>`);
+                        } else {
+                            $user.set({ step: 'request_card', etc: { amount: tx } }).save();
+                            msg.replyWithHTML("💳Karta raqamingizni kiriting\n📋Namuna: <b>9860 1601 4709 0205</b>", { ...btn.back });
+                        }
                     }
                 } else if ($user.step === 'admin_pid') {
                     const $product = await productModel.findOne({ id: tx });
@@ -377,7 +415,7 @@ bot.on('callback_query', async msg => {
             let p_his = 0;
             let sh_his = 0;
             let r_his = 0;
-            const $histpory = await payModel.find({ from: $user._id });
+            const $histpory = await payModel.find({ from: $user._id, status: 'success' });
             const $shoph = await shopModel.find({ flow: $user.id });
             const $refs = await shopModel.find({ ref_id: $user.id });
             $histpory.forEach(h => {
@@ -445,13 +483,30 @@ bot.on('callback_query', async msg => {
             }
         } else if (data?.includes('success_pay_')) {
             try {
+                // let p_his = 0;
+                // let sh_his = 0;
+                // let r_his = 0;
+                // const $histpory = await payModel.find({ from: $user._id, status: 'success' });
+                // const $shoph = await shopModel.find({ flow: $user.id });
+                // const $refs = await userModel.find({ ref_id: $user.id });
+                // for (let ref of $refs) {
+                //     const $rflows = await shopModel.find({ flow: ref.id });
+                //     $rflows.forEach(rf => {
+                //         r_his += rf.for_ref
+                //     });
+                // }
+                // $histpory.forEach(h => {
+                //     p_his += h.count;
+                // });
+                // $shoph.forEach(s => {
+                //     sh_his += s.for_admin;
+                // });
                 const card = data.split('_')[2]
                 const amount = +data.split('_')[3]
                 const uId = data.split('_')[4]
                 const $user = await userModel.findById(uId);
                 const $pay = await payModel.findOne({ from: uId, status: 'pending' });
                 $pay.set({ status: 'success', card }).save();
-                $user.set({ balance: $user.balance - amount }).save();
                 let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${card}</code>\n💰Miqdor: <code>${Number(amount).toLocaleString()}</code> so'm\n\n✅To'landi!`
                 msg.editMessageReplyMarkup().catch(() => { });
                 msg.editMessageText(txt, { 'parse_mode': 'HTML' }).then(() => {

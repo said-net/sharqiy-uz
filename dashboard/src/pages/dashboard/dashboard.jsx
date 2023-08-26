@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { API_LINK } from "../../config";
 import { FaBoxes, FaMoneyBill, FaMoneyCheck, FaShoppingCart } from 'react-icons/fa'
 import { FaClock, FaList, FaMoneyBillTransfer, FaMoneyBillTrendUp, FaPhone, FaUsers } from 'react-icons/fa6'
-import { TbReload, TbTruckDelivery } from 'react-icons/tb'
+import { TbArchive, TbReload, TbTruckDelivery } from 'react-icons/tb'
 import Formatter from "../../components/formatter";
 import { GiCash } from 'react-icons/gi'
 function Dashboard() {
@@ -54,7 +54,7 @@ function Dashboard() {
             {isLoad && filter === 'all' &&
                 <div className="flex items-center w-full justify-center flex-wrap">
                     {/* DEPOSIT */}
-                    <div className={cNameType}>
+                    {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-purple-400'}>
                             <FaMoneyBill className="text-white" />
                         </div>
@@ -62,9 +62,9 @@ function Dashboard() {
                             <p className="text-blue-gray-500">Umumiy invest</p>
                             <h1 className="text-[25px]"><Formatter value={data?.deposit} style={{ margin: 0 }} /><sub className="text-blue-gray-300">so'm</sub></h1>
                         </div>
-                    </div>
+                    </div> */}
                     {/* SOTUV */}
-                    <div className={cNameType}>
+                    {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-blue-400'}>
                             <FaMoneyCheck className="text-white" />
                         </div>
@@ -72,9 +72,9 @@ function Dashboard() {
                             <p className="text-blue-gray-500">Umumiy sotuvlar</p>
                             <h1 className="text-[25px]"><Formatter value={data?.sales} style={{ margin: 0 }} /><sub className="text-blue-gray-300">so'm</sub></h1>
                         </div>
-                    </div>
+                    </div> */}
                     {/* PROFIT */}
-                    <div className={cNameType}>
+                    {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-green-400'}>
                             <FaMoneyBillTrendUp className="text-white" />
                         </div>
@@ -82,7 +82,7 @@ function Dashboard() {
                             <p className="text-blue-gray-500">Umumiy foyda</p>
                             <h1 className="text-[25px]"><Formatter value={data?.profit} style={{ margin: 0 }} /><sub className="text-blue-gray-300">so'm</sub></h1>
                         </div>
-                    </div>
+                    </div> */}
                     {/* KATEGORIYALAR */}
                     <div className={cNameType}>
                         <div className={cNameIcon + 'bg-blue-gray-400'}>
@@ -141,6 +141,16 @@ function Dashboard() {
                         <div className="flex items-start justify-start flex-col">
                             <p className="text-blue-gray-500">Qaytarildi</p>
                             <h1 className="text-[25px]"><Formatter value={data?.rejected} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
+                        </div>
+                    </div>
+                    {/* ARCHIVED*/}
+                    <div className={cNameType}>
+                        <div className={cNameIcon + 'bg-orange-400'}>
+                            <TbArchive className="text-white" />
+                        </div>
+                        <div className="flex items-start justify-start flex-col">
+                            <p className="text-blue-gray-500">Arxivlandi</p>
+                            <h1 className="text-[25px]"><Formatter value={data?.archived} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
                         </div>
                     </div>
 
@@ -199,7 +209,7 @@ function Dashboard() {
                         </div>
                     </div> */}
                     {/* SOTUV */}
-                    <div className={cNameType}>
+                    {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-blue-400'}>
                             <FaMoneyCheck className="text-white" />
                         </div>
@@ -207,9 +217,9 @@ function Dashboard() {
                             <p className="text-blue-gray-500">Umumiy sotuvlar</p>
                             <h1 className="text-[25px]"><Formatter value={data?.sales} style={{ margin: 0 }} /><sub className="text-blue-gray-300">so'm</sub></h1>
                         </div>
-                    </div>
+                    </div> */}
                     {/* PROFIT */}
-                    <div className={cNameType}>
+                    {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-green-400'}>
                             <FaMoneyBillTrendUp className="text-white" />
                         </div>
@@ -217,7 +227,7 @@ function Dashboard() {
                             <p className="text-blue-gray-500">Umumiy foyda</p>
                             <h1 className="text-[25px]"><Formatter value={data?.profit} style={{ margin: 0 }} /><sub className="text-blue-gray-300">so'm</sub></h1>
                         </div>
-                    </div>
+                    </div> */}
                     {/* KATEGORIYALAR */}
                     {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-blue-gray-400'}>
@@ -278,7 +288,16 @@ function Dashboard() {
                             <h1 className="text-[25px]"><Formatter value={data?.rejected} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
                         </div>
                     </div>
-
+                    {/* ARCHIVED*/}
+                    <div className={cNameType}>
+                        <div className={cNameIcon + 'bg-orange-400'}>
+                            <TbArchive className="text-white" />
+                        </div>
+                        <div className="flex items-start justify-start flex-col">
+                            <p className="text-blue-gray-500">Arxivlandi</p>
+                            <h1 className="text-[25px]"><Formatter value={data?.archived} style={{ margin: 0 }} /><sub className="text-blue-gray-300">ta</sub></h1>
+                        </div>
+                    </div>
                     {/* BUYURTMACHILAR & ADMINLAR */}
                     {/* <div className={cNameType}>
                         <div className={cNameIcon + 'bg-lime-400'}>

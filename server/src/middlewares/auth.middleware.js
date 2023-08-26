@@ -83,7 +83,7 @@ module.exports = {
                         let p_his = 0;
                         let sh_his = 0;
                         let r_his = 0;
-                        const $histpory = await payModel.find({ from: id });
+                        const $histpory = await payModel.find({ from: id, success: 'success' });
                         const $shoph = await shopModel.find({ flow: $user.id });
 
                         const $refs = await userModel.find({ ref_id: $user.id });
@@ -137,10 +137,10 @@ module.exports = {
                     //         msg: "Ushbu qurulmada avtorizatsiya vaqti tugagan!"
                     //     });
                     // }
-                     else {
+                    else {
                         let p_his = 0;
                         let sh_his = 0;
-                        const $histpory = await payOperatorModel.find({ from: id });
+                        const $histpory = await payOperatorModel.find({ from: id, status: 'success' });
                         const $shoph = await shopModel.find({ operator: id });
                         $histpory.forEach(h => {
                             p_his += h.count;

@@ -8,7 +8,8 @@ import { setRefreshOrders } from "../managers/order.manager";
 function ConfirmChanges({ select, setSelect, setOpen }) {
     const dp = useDispatch();
     function Reject() {
-        axios.post(`${API_LINK}/operator/set-status/${select?._id}`, { ...select, status: 'reject' }, {
+        console.log();
+        axios.post(`${API_LINK}/operator/set-status/${select?._id}`, { ...select, status: 'archive' }, {
             headers: {
                 'x-auth-token': `Bearer ${localStorage.getItem('access')}`
             }

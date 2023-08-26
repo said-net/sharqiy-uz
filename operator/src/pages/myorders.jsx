@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { API_LINK } from "../config";
 import { toast } from "react-toastify";
-import { Button, Chip, IconButton, Input, Option, Select, Spinner } from "@material-tailwind/react";
+import { Button, Chip, Input, Option, Select, Spinner } from "@material-tailwind/react";
 import { setRefreshOrders } from "../managers/order.manager";
 import ViewOrder from "./vieworder";
 import { BiRefresh, BiSearch } from "react-icons/bi";
@@ -69,51 +69,43 @@ function MyOrders() {
                     {orders.map((e, i) => {
                         return (
                             !search ?
-                                e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
-                                    <div className="flex items-start justify-start flex-col">
-                                        <p className="text-[12px]">ID: {e?.id}</p>
-                                        <p className="text-[12px]">{e?.phone}</p>
-                                    </div>
-                                    <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
-                                        <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
-                                            <img src={e?.image} alt="rasm" />
+                                e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-start w-full h-[80px] flex-col ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                                    <div className="flex items-center justify-between w-full border-b">
+                                        <div className="flex items-start justify-start flex-col">
+                                            <p className="text-[12px]">ID: {e?.id}</p>
+                                            <p className="text-[12px]">{e?.phone}</p>
                                         </div>
-                                        <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
+                                        <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
+                                            <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
+                                                <img src={e?.image} alt="rasm" />
+                                            </div>
+                                            <p className="text-[12px] sm:text-[15px]">{e?.product?.title?.slice(0, 15)}...</p>
+                                        </div>
+                                        <div className="flex items-center justify-center">
+                                            {e?.status === 'reject' && <Chip className="rounded tracking-widest text-[9px]" color="red" value="Rad etilgan" />
+                                            }
+                                            {e?.status === 'archive' && <Chip className="rounded tracking-widest text-[9px]" color="deep-orange" value="Arxivlangan" />
+                                            }
+                                            {e?.status === 'pending' && <Chip className="rounded tracking-widest text-[9px]" color="orange" value="Kutulmoqda" />
+                                            }
+                                            {e?.status === 'success' && <Chip className="rounded tracking-widest text-[9px]" color="blue" value="Tekshiruvda" />
+                                            }
+                                            {e?.status === 'sended' && <Chip className="rounded tracking-widest text-[9px]" color="indigo" value="Yuborildi" />
+                                            }
+                                            {e?.status === 'delivered' && <Chip className="rounded tracking-widest text-[9px]" color="green" value="Yetkazilgan" />
+                                            }
+                                        </div>
                                     </div>
-                                    <div className="flex items-center justify-center">
-                                        {e?.status === 'reject' && <Chip className="rounded tracking-widest text-[9px]" color="red" value="Rad etilgan" />
-                                        }
-                                        {e?.status === 'archive' && <Chip className="rounded tracking-widest text-[9px]" color="deep-orange" value="Arxivlangan" />
-                                        }
-                                        {e?.status === 'pending' && <Chip className="rounded tracking-widest text-[9px]" color="orange" value="Kutulmoqda" />
-                                        }
-                                        {e?.status === 'success' && <Chip className="rounded tracking-widest text-[9px]" color="blue" value="Tekshiruvda" />
-                                        }
-                                        {e?.status === 'sended' && <Chip className="rounded tracking-widest text-[9px]" color="indigo" value="Yuborildi" />
-                                        }
-                                        {e?.status === 'delivered' && <Chip className="rounded tracking-widest text-[9px]" color="green" value="Yetkazilgan" />
-                                        }
+                                    <div className="flex items-center justify-start w-full">
+                                        <p className="text-[12px]">{e?.created}</p>
                                     </div>
-                                    {/* <div className="flex items-center justify-end w-[20%]">
-                                        {e?.status === 'reject' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
-                                        }
-                                        {e?.status === 'archive' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
-                                        }
-                                        {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                        {e?.status === 'success' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                        {e?.status === 'sended' && <p className="text-indigo-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                        {e?.status === 'delivered' && <p className="text-green-500">+{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                    </div> */}
                                 </div> :
-                                search && (Number(search) === e?.id || e?.phone?.includes(search)) && e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-between w-full h-[50px] ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                                search && (Number(search) === e?.id || e?.phone?.includes(search)) && e?.status === type && <div key={i} onClick={() => setOpen(e?._id)} className={`flex items-center justify-start w-full h-[80px] flex-col ${(i + 1) % 2 === 0 ? 'bg-white' : 'bg-gray-100'} p-[0_10px] cursor-pointer`}>
+                                <div className="flex items-center justify-between w-full border-b">
                                     <div className="flex items-start justify-start flex-col">
                                         <p className="text-[12px]">ID: {e?.id}</p>
                                         <p className="text-[12px]">{e?.phone}</p>
-                                    </div>v
+                                    </div>
                                     <div className="flex items-center justify-start w-[33%] sm:w-[25%]">
                                         <div className="flex items-center justify-center w-[50px] h-[50px] rounded-full overflow-hidden  p-[5px]">
                                             <img src={e?.image} alt="rasm" />
@@ -134,21 +126,11 @@ function MyOrders() {
                                         {e?.status === 'delivered' && <Chip className="rounded tracking-widest text-[9px]" color="green" value="Yetkazilgan" />
                                         }
                                     </div>
-                                    {/* <div className="flex items-center justify-end w-[20%]">
-                                        {e?.status === 'reject' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
-                                        }
-                                        {e?.status === 'archive' && <s className="text-red-500">{Number(e?.comming_pay).toLocaleString()}</s>
-                                        }
-                                        {e?.status === 'pending' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                        {e?.status === 'success' && <p className="text-blue-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                        {e?.status === 'sended' && <p className="text-indigo-500">~{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                        {e?.status === 'delivered' && <p className="text-green-500">+{Number(e?.comming_pay).toLocaleString()}</p>
-                                        }
-                                    </div> */}
                                 </div>
+                                <div className="flex items-center justify-start w-full">
+                                    <p className="text-[12px]">{e?.created}</p>
+                                </div>
+                            </div>
                         )
                     })}
                 </div>

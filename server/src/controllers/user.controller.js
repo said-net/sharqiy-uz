@@ -510,7 +510,7 @@ module.exports = {
                 title: e?.product?.title,
                 phone: e?.phone?.slice(0, 9) + '****',
                 status: e?.status,
-                about: e?.about ? e?.about : "Bekor qilindi!",
+                about: e?.about ? e?.about : "",
                 date: moment.unix(e?.created).format('DD.MM.YYYY | HH:mm')
             });
         });

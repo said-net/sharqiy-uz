@@ -12,6 +12,7 @@ const chequeMaker = require("../middlewares/cheque.maker");
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
 const payModel = require("../models/pay.model");
+const moment = require('moment')
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -63,20 +64,23 @@ module.exports = {
             // 
             let shopHistory = 0;
             let delivered = 0;
+            let archived = 0;
             let rejected = 0;
-            let sales = 0;
-            let profit = 0;
+            // let sales = 0;
+            // let profit = 0;
             const shp = await shopModel.find();
             shp.forEach(e => {
                 if (e.status === 'delivered') {
                     delivered++;
-                    sales += e?.price;
+                    // sales += e?.price;
                     shopHistory++;
-                    profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
+                    // profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
                 } else if (e?.status === 'sended' || e?.status === 'success') {
                     shopHistory++
                 } else if (e?.status === 'reject') {
                     rejected++;
+                } else if (e?.status === 'archive') {
+                    archived++
                 }
             })
             const waiting = shopHistory - delivered;
@@ -85,37 +89,40 @@ module.exports = {
             const users = await userModel.find();
             const operators = await operatorModel.find();
             // 
-            let deposit = 0;
+            // let deposit = 0;
             // 
-            products?.forEach(e => {
-                deposit += e.value * e?.original_price
-            });
+            // products?.forEach(e => {
+            //     deposit += e.value * e?.original_price
+            // });
             let p_his = 0;
             let sh_his = 0;
             let r_his = 0;
             let adminsBalance = 0;
             for (let $user of users) {
-                const $histpory = await payModel.find({ from: $user._id });
+                const $histpory = await payModel.find({ from: $user._id, status: 'success' });
                 const $shoph = await shopModel.find({ flow: $user.id });
                 const $refs = await userModel.find({ ref_id: $user.id });
                 for (let ref of $refs) {
                     const $rflows = await shopModel.find({ flow: ref.id });
                     $rflows.forEach(rf => {
                         r_his += rf.for_ref
+                        adminsBalance += rf.for_ref
                     });
                 };
                 $histpory.forEach(h => {
-                    p_his += h.count;
+                    p_his -= h.count;
+                    adminsBalance -= h.count;
                 });
                 $shoph.forEach(s => {
                     sh_his += s.for_admin;
+                    adminsBalance += s.for_admin
                 });
             }
-            adminsBalance += (sh_his + r_his) - p_his
+            // adminsBalance += (sh_his + r_his) - p_his
             let operatorsBalance = 0;
             for (let o of operators) {
-                const $shops = await shopModel.find({ operator: o?.id });
-                const $pays = await payOperatorModel.find({ from: o?._id });
+                const $shops = await shopModel.find({ operator: o?._id, status: 'delivered' });
+                const $pays = await payOperatorModel.find({ from: o?._id, status: 'success' });
                 $shops?.forEach($sh => {
                     operatorsBalance += $sh?.for_operator;
                 });
@@ -131,12 +138,13 @@ module.exports = {
                     products: products?.length,
                     shops: shopHistory,
                     delivered,
+                    archived,
                     waiting,
                     users: users.length,
                     operators: operators.length,
-                    deposit,
-                    profit,
-                    sales,
+                    // deposit,
+                    // profit,
+                    // sales,
                     rejected,
                     adminsBalance,
                     operatorsBalance
@@ -149,19 +157,22 @@ module.exports = {
             let shopHistory = 0;
             let delivered = 0;
             let rejected = 0;
-            let sales = 0;
-            let profit = 0;
+            // let sales = 0;
+            let archived = 0
+            // let profit = 0;
             const shp = await shopModel.find({ year, month: month - 1 });
             shp.forEach(e => {
                 if (e.status === 'delivered') {
                     delivered++;
-                    sales += e?.price;
+                    // sales += e?.price;
                     shopHistory++;
-                    profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
+                    // profit += e?.price - (e?.for_admin + e?.for_operator + e?.for_ref)
                 } else if (e?.status === 'sended' || e?.status === 'success') {
                     shopHistory++
                 } else if (e?.status === 'reject') {
                     rejected++;
+                } else if (e?.status === 'archive') {
+                    archived++
                 }
             })
             const waiting = shopHistory - delivered;
@@ -171,8 +182,9 @@ module.exports = {
                     shops: shopHistory,
                     delivered,
                     waiting,
-                    profit,
-                    sales,
+                    // profit,
+                    archived,
+                    // sales,
                     rejected,
                 }
             });
@@ -718,5 +730,37 @@ module.exports = {
                 msg: "Targetolog safidan olindi!"
             });
         });
+    },
+    addMoneyToOperator: async (req, res) => {
+        const { id } = req.params;
+        try {
+            const $operator = await operatorModel.findById(id);
+            if (!$operator) {
+                res.send({
+                    ok: false,
+                    msg: "Operator topilmadi!"
+                });
+            } else {
+                const { value, comment } = req.body;
+                new payOperatorModel({
+                    from: id,
+                    count: value > 0 ? -value : Number(value.slice(1)),
+                    comment,
+                    status: 'success',
+                    created: moment.now() / 1000
+                }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Qabul qilindi",
+                    })
+                })
+            }
+        } catch (error) {
+            res.send({
+                ok: false,
+                msg: "Xatolik",
+                data: error
+            })
+        }
     }
 }
