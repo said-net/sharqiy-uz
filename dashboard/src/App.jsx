@@ -25,6 +25,7 @@ import CompetitionGetOne from "./pages/competition/getone";
 import OperatorPays from "./pages/operatorpays/operatorpays";
 import SearchOrders from "./pages/searchorders/searchorders";
 import Admins from "./pages/admins/admins";
+import StatUsers from "./pages/statusers/statusers";
 
 function App() {
   const { refresh, phone } = useSelector(e => e.auth);
@@ -69,6 +70,7 @@ function App() {
           <Route path="/competition" element={<Competition />} />
           <Route path="/get-competition-one/:id" element={<CompetitionGetOne />} />
           <Route path="/admins" element={<Admins />} />
+          <Route path="/stat-users" element={<StatUsers />} />
           <Route path="*" element={<Dashboard />} />
         </Routes>
         {/* <img src={BgPic} alt="BG" className="fixed bottom-0 left-0 z-[-1] opacity-10 w-full" /> */}

@@ -556,7 +556,7 @@ module.exports = {
             res.send({
                 ok: false,
                 msg: "Xatolik!"
-            })
+            });
         }
     }
 }

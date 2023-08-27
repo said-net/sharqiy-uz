@@ -7,12 +7,14 @@ import { FaClock, FaList, FaMoneyBillTransfer, FaMoneyBillTrendUp, FaPhone, FaUs
 import { TbArchive, TbReload, TbTruckDelivery } from 'react-icons/tb'
 import Formatter from "../../components/formatter";
 import { GiCash } from 'react-icons/gi'
+import { useNavigate } from "react-router-dom";
 function Dashboard() {
     const [filter, setFilter] = useState('all');
     const [nextFilter, setNextFilter] = useState('');
     const [isLoad, setIsLoad] = useState(false);
     const [data, setData] = useState('');
     const [openFilter, setOpenFilter] = useState(false);
+    const nv = useNavigate();
     useEffect(() => {
         setIsLoad(false);
         axios(`${API_LINK}/boss/get-dashboard/${filter}`, {
@@ -155,7 +157,7 @@ function Dashboard() {
                     </div>
 
                     {/* BUYURTMACHILAR & ADMINLAR */}
-                    <div className={cNameType}>
+                    <div className={cNameType} onClick={()=>nv('/stat-users')}>
                         <div className={cNameIcon + 'bg-lime-400'}>
                             <FaUsers className="text-white" />
                         </div>

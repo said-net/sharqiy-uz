@@ -40,6 +40,7 @@ module.exports = {
                         id: $orders?.length + 1,
                         phone,
                         competition: !$c[0] || $c[0].end < (moment.now() / 1000) ? null : $c[0]._id,
+                        week: moment().week(),
                         flow: !flow ? '' : flow,
                         month: new Date().getMonth(),
                         day: new Date().getDate(),

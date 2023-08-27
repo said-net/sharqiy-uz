@@ -26,6 +26,7 @@ const schema = new Schema({
     region: Number,
     city: Number,
     phone: String,
+    week: Number,
     flow: {
         type: Number,
         default: 0

@@ -512,7 +512,7 @@ module.exports = {
         });
     },
     setStatusToNew: async (req, res) => {
-        await shopModel.updateMany({ status: 'wait' }, { status: 'pending', operator: null }).then(() => {
+        await shopModel.updateMany({ status: 'wait' }, { status: 'pending' }).then(() => {
             res.send({
                 ok: true,
                 msg: "O'tkazildi!"
@@ -764,6 +764,189 @@ module.exports = {
                 ok: false,
                 msg: "Xatolik",
                 data: error
+            })
+        }
+    },
+    getStatAdmins: async (req, res) => {
+        const { date } = req.params;
+        const $users = await userModel.find();
+        if (date === 'all') {
+            const data = [];
+            for (let user of $users) {
+                const reject = await shopModel.find({ flow: user.id, status: 'reject' }).countDocuments();
+                const archive = await shopModel.find({ flow: user.id, status: 'archive' }).countDocuments();
+                const wait = await shopModel.find({ flow: user.id, status: 'wait' }).countDocuments();
+                const success = await shopModel.find({ flow: user.id, status: 'success' }).countDocuments();
+                const pending = await shopModel.find({ flow: user.id, status: 'pending' }).countDocuments();
+                const sended = await shopModel.find({ flow: user.id, status: 'sended' }).countDocuments();
+                const delivered = await shopModel.find({ flow: user.id, status: 'delivered' }).countDocuments();
+                data.push({
+                    name: user.name,
+                    id: user.id,
+                    phone: user.phone,
+                    telegram: user.telegram,
+                    reject,
+                    archive,
+                    wait,
+                    success,
+                    pending,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data
+            })
+        } else if (date === 'week') {
+            const data = [];
+            for (let user of $users) {
+                const reject = await shopModel.find({ flow: user.id, status: 'reject', week: moment().week() }).countDocuments();
+                const archive = await shopModel.find({ flow: user.id, status: 'archive', week: moment().week() }).countDocuments();
+                const wait = await shopModel.find({ flow: user.id, status: 'wait', week: moment().week() }).countDocuments();
+                const success = await shopModel.find({ flow: user.id, status: 'success', week: moment().week() }).countDocuments();
+                const pending = await shopModel.find({ flow: user.id, status: 'pending', week: moment().week() }).countDocuments();
+                const sended = await shopModel.find({ flow: user.id, status: 'sended', week: moment().week() }).countDocuments();
+                const delivered = await shopModel.find({ flow: user.id, status: 'delivered', week: moment().week() }).countDocuments();
+                data.push({
+                    name: user.name,
+                    id: user.id,
+                    phone: user.phone,
+                    telegram: user.telegram,
+                    reject,
+                    archive,
+                    wait,
+                    success,
+                    pending,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data
+            })
+        } else if (date === 'today') {
+            const data = [];
+            const day = new Date().getDate();
+            const month = new Date().getMonth();
+            const year = new Date().getFullYear();
+            for (let user of $users) {
+                const reject = await shopModel.find({ flow: user.id, status: 'reject', day, month, year }).countDocuments();
+                const archive = await shopModel.find({ flow: user.id, status: 'archive', day, month, year }).countDocuments();
+                const wait = await shopModel.find({ flow: user.id, status: 'wait', day, month, year }).countDocuments();
+                const success = await shopModel.find({ flow: user.id, status: 'success', day, month, year }).countDocuments();
+                const pending = await shopModel.find({ flow: user.id, status: 'pending', day, month, year }).countDocuments();
+                const sended = await shopModel.find({ flow: user.id, status: 'sended', day, month, year }).countDocuments();
+                const delivered = await shopModel.find({ flow: user.id, status: 'delivered', day, month, year }).countDocuments();
+                data.push({
+                    name: user.name,
+                    id: user.id,
+                    phone: user.phone,
+                    telegram: user.telegram,
+                    reject,
+                    archive,
+                    wait,
+                    success,
+                    pending,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data
+            })
+        } else if (date === 'yesterday') {
+            const data = [];
+            const day = new Date().getDate() - 1;
+            const month = new Date().getMonth();
+            const year = new Date().getFullYear();
+            for (let user of $users) {
+                const reject = await shopModel.find({ flow: user.id, status: 'reject', day, month, year }).countDocuments();
+                const archive = await shopModel.find({ flow: user.id, status: 'archive', day, month, year }).countDocuments();
+                const wait = await shopModel.find({ flow: user.id, status: 'wait', day, month, year }).countDocuments();
+                const success = await shopModel.find({ flow: user.id, status: 'success', day, month, year }).countDocuments();
+                const pending = await shopModel.find({ flow: user.id, status: 'pending', day, month, year }).countDocuments();
+                const sended = await shopModel.find({ flow: user.id, status: 'sended', day, month, year }).countDocuments();
+                const delivered = await shopModel.find({ flow: user.id, status: 'delivered', day, month, year }).countDocuments();
+                data.push({
+                    name: user.name,
+                    id: user.id,
+                    phone: user.phone,
+                    telegram: user.telegram,
+                    reject,
+                    archive,
+                    wait,
+                    success,
+                    pending,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data
+            })
+        } else if (date === 'month') {
+            const data = [];
+            const month = new Date().getMonth();
+            const year = new Date().getFullYear();
+            for (let user of $users) {
+                const reject = await shopModel.find({ flow: user.id, status: 'reject', month, year }).countDocuments();
+                const archive = await shopModel.find({ flow: user.id, status: 'archive', month, year }).countDocuments();
+                const wait = await shopModel.find({ flow: user.id, status: 'wait', month, year }).countDocuments();
+                const success = await shopModel.find({ flow: user.id, status: 'success', month, year }).countDocuments();
+                const pending = await shopModel.find({ flow: user.id, status: 'pending', month, year }).countDocuments();
+                const sended = await shopModel.find({ flow: user.id, status: 'sended', month, year }).countDocuments();
+                const delivered = await shopModel.find({ flow: user.id, status: 'delivered', month, year }).countDocuments();
+                data.push({
+                    name: user.name,
+                    id: user.id,
+                    phone: user.phone,
+                    telegram: user.telegram,
+                    reject,
+                    archive,
+                    wait,
+                    success,
+                    pending,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data
+            })
+        } else if (date === 'lastmonth') {
+            const data = [];
+            const month = new Date().getMonth() - 1;
+            const year = new Date().getFullYear();
+            for (let user of $users) {
+                const reject = await shopModel.find({ flow: user.id, status: 'reject', month, year }).countDocuments();
+                const archive = await shopModel.find({ flow: user.id, status: 'archive', month, year }).countDocuments();
+                const wait = await shopModel.find({ flow: user.id, status: 'wait', month, year }).countDocuments();
+                const success = await shopModel.find({ flow: user.id, status: 'success', month, year }).countDocuments();
+                const pending = await shopModel.find({ flow: user.id, status: 'pending', month, year }).countDocuments();
+                const sended = await shopModel.find({ flow: user.id, status: 'sended', month, year }).countDocuments();
+                const delivered = await shopModel.find({ flow: user.id, status: 'delivered', month, year }).countDocuments();
+                data.push({
+                    name: user.name,
+                    id: user.id,
+                    phone: user.phone,
+                    telegram: user.telegram,
+                    reject,
+                    archive,
+                    wait,
+                    success,
+                    pending,
+                    sended,
+                    delivered
+                });
+            }
+            res.send({
+                ok: true,
+                data
             })
         }
     }
