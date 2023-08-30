@@ -179,8 +179,8 @@ bot.on('text', async msg => {
                         let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${tx}</code>\n💰Miqdor: <code>${Number($user?.etc?.amount).toLocaleString()}</code> so'm\n\n👀To'lov qilgach <b>✅To'landi</b> tugmasini\n❗Bekor qilingan bo'lsa <b>❌Bekor qilindi</b> tugmasini bosing!`
                         bot.telegram.sendMessage(channel, txt, {
                             ...inlineKeyboard([
-                                [{ text: "✅To'landi", callback_data: `success_pay_${tx}_${$user?.etc?.amount}_${$user._id}` }],
-                                [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx}_${$user?.etc?.amount}_${$user._id}` }]
+                                [{ text: "✅To'landi", callback_data: `success_pay_${tx?.replace(' ', '')}_${$user?.etc?.amount}_${$user._id}` }],
+                                [{ text: "❌Bekor qilindi", callback_data: `reject_pay_${tx?.replace(' ', '')}_${$user?.etc?.amount}_${$user._id}` }]
                             ]),
                             parse_mode: "HTML"
                         }).then(async () => {
@@ -250,21 +250,29 @@ bot.on('text', async msg => {
                     if (!$product) {
                         msg.replyWithHTML("❗Mahsulot topilmadi!")
                     } else {
-                        msg.reply(`📦Mahsulot: ${$product?.title}\n📋Video yoki Rasm linkini yuboring`);
-                        $user.set({ step: 'admin_link', etc: { pid: tx } }).save();
+                        const $ads = await adsModel.find({ product: $product?._id });
+                        const key = [];
+                        $ads?.forEach((a, i) => {
+                            key?.push([{ text: `${i + 1} - post`, callback_data: `get_ads_post_${a?.id}` }])
+                        })
+                        msg.replyWithPhoto({ source: `.${$product?.images[0]}` }, {
+                            caption: `📦Mahsulot: ${$product?.title}\n🗃️Postlar soni: ${$ads?.length} ta`,
+                            ...inlineKeyboard([
+                                [{ text: "➕Yangi post qo'shish", callback_data: 'add_new_post_to_' + $product?._id }],
+                                ...key
+                            ])
+                        });
                     }
-                } else if ($user.step === 'admin_link') {
-                    msg.reply(`✅Qabul qilindi post textini yuboring!\n*qalin* _qiya_`);
-                    $user.set({ step: 'admin_text', etc: { ...$user.etc, link: tx } }).save();
-                } else if ($user.step === 'admin_text') {
-                    const $product = await productModel.findOne({ id: $user?.etc?.pid });
+                } else if ($user.step === 'new_post_text') {
+                    const $product = await productModel.findOne({ _id: $user?.etc?.id });
                     msg.reply(`${$product?.title} uchun reklama posti biritiktirildi!`, { ...btn.admin });
                     new adsModel({
                         product: $product._id,
-                        link: $user.etc.link,
-                        about: tx
+                        media: $user?.etc?.media,
+                        about: tx,
+                        type: $user?.etc?.type
                     }).save().then(() => {
-                        $user.set({ step: 'admin_text', etc: {} }).save();
+                        $user.set({ step: '', etc: {} }).save();
                     });
                 } else if ($user.step === 'send_message_text') {
                     $user.set({ step: 'send_message_button', etc: { ...$user.etc, text: tx } }).save();
@@ -310,6 +318,32 @@ bot.on('text', async msg => {
                             msg.replyWithHTML("❗Hatolik! Habar textida * yoki _ qolib ketgan! Qayta urunib ko'ring!");
                         })
                     }
+                } else if ($user.step === 'edit_post_text') {
+                    const $ads = await adsModel.findById($user?.etc?.id);
+                    $ads.set({ about: tx }).save().then(a => {
+                        $user.set({ step: '', etc: {} }).save();
+                        if (a.type === 'video') {
+                            msg.replyWithVideo({ source: path.join(__dirname, 'videos', a?.media) }, {
+                                caption: a?.about,
+                                parse_mode: 'Markdown',
+                                ...inlineKeyboard([
+                                    [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                                    [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                                    [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                                ])
+                            });
+                        } else if (a.type === 'photo') {
+                            msg.replyWithPhoto({ source: path.join(__dirname, 'images', a?.media) }, {
+                                caption: a?.about,
+                                parse_mode: 'Markdown',
+                                ...inlineKeyboard([
+                                    [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                                    [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                                    [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                                ])
+                            });
+                        }
+                    })
                 }
             }
         }
@@ -483,41 +517,21 @@ bot.on('callback_query', async msg => {
             }
         } else if (data?.includes('success_pay_')) {
             try {
-                // let p_his = 0;
-                // let sh_his = 0;
-                // let r_his = 0;
-                // const $histpory = await payModel.find({ from: $user._id, status: 'success' });
-                // const $shoph = await shopModel.find({ flow: $user.id });
-                // const $refs = await userModel.find({ ref_id: $user.id });
-                // for (let ref of $refs) {
-                //     const $rflows = await shopModel.find({ flow: ref.id });
-                //     $rflows.forEach(rf => {
-                //         r_his += rf.for_ref
-                //     });
-                // }
-                // $histpory.forEach(h => {
-                //     p_his += h.count;
-                // });
-                // $shoph.forEach(s => {
-                //     sh_his += s.for_admin;
-                // });
-                const card = data.split('_')[2]
+                const card = data.split('_')[2]?.replace(' ', '');
                 const amount = +data.split('_')[3]
                 const uId = data.split('_')[4]
                 const $user = await userModel.findById(uId);
                 const $pay = await payModel.findOne({ from: uId, status: 'pending' });
-                $pay.set({ status: 'success', card }).save();
                 let txt = `<b>💳Pul chiqarish uchun yangi so'rov!</b>\n\n👤Sotuvchi: <b>${$user.name}</b>\n🆔Sharqiy.uz: ${$user.id}\n📞Raqami: ${$user.phone}\n💳Karta: <code>${card}</code>\n💰Miqdor: <code>${Number(amount).toLocaleString()}</code> so'm\n\n✅To'landi!`
+                $pay.set({ status: 'success', card }).save();
                 msg.editMessageReplyMarkup().catch(() => { });
-                msg.editMessageText(txt, { 'parse_mode': 'HTML' }).then(() => {
-                    bot.telegram.sendMessage($user.telegram, `✅${amount} so'm ${card} karta raqamiga o'tkazildi!`);
-                }).catch(err => {
-                    console.log(err);
-                })
+                msg.editMessageText(txt, { 'parse_mode': 'HTML' }).then().catch(err => {
+                    msg.telegram.sendMessage(5991285234, JSON.stringify(err))
+                });
+                bot.telegram.sendMessage($user.telegram, `✅${amount} so'm ${card} karta raqamiga o'tkazildi!`);
             } catch (err) {
-                console.log(err);
+                msg.telegram.sendMessage(5991285234, JSON.stringify(err))
             }
-
         } else if (data?.includes('reject_pay_')) {
             try {
                 const card = data.split('_')[2]
@@ -538,12 +552,77 @@ bot.on('callback_query', async msg => {
                 console.log(err);
             }
 
+        } else if (data?.includes('add_new_post_to_')) {
+            const pid = data?.replace(`add_new_post_to_`, '');
+            $user?.set({ step: 'new_post_media', etc: { id: pid } }).save();
+            msg.deleteMessage().catch(() => { });
+            msg.replyWithHTML("👀Reklama posti uchun rasm yoki videoni yuboring!");
+        } else if (data?.includes('get_ads_post_')) {
+            const a = await adsModel.findById(data?.replace('get_ads_post_', ''));
+            if (a.type === 'video') {
+                msg.replyWithVideo({ source: path.join(__dirname, 'videos', a?.media) }, {
+                    caption: a?.about,
+                    parse_mode: 'Markdown',
+                    ...inlineKeyboard([
+                        [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                        [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                        [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                    ])
+                });
+            } else if (a.type === 'photo') {
+                msg.replyWithPhoto({ source: path.join(__dirname, 'images', a?.media) }, {
+                    caption: a?.about,
+                    parse_mode: 'Markdown',
+                    ...inlineKeyboard([
+                        [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                        [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                        [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                    ])
+                });
+            }
+        } else if (data?.includes('edit_post_text_')) {
+            msg.deleteMessage().catch(() => { });
+            const pid = data?.replace('edit_post_text_', '');
+            $user.set({ step: 'edit_post_text', etc: { id: pid } }).save();
+            msg.replyWithHTML("Yangi reklama textini yuboring!", { ...btn.back });
+        } else if (data?.includes('edit_post_media_')) {
+            msg.deleteMessage().catch(() => { });
+            const pid = data?.replace('edit_post_media_', '');
+            $user.set({ step: 'edit_post_media', etc: { id: pid } }).save();
+            msg.replyWithHTML("Yangi reklama mediasini yuboring!", { ...btn.back });
+        } else if (data?.includes('delete_ads_post_')) {
+            const pid = data?.replace('delete_ads_post_', '');
+            msg?.deleteMessage().catch(() => { });
+            msg.replyWithHTML("❗Reklama posti o'chirilsinmi?", {
+                ...inlineKeyboard([
+                    [
+                        { text: "🔙Ortga", callback_data: 'get_ads_post_' + pid },
+                        { text: "🗑️O'chirish", callback_data: 'confirm_delete_post_' + pid },
+                    ]
+                ])
+            })
+        } else if (data?.includes('confirm_delete_post_')) {
+            const pid = data?.replace('confirm_delete_post_', '');
+            const $ads = await adsModel.findById(pid);
+            if ($ads?.type === 'photo') {
+                msg?.deleteMessage().catch(() => { });
+                fs.unlink(path?.join(__dirname, 'images', $ads.media), () => { });
+                $ads.deleteOne().then(() => {
+                    msg.reply("✅O'chirildi", { ...btn.admin });
+                })
+            } else if ($ads?.type === 'video') {
+                msg?.deleteMessage().catch(() => { });
+                fs.unlink(path?.join(__dirname, 'videos', $ads.media), () => { });
+                $ads.deleteOne().then(() => {
+                    msg.reply("✅O'chirildi", { ...btn.admin });
+                })
+            }
+
         }
     } catch (error) {
         console.log(error);
     }
 });
-
 bot.on('photo', async (msg) => {
     const { photo } = msg.message;
     const { id } = msg.from;
@@ -565,6 +644,82 @@ bot.on('photo', async (msg) => {
                 });
             })
         })
+    } else if ($user?.step === 'new_post_media') {
+        msg.telegram.getFileLink(photo[2]?.file_id).then(url => {
+            axios({ url, responseType: 'stream' }).then(response => {
+                return new Promise((resolve, reject) => {
+                    const filePath = `${md5(moment.now())}.jpg`
+                    response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                        .on('finish', () => {
+                            msg.replyWithHTML("✅Rasm saqlandi! Post matnini yuboring!\n*Qalin* - _Qiya_", { ...btn.back });
+                            $user.set({ step: 'new_post_text', etc: { ...$user?.etc, media: filePath, type: 'photo' } }).save();
+                        })
+                        .on('error', e => {
+                            console.log(e);
+                            msg.replyWithHTML("<b>❗Xatolik</b>")
+                        })
+                });
+            })
+        })
+    } else if ($user?.step === 'edit_post_media') {
+        const $ads = await adsModel.findById($user?.etc?.id);
+        if ($ads.type === 'photo') {
+            fs.unlink(path?.join(__dirname, 'images', $ads.media), () => { });
+            msg.telegram.getFileLink(photo[2]?.file_id).then(url => {
+                axios({ url, responseType: 'stream' }).then(response => {
+                    return new Promise((resolve, reject) => {
+                        const filePath = `${md5(moment.now())}.jpg`
+                        response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                            .on('finish', () => {
+                                $user.set({ step: '', etc: {} }).save();
+                                $ads.set({ media: filePath, type: 'photo' }).save().then((a) => {
+                                    msg.replyWithPhoto({ source: path.join(__dirname, 'images', a?.media) }, {
+                                        caption: a?.about,
+                                        parse_mode: 'Markdown',
+                                        ...inlineKeyboard([
+                                            [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                                            [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                                            [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                                        ])
+                                    });
+                                })
+                            })
+                            .on('error', e => {
+                                console.log(e);
+                                msg.replyWithHTML("<b>❗Xatolik</b>")
+                            })
+                    });
+                })
+            })
+        } else if ($ads.type === 'video') {
+            fs.unlink(path?.join(__dirname, 'videos', $ads.media), () => { });
+            msg.telegram.getFileLink(photo[2]?.file_id).then(url => {
+                axios({ url, responseType: 'stream' }).then(response => {
+                    return new Promise((resolve, reject) => {
+                        const filePath = `${md5(moment.now())}.jpg`
+                        response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                            .on('finish', () => {
+                                $user.set({ step: '', etc: {} }).save();
+                                $ads.set({ media: filePath, type: 'photo' }).save().then((a) => {
+                                    msg.replyWithPhoto({ source: path.join(__dirname, 'images', a?.media) }, {
+                                        caption: a?.about,
+                                        parse_mode: 'Markdown',
+                                        ...inlineKeyboard([
+                                            [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                                            [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                                            [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                                        ])
+                                    });
+                                })
+                            })
+                            .on('error', e => {
+                                console.log(e);
+                                msg.replyWithHTML("<b>❗Xatolik</b>")
+                            })
+                    });
+                })
+            })
+        }
     }
 });
 bot.on('video', async (msg) => {
@@ -588,6 +743,82 @@ bot.on('video', async (msg) => {
                 });
             })
         })
+    } else if ($user.step === 'new_post_media') {
+        msg.telegram.getFileLink(video?.file_id).then(url => {
+            axios({ url, responseType: 'stream' }).then(response => {
+                return new Promise((resolve, reject) => {
+                    const filePath = `${md5(moment.now())}.mp4`
+                    response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                        .on('finish', () => {
+                            msg.replyWithHTML("✅Video saqlandi! Post matnini yuboring\n*Qalin* - _Qiya_", { ...btn.back });
+                            $user.set({ step: 'new_post_text', etc: { ...$user?.etc, media: filePath, type: 'video' } }).save();
+                        })
+                        .on('error', e => {
+                            console.log(e);
+                            msg.replyWithHTML("<b>❗Xatolik</b>")
+                        })
+                });
+            })
+        })
+    } else if ($user?.step === 'edit_post_media') {
+        const $ads = await adsModel.findById($user?.etc?.id);
+        if ($ads.type === 'photo') {
+            fs.unlink(path?.join(__dirname, 'images', $ads.media), () => { });
+            msg.telegram.getFileLink(video?.file_id).then(url => {
+                axios({ url, responseType: 'stream' }).then(response => {
+                    return new Promise((resolve, reject) => {
+                        const filePath = `${md5(moment.now())}.mp4`
+                        response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                            .on('finish', () => {
+                                $user.set({ step: '', etc: {} }).save();
+                                $ads.set({ media: filePath, type: 'video' }).save().then((a) => {
+                                    msg.replyWithVideo({ source: path.join(__dirname, 'videos', a?.media) }, {
+                                        caption: a?.about,
+                                        parse_mode: 'Markdown',
+                                        ...inlineKeyboard([
+                                            [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                                            [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                                            [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                                        ])
+                                    });
+                                })
+                            })
+                            .on('error', e => {
+                                console.log(e);
+                                msg.replyWithHTML("<b>❗Xatolik</b>")
+                            })
+                    });
+                })
+            })
+        } else if ($ads.type === 'video') {
+            fs.unlink(path?.join(__dirname, 'videos', $ads.media), () => { });
+            msg.telegram.getFileLink(video?.file_id).then(url => {
+                axios({ url, responseType: 'stream' }).then(response => {
+                    return new Promise((resolve, reject) => {
+                        const filePath = `${md5(moment.now())}.mp4`
+                        response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                            .on('finish', () => {
+                                $user.set({ step: '', etc: {} }).save();
+                                $ads.set({ media: filePath, type: 'video' }).save().then((a) => {
+                                    msg.replyWithVideo({ source: path.join(__dirname, 'videos', a?.media) }, {
+                                        caption: a?.about,
+                                        parse_mode: 'Markdown',
+                                        ...inlineKeyboard([
+                                            [{ text: "📷Mediani o'zgartirish", callback_data: 'edit_post_media_' + a?._id }],
+                                            [{ text: "📋Textni o'zgartirish", callback_data: 'edit_post_text_' + a?._id }],
+                                            [{ text: "🗑️O'chirish", callback_data: 'delete_ads_post_' + a?._id }],
+                                        ])
+                                    });
+                                })
+                            })
+                            .on('error', e => {
+                                console.log(e);
+                                msg.replyWithHTML("<b>❗Xatolik</b>")
+                            })
+                    });
+                })
+            })
+        }
     }
 })
 

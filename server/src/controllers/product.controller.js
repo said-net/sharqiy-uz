@@ -10,6 +10,7 @@ const shopModel = require("../models/shop.model");
 const bot = require("../bot/app");
 // const path = require('path');
 const viewModel = require("../models/view.model");
+const  path  = require("path");
 // const { Input } = require("telegraf");
 module.exports = {
     create: async (req, res) => {
@@ -501,7 +502,7 @@ module.exports = {
     // 
     getAdsPost: async (req, res) => {
         const { id } = req.params;
-        const $ads = await adsModel.find({ product: id }).populate('product')
+        const $ads = await adsModel.find({ product: id }).populate('product');
         if (!$ads[0]) {
             res.send({
                 ok: false,
@@ -509,23 +510,31 @@ module.exports = {
             });
         } else {
             $ads?.forEach(a => {
-                bot.telegram.sendVideo(req.user.telegram, a.link, {
-                    caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
-                        inline_keyboard: [
-                            [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
-                            [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }]
-                        ]
-                    }
-                }).catch(() => {
-                    bot.telegram.sendPhoto(req.user.telegram, a.link, {
+                if (a?.type === 'video') {
+                    // console.log(path?.join(__dirname,'../','bot', 'videos', `${a?.media}`));
+                    bot.telegram.sendVideo(req?.user?.telegram, {source:path?.join(__dirname,'../','bot', 'videos', `${a?.media}`)} , {
                         caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
                             inline_keyboard: [
                                 [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
                                 [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }]
                             ]
                         }
-                    }).catch(() => { })
-                })
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                } else if (a?.type === 'photo') {
+                    bot.telegram.sendPhoto(req?.user?.telegram, {source:path?.join(__dirname,'../','bot', 'images', `${a?.media}`)}, {
+                        caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
+                            inline_keyboard: [
+                                [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
+                                [{ text: '📋Batafsil', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }]
+                            ]
+                        }
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                }
+
             })
             res.send({
                 ok: true,

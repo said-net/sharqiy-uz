@@ -8,7 +8,6 @@ const moment = require("moment");
 const userModel = require("../models/user.model");
 const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
-const { default: parsePhoneNumberFromString } = require("libphonenumber-js");
 module.exports = {
     create: async (req, res) => {
         const { name, phone, password } = req.body;
@@ -228,6 +227,17 @@ module.exports = {
         console.log(id);
         try {
             const $order = await shopModel.findById(id).populate('product');
+            const $h = await shopModel.find({ phone: $order?.phone })?.populate('product')
+            const history = [];
+            $h?.forEach(h => {
+                history.push({
+                    id: h?.id,
+                    product: h?.product?.title,
+                    image: SERVER_LINK + h?.product?.images[0],
+                    status: h?.status,
+                    created: moment.unix(h?.created)?.format('DD.MM.yyyy | HH:mm')
+                });
+            });
             const $settings = await settingModel.find();
             const order = {
                 ...$order._doc,
@@ -240,7 +250,8 @@ module.exports = {
             }
             res.send({
                 ok: true,
-                data: order
+                data: order,
+                history
             });
         } catch {
             res.send({
@@ -254,7 +265,7 @@ module.exports = {
         const { bonus_gived: bonus, about, city, region, status, count, phone, name, price } = req.body;
         console.log(status);
         const $order = await shopModel.findById(id);
-        if (status === 'reject' && ($order?.status === 'pending' || $order?.status === 'wait' || $order?.status === 'success')) {
+        if (status === 'archive' && ($order?.status === 'pending' || $order?.status === 'wait' || $order?.status === 'success')) {
             $order.set({
                 status: 'archive',
                 about, city, region, bonus, count: 0, phone, name, price: 0
@@ -272,7 +283,7 @@ module.exports = {
                 //     }
                 // }
             });
-        } else if (status === 'wait' && ($order?.status === 'pending' || $order?.status === 'wait')) {
+        } else if (status === 'wait' && ($order?.status === 'pending' || $order?.status === 'success' || $order?.status === 'wait')) {
             $order.set({
                 status: 'wait',
                 about, city, region, bonus, count: 0, phone, name, price: 0
@@ -300,6 +311,14 @@ module.exports = {
                         ok: true,
                         msg: "Taxrirlandi"
                     });
+                    if ($order?.flow) {
+                        const $flower = await userModel.findOne({ id: $order?.flow });
+                        if ($flower && $flower?.telegram) {
+                            bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n📦Buyurtma dostavkaga tayyor!\n🆔Buyurtma uchun id: #${$order?.id}`).catch(err => {
+                                console.log(err);
+                            });
+                        }
+                    }
                 } else {
                     res.send({
                         ok: true,
@@ -433,25 +452,31 @@ module.exports = {
         }
     },
     searchBase: async (req, res) => {
-        const { search } = req.params;
-        const $orders = await shopModel.find().populate('product');
-        const orders = [];
-        const $settings = await settingModel.find();
-        $orders.filter(o => o?.id === Number(search) || o?.phone?.includes(search)).forEach(e => {
-            if (e?.status !== 'delivered') {
+        try {
+            const { search } = req.params;
+            const $orders = await shopModel.find().populate('product');
+            const orders = [];
+            const $settings = await settingModel.find();
+            $orders.filter(o => o?.id === Number(search) || o?.phone?.includes(search)).forEach(e => {
                 orders.push({
                     _id: e?._id,
                     ...e?._doc,
-                    created: moment.unix(order?.created).format("DD.MM.YYYY | HH:mm"),
+                    created: moment.unix(e?.created).format("DD.MM.YYYY | HH:mm"),
                     image: SERVER_LINK + e?.product?.images[0],
                     comming_pay: $settings[0]?.for_operators
                 });
-            }
-        });
-        res.send({
-            ok: true,
-            data: orders.reverse()
-        })
+            });
+            res.send({
+                ok: true,
+                data: orders.reverse()
+            })
+        } catch (err) {
+            res.send({
+                ok: false,
+                msg: "Nimadir xato",
+                data: err
+            })
+        }
     },
     getTargetologOrders: async (req, res) => {
         const { id } = req.params;

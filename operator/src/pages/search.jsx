@@ -23,6 +23,7 @@ function SearchOrder() {
             }).then(res => {
                 const { ok, data, msg } = res.data;
                 setIsLoad(true);
+                console.log(data);
                 // console.log(data[0]);
                 if (!ok) {
                     toast.error(msg)

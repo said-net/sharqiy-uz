@@ -5,6 +5,7 @@ const file = require('express-fileupload');
 const cors = require('cors');
 const router = require('./router');
 const shopController = require('./controllers/shop.controller');
+// const md5 = require('md5');
 const app = express();
 require('mongoose').connect(MONGO_URI);
 require('./controllers/boss.controller').default();
@@ -27,5 +28,4 @@ app.listen(APP_PORT, () => {
         console.log(error);
     }
 });
-const moment = require('moment');
-// console.log(moment().week());
+// console.log(md5('555555'))
