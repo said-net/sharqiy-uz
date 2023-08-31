@@ -1,7 +1,7 @@
-import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input, List, Option, Select, Spinner, Textarea } from "@material-tailwind/react";
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, Input, Option, Select, Spinner, Textarea } from "@material-tailwind/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FaBox, FaBoxes, FaImages, FaMoneyBill, FaMoneyCheck, FaRegFrown, FaYoutube } from 'react-icons/fa'
+import { FaBox, FaBoxes, FaFileVideo, FaImages, FaMoneyBill, FaMoneyCheck, FaRegFrown } from 'react-icons/fa'
 import { API_LINK } from "../../config";
 import { AiFillDollarCircle } from 'react-icons/ai'
 import { toast } from "react-toastify";
@@ -31,6 +31,7 @@ function AddProduct({ open, setOpen }) {
     }, [open]);
     useEffect(() => {
         const { title, category, images, about, price, original_price, video, value } = state;
+        console.log(video);
         if (!title || !category || ![...images][0] || !about || !price || !original_price || !video || !value) {
             setDisableBtn(true)
         } else {
@@ -127,7 +128,7 @@ function AddProduct({ open, setOpen }) {
                                 <div className="flex items-center justify-center w-full mb-[10px]">
                                     <Input label="Sotuv narxi/dona" required onChange={e => setState({ ...state, price: e.target.value })} type="number" value={state.price} icon={<FaMoneyCheck />} />
                                 </div>
-                                {/* SOLD PRICE */}
+                                {/* ADMIN PRICE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
                                     <Input label="Adminlar uchun" required onChange={e => setState({ ...state, for_admins: e.target.value })} type="number" value={state.for_admins} icon={<AiFillDollarCircle />} />
                                 </div>
@@ -137,7 +138,7 @@ function AddProduct({ open, setOpen }) {
                                 </div>
                                 {/* VIDEO */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Youtube link" required onChange={e => setState({ ...state, video: e.target.value.trim() })} value={state.video} icon={<FaYoutube />} />
+                                    <Input type="file" label="Videoni tanlang" accept="video/*" required onChange={e => setState({ ...state, video: e.target.files[0] })} icon={<FaFileVideo />} />
                                 </div>
                             </div>
                         </DialogBody>

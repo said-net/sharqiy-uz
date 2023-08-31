@@ -8,6 +8,8 @@ import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import Auth from "../user/auth";
 import YouTube from "react-youtube";
 import YoutubePlayer from "../components/videoplayer";
+import ReactPlayer from "react-player";
+import { FaPlay } from "react-icons/fa";
 
 function Home() {
     const [isLoad, setIsLoad] = useState(false);
@@ -143,12 +145,13 @@ function Home() {
             }
             {/*  */}
             {isLoad && state?.videos[0] &&
-                <div className="flex items-center justify-start w-full overflow-x-scroll h-[200px]  p-[0_10px] mb-[20px] shadow-md">
+                <div className="flex items-center justify-start w-full overflow-x-scroll h-[300px] p-[0_10px] mb-[20px] shadow-md">
                     {state?.videos?.map((v, i) => {
                         return (
-                            <div className="flex relative" onClick={() => { setOpenVideo(v.video); setVideoDetail({ id: v.pid, title: v.product }) }}>
-                                <YouTube className="mr-[10px]" key={i} loading="lazy" videoId={v?.video?.split('/')?.reverse()[0]} opts={{ width: '120px', height: '200px', playerVars: { autoplay: 0, listType: 'user_uploads', controls: 0, enablejsapi: 0, disablekb: 1 } }} />
-                                <div className="absolute w-[120px] h-[50px] bottom-0 left-0 bg-black flex items-center justify-center">
+                            <div key={i} className="flex relative mr-[20px] w-[200px]" onClick={() => { setOpenVideo(v.video); setVideoDetail({ id: v.pid, title: v.product }) }}>
+                                <div className="w-full h-[300px] absolute top-0 left-0 z-[99]"></div>
+                                <ReactPlayer playIcon={<FaPlay />} url={v?.video} controls height={300} />
+                                <div className="absolute w-full h-[50px] bottom-0 left-0 bg-black flex items-center justify-center">
                                     <p className="text-white p-[5px] border">Katta ekran</p>
                                 </div>
                             </div>

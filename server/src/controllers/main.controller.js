@@ -104,7 +104,7 @@ module.exports = {
                 id: p._id,
                 pid: p.id,
                 product: p.title,
-                video: p.video
+                video: SERVER_LINK + p.video
             });
         });
         $main.forEach(m => {

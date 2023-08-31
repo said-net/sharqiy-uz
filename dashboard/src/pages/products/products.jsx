@@ -94,7 +94,7 @@ function Products() {
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
                                                         <FaPlus className="mr-[10px]" /> Qo'shish
                                                     </MenuItem>
-                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true })}>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true, video: '' })}>
                                                         <FaPencilAlt className="mr-[10px]" /> Tahrirlash
                                                     </MenuItem>
                                                     {!e?.bonus ? <MenuItem className="flex items-center" onClick={() => setOpenBonusAdd(e?.id)}>
@@ -160,7 +160,7 @@ function Products() {
                                                     <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, join_value: true, old: e?.value })}>
                                                         <FaPlus className="mr-[10px]" /> Qo'shish
                                                     </MenuItem>
-                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true })}>
+                                                    <MenuItem className="flex items-center" onClick={() => setSelect({ ...select, ...e, edit: true, video: '' })}>
                                                         <FaPencilAlt className="mr-[10px]" /> Tahrirlash
                                                     </MenuItem>
                                                     {!e?.bonus ? <MenuItem className="flex items-center" onClick={() => setOpenBonusAdd(e?.id)}>

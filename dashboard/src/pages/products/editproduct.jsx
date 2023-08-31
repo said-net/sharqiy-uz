@@ -42,6 +42,7 @@ function EditProduct({ select, setSelect }) {
             form.append('value', value);
             form.append('video', video);
             form.append('for_admins', for_admins);
+            form.append('new_video', !video ? 'no' : 'ok');
             axios.put(API_LINK + '/product/edit/' + select?.id, form, {
                 headers: {
                     'x-auth-token': `Bearer ${localStorage.getItem('access')}`
@@ -111,7 +112,7 @@ function EditProduct({ select, setSelect }) {
                                 </div>
                                 {/* VALUE */}
                                 <div className="flex items-center justify-center w-full mb-[10px]">
-                                    <Input label="Youtube link" required onChange={e => setSelect({ ...select, video: e.target.value.trim() })} value={select.video} icon={<FaYoutube />} />
+                                    <Input type="file" accept="video/*" label="Video" required onChange={e => setSelect({ ...select, video: e.target.files[0] })} icon={<FaYoutube />} />
                                 </div>
                             </div>
                         }

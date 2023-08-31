@@ -10,11 +10,13 @@ const shopModel = require("../models/shop.model");
 const bot = require("../bot/app");
 // const path = require('path');
 const viewModel = require("../models/view.model");
-const  path  = require("path");
+const path = require("path");
 // const { Input } = require("telegraf");
 module.exports = {
     create: async (req, res) => {
-        const { title, about, price, original_price, video, category, value, for_admins } = req.body;
+        const { title, about, price, original_price, category, value, for_admins } = req.body;
+        const video = req?.files?.video;
+        console.log(req?.body);
         const images = req?.files?.images[0] ? [...req?.files?.images] : [req?.files?.images];
         if (!title || !about || !price || !video || !category || !original_price || !value || !for_admins) {
             res.send({
@@ -38,14 +40,16 @@ module.exports = {
                 const filePath = `/public/products/${md5(img?.name + new Date() + i)}.png`;
                 imgs.push(filePath);
                 img.mv(`.${filePath}`);
-            })
+            });
+            const videoPath = `/public/videos/${md5(new Date())}.mp4`;
+            video.mv(`.${videoPath}`);
             new productModel({
                 title,
                 id: $products + 1,
                 about,
                 price,
                 original_price,
-                video,
+                video: videoPath,
                 category,
                 images: imgs,
                 value,
@@ -104,21 +108,43 @@ module.exports = {
     //
     edit: async (req, res) => {
         const { id } = req.params;
-        console.log(req.body);
-        try {
-            const $product = await productModel.findById(id);
-            $product.set(req.body).save().then(() => {
-                res.send({
-                    ok: true,
-                    msg: "Saqlandi!"
+        const { new_video } = req.body;
+        if (new_video === 'no') {
+            try {
+                const $product = await productModel.findById(id);
+                $product.set(req.body).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    })
                 })
-            })
-        } catch (error) {
-            console.log(error);
-            res.send({
-                ok: false,
-                msg: "Nimadir hato!"
-            })
+            } catch (error) {
+                console.log(error);
+                res.send({
+                    ok: false,
+                    msg: "Nimadir hato!"
+                })
+            }
+        } else if (new_video === 'ok') {
+            const video = req?.files?.video;
+            try {
+                const $product = await productModel.findById(id);
+                fs.unlink('.' + $product?.video, () => { });
+                const filePath = `/public/videos/${md5(new Date())}.mp4`
+                video.mv(`.${filePath}`);
+                $product.set({ ...req.body, video: filePath }).save().then(() => {
+                    res.send({
+                        ok: true,
+                        msg: "Saqlandi!"
+                    })
+                })
+            } catch (error) {
+                console.log(error);
+                res.send({
+                    ok: false,
+                    msg: "Nimadir hato!"
+                })
+            }
         }
     },
     getAllProductsToAdmin: async (req, res) => {
@@ -284,6 +310,7 @@ module.exports = {
                 images: [...$product.images.map(e => {
                     return SERVER_LINK + e
                 })],
+                video: SERVER_LINK + $product?.video,
                 original_price: 0,
                 price: $product?.price + $product?.for_admins + $settings[0].for_operators,
                 value: $product.value - $product.solded,
@@ -331,6 +358,7 @@ module.exports = {
                     id: p?._id,
                     pid: p?.id,
                     image: SERVER_LINK + p?.images[0],
+                    video: SERVER_LINK + p?.video,
                     original_price: 0,
                     price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p?.value - p?.solded,
@@ -367,6 +395,7 @@ module.exports = {
                     id: p?._id,
                     pid: p?.id,
                     image: SERVER_LINK + p?.images[0],
+                    video: SERVER_LINK + p?.video,
                     original_price: 0,
                     price: p?.price + p?.for_admins + $settings[0].for_operators,
                     value: p?.value - p?.solded,
@@ -392,14 +421,14 @@ module.exports = {
         const $modded = [];
         $videos.forEach(p => {
             $modded.push({
-                id: p?._id,
-                video: p?.video,
+                id: p?.id,
+                video: SERVER_LINK + p?.video,
                 title: p?.title
             })
         })
         res.send({
             ok: true,
-            data: $videos
+            data: $modded
         })
     },
     //
@@ -453,6 +482,7 @@ module.exports = {
                         id: p?._id,
                         pid: p?.id,
                         image: SERVER_LINK + p?.images[0],
+                        video: SERVER_LINK + p?.video,
                         original_price: 0,
                         price: p?.price + p?.for_admins + $settings[0].for_operators,
                         old_price: p?.old_price ? p?.old_price + p?.for_admins + $settings[0].for_operators : null,
@@ -473,6 +503,7 @@ module.exports = {
                         id: p?._id,
                         pid: p?.id,
                         image: SERVER_LINK + p?.images[0],
+                        video: SERVER_LINK + p?.video,
                         original_price: 0,
                         price: p?.price + p?.for_admins + $settings[0].for_operators,
                         value: p?.value - p?.solded,
@@ -512,7 +543,7 @@ module.exports = {
             $ads?.forEach(a => {
                 if (a?.type === 'video') {
                     // console.log(path?.join(__dirname,'../','bot', 'videos', `${a?.media}`));
-                    bot.telegram.sendVideo(req?.user?.telegram, {source:path?.join(__dirname,'../','bot', 'videos', `${a?.media}`)} , {
+                    bot.telegram.sendVideo(req?.user?.telegram, { source: path?.join(__dirname, '../', 'bot', 'videos', `${a?.media}`) }, {
                         caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
                             inline_keyboard: [
                                 [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
@@ -523,7 +554,7 @@ module.exports = {
                         console.log(err);
                     })
                 } else if (a?.type === 'photo') {
-                    bot.telegram.sendPhoto(req?.user?.telegram, {source:path?.join(__dirname,'../','bot', 'images', `${a?.media}`)}, {
+                    bot.telegram.sendPhoto(req?.user?.telegram, { source: path?.join(__dirname, '../', 'bot', 'images', `${a?.media}`) }, {
                         caption: `${a.about}\n\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}\nhttps://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}`, parse_mode: 'Markdown', reply_markup: {
                             inline_keyboard: [
                                 [{ text: '🛒Sotib olish', url: `https://sharqiy.uz/oqim/${req?.user?.uId}/${a?.product?.id}` }],
