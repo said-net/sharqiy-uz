@@ -9,12 +9,15 @@ import { useState } from "react";
 function SendedOrder({ select, setSelect, setOpen }) {
     const dp = useDispatch();
     const [success, setSuccess] = useState('');
+    const [disabled, setDisabled] = useState(false);
     function Submit() {
+        setDisabled(true)
         axios.post(`${API_LINK}/boss/set-status-order/${select?._id}`, { status: 'sended' }, {
             headers: {
                 'x-auth-token': `Bearer ${localStorage.getItem('access')}`
             }
         }).then(res => {
+            setDisabled(false)
             const { ok, msg, data } = res.data;
             if (!ok) {
                 toast.error(msg);
@@ -23,6 +26,7 @@ function SendedOrder({ select, setSelect, setOpen }) {
                 setSuccess(data)
             }
         }).catch(() => {
+            setDisabled(false)
             toast.error("Aloqani tekshirib qayta urunib ko'ring!")
         });
     }
@@ -39,14 +43,14 @@ function SendedOrder({ select, setSelect, setOpen }) {
                 <DialogFooter className="w-full flex items-center justify-between">
                     {!success &&
                         <>
-                            <Button className="rounded" color="orange" onClick={() => { setSelect({ ...select, sended: false, id: 0, _id: '' }) }}>Ortga</Button>
-                            <Button className="rounded" color="green" onClick={Submit}>Tasdiqlash</Button>
+                            <Button className="rounded" color="orange" onClick={() => { setSelect({ ...select, sended: false, id: 0, _id: '' }) }} disabled={disabled}>Ortga</Button>
+                            <Button disabled={disabled} className="rounded" color="green" onClick={Submit}>Tasdiqlash</Button>
                         </>
                     }
                     {success &&
                         <>
-                            <Button className="rounded" color="orange" onClick={Close}>Ortga</Button>
-                            <Button className="rounded" color="green" onClick={()=>window.open(success)}>Chekni olish</Button>
+                            <Button className="rounded" color="orange" onClick={Close} disabled={disabled}>Ortga</Button>
+                            <Button className="rounded" color="green" onClick={() => window.open(success)} disabled={disabled}>Chekni olish</Button>
                         </>
                     }
                 </DialogFooter>

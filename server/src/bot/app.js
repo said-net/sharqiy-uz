@@ -632,7 +632,7 @@ bot.on('photo', async (msg) => {
             axios({ url, responseType: 'stream' }).then(response => {
                 return new Promise((resolve, reject) => {
                     const filePath = `${md5(moment.now())}.jpg`
-                    response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                    response.data.pipe(fs.createWriteStream('./bot/images/' + filePath))
                         .on('finish', () => {
                             msg.replyWithHTML("✅Rasm saqlandi! Habar matnini yuboring\n*Qalin* - _Qiya_", { ...btn.back });
                             $user.set({ step: 'send_message_text', etc: { photo: filePath, type: 'photo' } }).save();
@@ -649,7 +649,7 @@ bot.on('photo', async (msg) => {
             axios({ url, responseType: 'stream' }).then(response => {
                 return new Promise((resolve, reject) => {
                     const filePath = `${md5(moment.now())}.jpg`
-                    response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                    response.data.pipe(fs.createWriteStream('./bot/images/' + filePath))
                         .on('finish', () => {
                             msg.replyWithHTML("✅Rasm saqlandi! Post matnini yuboring!\n*Qalin* - _Qiya_", { ...btn.back });
                             $user.set({ step: 'new_post_text', etc: { ...$user?.etc, media: filePath, type: 'photo' } }).save();
@@ -669,7 +669,7 @@ bot.on('photo', async (msg) => {
                 axios({ url, responseType: 'stream' }).then(response => {
                     return new Promise((resolve, reject) => {
                         const filePath = `${md5(moment.now())}.jpg`
-                        response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                        response.data.pipe(fs.createWriteStream('./bot/images/' + filePath))
                             .on('finish', () => {
                                 $user.set({ step: '', etc: {} }).save();
                                 $ads.set({ media: filePath, type: 'photo' }).save().then((a) => {
@@ -697,7 +697,7 @@ bot.on('photo', async (msg) => {
                 axios({ url, responseType: 'stream' }).then(response => {
                     return new Promise((resolve, reject) => {
                         const filePath = `${md5(moment.now())}.jpg`
-                        response.data.pipe(fs.createWriteStream('./src/bot/images/' + filePath))
+                        response.data.pipe(fs.createWriteStream('./bot/images/' + filePath))
                             .on('finish', () => {
                                 $user.set({ step: '', etc: {} }).save();
                                 $ads.set({ media: filePath, type: 'photo' }).save().then((a) => {
@@ -731,7 +731,7 @@ bot.on('video', async (msg) => {
             axios({ url, responseType: 'stream' }).then(response => {
                 return new Promise((resolve, reject) => {
                     const filePath = `${md5(moment.now())}.mp4`
-                    response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                    response.data.pipe(fs.createWriteStream('./bot/videos/' + filePath))
                         .on('finish', () => {
                             msg.replyWithHTML("✅Video saqlandi! Habar matnini yuboring\n*Qalin* - _Qiya_", { ...btn.back });
                             $user.set({ step: 'send_message_text', etc: { video: filePath, type: 'video' } }).save();
@@ -748,7 +748,7 @@ bot.on('video', async (msg) => {
             axios({ url, responseType: 'stream' }).then(response => {
                 return new Promise((resolve, reject) => {
                     const filePath = `${md5(moment.now())}.mp4`
-                    response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                    response.data.pipe(fs.createWriteStream('./bot/videos/' + filePath))
                         .on('finish', () => {
                             msg.replyWithHTML("✅Video saqlandi! Post matnini yuboring\n*Qalin* - _Qiya_", { ...btn.back });
                             $user.set({ step: 'new_post_text', etc: { ...$user?.etc, media: filePath, type: 'video' } }).save();
@@ -768,7 +768,7 @@ bot.on('video', async (msg) => {
                 axios({ url, responseType: 'stream' }).then(response => {
                     return new Promise((resolve, reject) => {
                         const filePath = `${md5(moment.now())}.mp4`
-                        response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                        response.data.pipe(fs.createWriteStream('./bot/videos/' + filePath))
                             .on('finish', () => {
                                 $user.set({ step: '', etc: {} }).save();
                                 $ads.set({ media: filePath, type: 'video' }).save().then((a) => {
@@ -796,7 +796,7 @@ bot.on('video', async (msg) => {
                 axios({ url, responseType: 'stream' }).then(response => {
                     return new Promise((resolve, reject) => {
                         const filePath = `${md5(moment.now())}.mp4`
-                        response.data.pipe(fs.createWriteStream('./src/bot/videos/' + filePath))
+                        response.data.pipe(fs.createWriteStream('./bot/videos/' + filePath))
                             .on('finish', () => {
                                 $user.set({ step: '', etc: {} }).save();
                                 $ads.set({ media: filePath, type: 'video' }).save().then((a) => {

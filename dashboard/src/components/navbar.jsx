@@ -1,6 +1,6 @@
 import { Chip, IconButton, Menu, MenuHandler, MenuItem, MenuList } from "@material-tailwind/react";
 import { FaBars, FaBox, FaCaretLeft, FaComment, FaGift, FaHistory, FaList, FaSearch, FaShoppingBag, FaShoppingCart, FaUsers } from "react-icons/fa";
-import { BiLogOut, BiSolidDashboard } from 'react-icons/bi'
+import { BiListUl, BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -22,13 +22,16 @@ function Navbar() {
         }, 1500)
     }
     return (
-        <div className="w-full h-[100px]">
+        <div className={`w-full h-[100px] ${pathname === '/get-all-cheques'?'hidden':''}`}>
             <nav className="w-full h-[100px] flex items-center justify-between fixed top-0 left-0 bg-[#ffffffba] backdrop-blur-md shadow-md rounded z-[999] p-[0_2%]">
                 <div className="flex items-start justify-start flex-col">
                     <h1 className="text-[20px]">{name}</h1>
                     <Chip className=" rounded" value={phone} color="green" />
                 </div>
                 <div className="flex items-center justify-between w-[200px]">
+                    <IconButton onClick={() => nv('/get-all-cheques')} className="rounded-full text-[20px]" color="deep-orange">
+                        <BiListUl />
+                    </IconButton>
                     <IconButton onClick={() => nv('/operator-pays')} className="rounded-full text-[20px]">
                         <FaCreditCard />
                     </IconButton>

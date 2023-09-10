@@ -13,6 +13,8 @@ const bot = require("../bot/app");
 const payOperatorModel = require("../models/pay.operator.model");
 const payModel = require("../models/pay.model");
 const moment = require('moment')
+const Regions = require('../configs/regions.json');
+const Cities = require('../configs/cities.json');
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -947,6 +949,41 @@ module.exports = {
             res.send({
                 ok: true,
                 data
+            })
+        }
+    },
+    getAllCheques: async (req, res) => {
+        try {
+            const $cheques = await shopModel.find({ status: "success" }).populate('operator product');
+            const $modded = [];
+            $cheques?.forEach((o) => {
+                $modded.push(
+                    {
+                        _id: o?._id,
+                        id: o?.id,
+                        title: o?.product?.title,
+                        bonus: o?.bonus,
+                        about: o?.about,
+                        count: o?.count,
+                        price: o?.price,
+                        location: `${Regions?.find(e => e.id === o?.region)?.name} - ${Cities?.find(e => e.id === o?.city)?.name}`,
+                        operator_name: o?.operator?.name,
+                        operator_phone: o?.operator?.phone,
+                        name: o?.name,
+                        phone: o?.phone,
+                        delivery_price: 25000,
+                        date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
+                    }
+                )
+            });
+            res.send({
+                ok: true,
+                data: $modded
+            })
+        } catch (error) {
+            res.send({
+                ok: false,
+                msg: "Xatolik!"
             })
         }
     }
