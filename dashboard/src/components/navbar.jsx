@@ -4,10 +4,12 @@ import { BiListUl, BiLogOut, BiSolidDashboard } from 'react-icons/bi'
 import { useDispatch, useSelector } from "react-redux";
 import { setInfoAuth, setRefreshAuth } from "../managers/auth.manager";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FaCalendarDay, FaClockRotateLeft, FaCreditCard, FaGear, FaGears, FaUserSecret } from "react-icons/fa6";
+import { FaCalendarDay, FaClockRotateLeft, FaCreditCard, FaDownLeftAndUpRightToCenter, FaGear, FaGears, FaUpRightAndDownLeftFromCenter, FaUserSecret } from "react-icons/fa6";
+import { useState } from "react";
 function Navbar() {
     const { phone, name } = useSelector(e => e.auth);
     // 
+    const [open, setOpen] = useState(false);
     const nv = useNavigate();
     const dp = useDispatch();
     const { pathname } = useLocation()
@@ -19,11 +21,19 @@ function Navbar() {
         }, 1000);
         setTimeout(() => {
             dp(setRefreshAuth());
-        }, 1500)
+        }, 1500);
     }
     return (
-        <div className={`w-full h-[100px] ${pathname === '/get-all-cheques'?'hidden':''}`}>
-            <nav className="w-full h-[100px] flex items-center justify-between fixed top-0 left-0 bg-[#ffffffba] backdrop-blur-md shadow-md rounded z-[999] p-[0_2%]">
+        <div className={`w-full ${open ? 'h-[100px]' : 'h-0'} ${pathname === '/get-all-cheques' ? 'hidden' : ''} duration-500 mb-[50px] lg:mb-0`}>
+            {!open ?
+                <div onClick={()=>setOpen(!open)} className="flex items-center justify-center bg-blue-gray-500 rounded cursor-pointer w-[40px] h-[40px] absolute left-[10px] top-[5px]">
+                    <FaUpRightAndDownLeftFromCenter className=" text-[white] text-[20]" />
+                </div> :
+                <div onClick={()=>setOpen(!open)} className="flex items-center justify-center bg-blue-gray-500 rounded cursor-pointer w-[40px] h-[40px] absolute left-[10px] top-[105px]">
+                    <FaDownLeftAndUpRightToCenter className=" text-[white] text-[20]" />
+                </div>
+            }
+            <nav className={`duration-500 w-full ${open ? 'h-[100px]' : 'h-0'} flex items-center justify-between fixed top-0 left-0 bg-[#ffffffba] backdrop-blur-md shadow-md rounded z-[999] p-[0_2%] overflow-hidden`}>
                 <div className="flex items-start justify-start flex-col">
                     <h1 className="text-[20px]">{name}</h1>
                     <Chip className=" rounded" value={phone} color="green" />

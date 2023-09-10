@@ -15,6 +15,7 @@ const payModel = require("../models/pay.model");
 const moment = require('moment')
 const Regions = require('../configs/regions.json');
 const Cities = require('../configs/cities.json');
+const deliveryModel = require("../models/delivery.model");
 module.exports = {
     default: async () => {
         const $admin = await adminModel.find();
@@ -198,17 +199,25 @@ module.exports = {
     },
     getNewOrders: async (req, res) => {
         const $orders = await shopModel.find({ status: 'success' }).populate('product operator');
+        const $deliveries = await deliveryModel.find();
         const $modded = [];
         $orders?.forEach(o => {
             $modded?.push({
                 _id: o?._id,
                 id: o?.id,
+                name: o?.name,
+                phone: o?.phone,
+                operator_name: o?.operator?.name,
+                operator_phone: o?.operator?.phone,
                 title: o?.product?.title,
+                about: o?.about,
                 count: o?.count,
                 price: o?.price,
                 region: o?.region,
                 bonus: o?.bonus,
-                image: SERVER_LINK + o?.product?.images[0]
+                location: Regions?.find(e => e.id === o?.region).name + ', ' + Cities?.find(e => e.id === o?.city).name,
+                image: SERVER_LINK + o?.product?.images[0],
+                delivery_price: $deliveries?.find(e => e?.id === o?.region)?.price,
             });
         });
         res.send({
@@ -257,6 +266,7 @@ module.exports = {
     getChequeOrder: async (req, res) => {
         const { id } = req.params;
         const o = await shopModel.findById(id).populate('product operator');
+        const $deliveries = await deliveryModel.find();
         const data = {
             _id: o?._id,
             id: o?.id,
@@ -270,6 +280,7 @@ module.exports = {
             operator_name: o?.operator?.name,
             operator_phone: o?.operator?.phone,
             name: o?.name,
+            delivery_price: $deliveries?.find(e => e?.id === o?.region)?.price,
             phone: o?.phone,
             date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
         }
@@ -296,14 +307,6 @@ module.exports = {
                     ok: true,
                     msg: "Buyurtma bekor qilindi!"
                 });
-                // if (o?.flow) {
-                //     const $flower = await userModel.findOne({ id: o?.flow });
-                //     if ($flower && $flower?.telegram) {
-                //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n❌Buyurtma bekor qilindi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
-                //             console.log(err);
-                //         });
-                //     }
-                // }
             });
         } else if (status === 'sended') {
             o.set({ status: 'sended' }).save().then(() => {
@@ -329,14 +332,6 @@ module.exports = {
                         msg: "Buyurtma yuborildi!",
                         data: SERVER_LINK + '/public/cheques/' + o?.id + '.pdf'
                     });
-                    // if (o?.flow) {
-                    //     const $flower = await userModel.findOne({ id: o?.flow });
-                    //     if ($flower && $flower?.telegram) {
-                    //         bot.telegram.sendMessage($flower?.telegram, `sharqiy.uz\n🚚Buyurtma buyurtmachiga yuborildi!\n🆔Buyurtma uchun id: #${o?.id}`).catch(err => {
-                    //             console.log(err);
-                    //         });
-                    //     }
-                    // }
                 }).catch((err) => {
                     console.log(err);
                     res.send({
@@ -953,6 +948,7 @@ module.exports = {
         }
     },
     getAllCheques: async (req, res) => {
+        const $deliveries = await deliveryModel.find();
         try {
             const $cheques = await shopModel.find({ status: "success" }).populate('operator product');
             const $modded = [];
@@ -971,7 +967,7 @@ module.exports = {
                         operator_phone: o?.operator?.phone,
                         name: o?.name,
                         phone: o?.phone,
-                        delivery_price: 25000,
+                        delivery_price: $deliveries?.find(e => e?.id === o?.region)?.price,
                         date: `${(o?.day < 10 ? '0' + o?.day : o?.day) + '-' + ((o?.month + 1) < 10 ? '0' + (o?.month + 1) : (o?.month + 1)) + '-' + o?.year}`,
                     }
                 )
@@ -985,6 +981,45 @@ module.exports = {
                 ok: false,
                 msg: "Xatolik!"
             })
+        }
+    },
+    setStatusById: async (req, res) => {
+        const { list, status } = req.body;
+        if (!list || !list[0] || !status) {
+            res.send({
+                ok: false,
+                msg: "Order yoki status tanlanmagan!"
+            });
+        } else {
+            try {
+                for (let l of list) {
+                    if (l !== undefined) {
+                        const $order = await shopModel.findById(l);
+                        if (status === 'reject') {
+                            $order.set({ status: 'reject' }).save();
+                        } else if (status === 'sended') {
+                            $order.set({ status: 'sended' }).save();
+                        }
+                    }
+                }
+                if (status === 'reject') {
+                    res.send({
+                        ok: true,
+                        msg: "Bekor qilindi!"
+                    });
+                } else if (status === 'sended') {
+                    res.send({
+                        ok: true,
+                        msg: "Tasdiqlandi"
+                    })
+                }
+            } catch (error) {
+                console.log(error);
+                res.send({
+                    ok: false,
+                    msg: "Xatolik!"
+                })
+            }
         }
     }
 }
